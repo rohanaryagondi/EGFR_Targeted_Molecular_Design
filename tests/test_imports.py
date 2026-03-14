@@ -1,0 +1,33 @@
+"""Test that all modules can be imported."""
+
+
+def test_import_statebind():
+    import statebind
+    assert hasattr(statebind, "__version__")
+    assert statebind.__version__ == "0.1.0"
+
+
+def test_import_context():
+    import statebind.context
+
+
+def test_import_structure():
+    import statebind.structure
+
+
+def test_import_dynamics():
+    import statebind.dynamics
+
+
+def test_import_generation():
+    import statebind.generation
+
+
+def test_import_ranking():
+    import statebind.ranking
+
+
+def test_import_utils():
+    import statebind.utils
+    from statebind.utils.config import load_config
+    from statebind.utils.io import ensure_dir, save_json, load_json

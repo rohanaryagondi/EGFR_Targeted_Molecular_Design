@@ -1,0 +1,21 @@
+# Structure module configuration
+
+module: structure
+
+target:
+  gene: EGFR
+  domain: kinase
+
+pdb:
+  # Representative EGFR structures per state (to be populated in Phase 2)
+  reference_structures: []
+
+classification:
+  # Geometric criteria for conformational state classification
+  dfg_distance_threshold: 10.0  # Angstroms
+  ac_helix_angle_threshold: 15.0  # Degrees
+
+output:
+  artifact_dir: artifacts/structure
+  state_atlas_dir: artifacts/structure/state_atlas
+  pockets_dir: artifacts/structure/pockets

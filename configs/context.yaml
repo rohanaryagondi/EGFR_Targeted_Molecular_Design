@@ -1,0 +1,24 @@
+# Context module configuration
+
+module: context
+
+target:
+  gene: EGFR
+  uniprot_id: P00533
+  organism: human
+
+mutations:
+  # Known clinically relevant EGFR resistance mutations
+  primary:
+    - T790M
+    - C797S
+    - L858R
+    - exon19del
+  sources:
+    - cosmic
+    - clinvar
+    - literature
+
+output:
+  artifact_dir: artifacts/context
+  mutation_atlas: artifacts/context/mutation_atlas.json

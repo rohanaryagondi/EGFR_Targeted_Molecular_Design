@@ -1,0 +1,16 @@
+# StateBind default configuration
+# Override per-module settings in module-specific configs.
+
+project:
+  name: statebind
+  version: "0.1.0"
+  target: EGFR
+
+paths:
+  artifacts_dir: artifacts
+  reports_dir: reports
+  data_dir: data
+
+logging:
+  level: INFO
+  format: "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
