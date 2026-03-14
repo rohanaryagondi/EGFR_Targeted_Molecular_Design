@@ -1,0 +1,47 @@
+{
+  "manifest_version": "1.0.0",
+  "category": "structures",
+  "created_at": "2026-03-14T21:30:50.334232+00:00",
+  "updated_at": "2026-03-14T21:30:50.334252+00:00",
+  "entries": [
+    {
+      "file_path": "data/raw/structures/pdb_metadata.json",
+      "description": "RCSB PDB metadata for EGFR kinase domain structures",
+      "source_name": "pdb",
+      "source_version": "",
+      "source_url": "https://data.rcsb.org/rest/v1/core/entry/",
+      "download_date": "",
+      "file_hash": "",
+      "file_size_bytes": 0,
+      "format": "json",
+      "status": "pending",
+      "notes": "Query RCSB search API for EGFR kinase domain, human, X-ray, <=3.0A."
+    },
+    {
+      "file_path": "data/raw/structures/klifs_egfr.csv",
+      "description": "KLIFS kinase classification data for EGFR",
+      "source_name": "klifs",
+      "source_version": "",
+      "source_url": "https://klifs.net/",
+      "download_date": "",
+      "file_hash": "",
+      "file_size_bytes": 0,
+      "format": "csv",
+      "status": "pending",
+      "notes": "Used as validation reference for conformational state classification."
+    },
+    {
+      "file_path": "data/raw/structures/uniprot_p00533.json",
+      "description": "UniProt entry for human EGFR (P00533)",
+      "source_name": "uniprot",
+      "source_version": "",
+      "source_url": "https://rest.uniprot.org/uniprotkb/P00533.json",
+      "download_date": "",
+      "file_hash": "",
+      "file_size_bytes": 0,
+      "format": "json",
+      "status": "pending",
+      "notes": ""
+    }
+  ]
+}

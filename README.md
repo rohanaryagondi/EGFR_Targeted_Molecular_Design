@@ -56,7 +56,7 @@ Disease Context (mutations, resistance)
 | Phase | Name | Goal | Status |
 |-------|------|------|--------|
 | 0 | Scaffold | Repo structure, docs, CI basics | ✅ Complete |
-| 1 | Context & Data | EGFR mutation atlas, resistance context curation | 🔲 Not started |
+| 1 | Context & Data | EGFR mutation atlas, resistance context curation | 🔨 In progress |
 | 2 | Structure Atlas | Conformational state classification from PDB | 🔲 Not started |
 | 3 | Dynamics | Lightweight conformational state predictor | 🔲 Not started |
 | 4 | Generation | State-conditioned molecular generation | 🔲 Not started |
@@ -67,13 +67,12 @@ See [docs/PHASE_PLAN.md](docs/PHASE_PLAN.md) for detailed breakdowns.
 
 ## Current Status
 
-**Phase 0: Scaffold — Complete**
+**Phase 1: Context & Data — In Progress**
 
-- Repository structure created
-- Documentation framework in place
-- Development environment configured
-- Minimal test suite passing
-- CLI entrypoint scaffolded
+- Data layer infrastructure built (manifests, registry, validation, paths)
+- Source registry defines all v1 data sources with provenance tracking
+- Data documentation: [DATA_SOURCES.md](docs/DATA_SOURCES.md), [DATA_SCHEMA.md](docs/DATA_SCHEMA.md)
+- Next: curate mutation atlas, download structural data
 
 ## Quick Start
 
@@ -101,7 +100,12 @@ statebind --help
 │   ├── dynamics/           # State modeling & dynamics
 │   ├── generation/         # Molecular generation
 │   ├── ranking/            # Scoring & reranking
+│   ├── data/               # Data layer (registry, manifests, validation)
 │   └── utils/              # Shared utilities
+├── data/                   # Data directory (see below)
+│   ├── manifests/          # Provenance-tracking manifest files (committed)
+│   ├── raw/                # Downloaded source files (gitignored)
+│   └── processed/          # Derived data (gitignored)
 ├── configs/                # YAML configuration files
 ├── scripts/                # Runnable pipeline scripts
 ├── tests/                  # Test suite
@@ -118,6 +122,8 @@ statebind --help
 - [Phase Plan](docs/PHASE_PLAN.md) — Detailed phase breakdown with pass/fail conditions
 - [Benchmark Spec](docs/BENCHMARK_SPEC.md) — Metrics, baselines, what constitutes a "win"
 - [Risk Register](docs/RISK_REGISTER.md) — Bottlenecks, limitations, fallback plans
+- [Data Sources](docs/DATA_SOURCES.md) — All public data sources with licensing and quality notes
+- [Data Schema](docs/DATA_SCHEMA.md) — Raw/processed schemas, canonical IDs, provenance
 - [GitHub Story](docs/GITHUB_STORY.md) — How to present and narrate the project
 - [Decisions](docs/DECISIONS.md) — Architecture decision records
 - [Runbook](docs/RUNBOOK.md) — How to run each phase

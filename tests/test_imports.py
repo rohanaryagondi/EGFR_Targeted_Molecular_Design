@@ -31,3 +31,11 @@ def test_import_utils():
     import statebind.utils
     from statebind.utils.config import load_config
     from statebind.utils.io import ensure_dir, save_json, load_json
+
+
+def test_import_data():
+    import statebind.data
+    from statebind.data.registry import SourceRegistry
+    from statebind.data.manifest import Manifest, ManifestEntry
+    from statebind.data.paths import DataPaths
+    from statebind.data.validation import validate_data_layout

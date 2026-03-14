@@ -1,0 +1,47 @@
+{
+  "manifest_version": "1.0.0",
+  "category": "context",
+  "created_at": "2026-03-14T21:30:50.333913+00:00",
+  "updated_at": "2026-03-14T21:30:50.334225+00:00",
+  "entries": [
+    {
+      "file_path": "data/raw/context/cosmic_egfr_mutations.tsv",
+      "description": "COSMIC somatic mutations for EGFR, filtered to kinase domain",
+      "source_name": "cosmic",
+      "source_version": "",
+      "source_url": "https://cancer.sanger.ac.uk/cosmic/download",
+      "download_date": "",
+      "file_hash": "",
+      "file_size_bytes": 0,
+      "format": "tsv",
+      "status": "pending",
+      "notes": "Requires COSMIC account. Download CosmicMutantExport, filter to EGFR."
+    },
+    {
+      "file_path": "data/raw/context/clinvar_egfr_variants.xml",
+      "description": "ClinVar variant records for EGFR",
+      "source_name": "clinvar",
+      "source_version": "",
+      "source_url": "https://www.ncbi.nlm.nih.gov/clinvar/",
+      "download_date": "",
+      "file_hash": "",
+      "file_size_bytes": 0,
+      "format": "xml",
+      "status": "pending",
+      "notes": "Query via Entrez efetch for EGFR[gene] with clinical significance."
+    },
+    {
+      "file_path": "data/raw/context/manual_curated_mutations.json",
+      "description": "Hand-curated EGFR resistance mutations with conformational annotations",
+      "source_name": "manual",
+      "source_version": "",
+      "source_url": "",
+      "download_date": "",
+      "file_hash": "",
+      "file_size_bytes": 0,
+      "format": "json",
+      "status": "pending",
+      "notes": "Primary gold-standard annotation source. Created by project author."
+    }
+  ]
+}

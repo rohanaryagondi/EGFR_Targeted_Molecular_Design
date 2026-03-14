@@ -30,6 +30,25 @@ artifacts/*
 reports/*
 !reports/.gitkeep
 
+# Raw data files (large, downloaded separately)
+data/raw/context/*
+!data/raw/context/.gitkeep
+data/raw/structures/*
+!data/raw/structures/.gitkeep
+data/raw/ligands/*
+!data/raw/ligands/.gitkeep
+
+# Processed data (regenerable)
+data/processed/context/*
+!data/processed/context/.gitkeep
+data/processed/structures/*
+!data/processed/structures/.gitkeep
+data/processed/ligands/*
+!data/processed/ligands/.gitkeep
+
+# Manifests ARE tracked (small JSON files with provenance)
+# data/manifests/*.json — committed to git
+
 # Jupyter
 .ipynb_checkpoints/
 
