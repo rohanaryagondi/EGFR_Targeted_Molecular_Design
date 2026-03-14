@@ -39,3 +39,14 @@ def test_import_data():
     from statebind.data.manifest import Manifest, ManifestEntry
     from statebind.data.paths import DataPaths
     from statebind.data.validation import validate_data_layout
+
+
+def test_import_processing():
+    import statebind.processing
+    from statebind.processing.models import MutationRecord, StructureRecord, LigandRecord
+    from statebind.processing.context import build_context_dataset
+    from statebind.processing.structures import build_structure_dataset
+    from statebind.processing.ligands import build_ligand_dataset
+    from statebind.processing.mapping import build_mapping_tables
+    from statebind.processing.validation import validate_dataset
+    from statebind.processing.benchmark import assemble_benchmark

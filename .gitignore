@@ -45,6 +45,8 @@ data/processed/structures/*
 !data/processed/structures/.gitkeep
 data/processed/ligands/*
 !data/processed/ligands/.gitkeep
+data/processed/benchmark/*
+!data/processed/benchmark/.gitkeep
 
 # Manifests ARE tracked (small JSON files with provenance)
 # data/manifests/*.json — committed to git

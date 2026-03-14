@@ -10,7 +10,7 @@ def test_src_layout_exists():
 
 
 def test_all_modules_have_init():
-    modules = ["context", "structure", "dynamics", "generation", "ranking", "utils", "data"]
+    modules = ["context", "structure", "dynamics", "generation", "ranking", "utils", "data", "processing"]
     for module in modules:
         init_file = PROJECT_ROOT / "src" / "statebind" / module / "__init__.py"
         assert init_file.exists(), f"Missing __init__.py in {module}"
@@ -33,6 +33,7 @@ def test_docs_exist():
         "GITHUB_STORY.md",
         "DATA_SOURCES.md",
         "DATA_SCHEMA.md",
+        "BENCHMARK_DATASET_CARD.md",
     ]
     for doc in expected_docs:
         assert (PROJECT_ROOT / "docs" / doc).exists(), f"Missing doc: {doc}"
