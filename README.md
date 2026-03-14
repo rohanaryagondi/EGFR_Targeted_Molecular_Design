@@ -113,9 +113,12 @@ statebind --help
 
 ## Documentation
 
-- [Project Charter](docs/PROJECT_CHARTER.md) — Scope, goals, non-goals
-- [Architecture](docs/ARCHITECTURE.md) — System design and module contracts
-- [Phase Plan](docs/PHASE_PLAN.md) — Detailed phase breakdown
+- [Project Charter](docs/PROJECT_CHARTER.md) — Scope, hypotheses, success criteria
+- [Architecture](docs/ARCHITECTURE.md) — System design, module contracts, baselines, ablations
+- [Phase Plan](docs/PHASE_PLAN.md) — Detailed phase breakdown with pass/fail conditions
+- [Benchmark Spec](docs/BENCHMARK_SPEC.md) — Metrics, baselines, what constitutes a "win"
+- [Risk Register](docs/RISK_REGISTER.md) — Bottlenecks, limitations, fallback plans
+- [GitHub Story](docs/GITHUB_STORY.md) — How to present and narrate the project
 - [Decisions](docs/DECISIONS.md) — Architecture decision records
 - [Runbook](docs/RUNBOOK.md) — How to run each phase
 

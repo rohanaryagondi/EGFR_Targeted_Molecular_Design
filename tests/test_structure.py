@@ -28,6 +28,9 @@ def test_docs_exist():
         "PHASE_PLAN.md",
         "DECISIONS.md",
         "RUNBOOK.md",
+        "BENCHMARK_SPEC.md",
+        "RISK_REGISTER.md",
+        "GITHUB_STORY.md",
     ]
     for doc in expected_docs:
         assert (PROJECT_ROOT / "docs" / doc).exists(), f"Missing doc: {doc}"
