@@ -69,3 +69,19 @@ def test_import_structure_modules():
     from statebind.structure.clustering import cluster_structures, compute_cluster_quality
     from statebind.structure.pocket_comparison import compare_pockets_by_state
     from statebind.structure.atlas import build_state_atlas
+
+
+def test_import_context_modules():
+    from statebind.context.features import (
+        extract_mutation_features, extract_pathway_features,
+        extract_all_features, build_feature_matrix, assign_state_label,
+    )
+    from statebind.context.preprocessing import fit_scaler, generate_splits
+    from statebind.context.models import (
+        MutationOnlyBaseline, CombinedLogistic, EmbeddingMLP,
+        ModelConfig, Prediction, create_model,
+    )
+    from statebind.context.training import train_model, run_ablation_suite
+    from statebind.context.evaluation import (
+        evaluate_model, compare_ablations, evaluation_to_dict,
+    )
