@@ -1,0 +1,94 @@
+"""Pydantic models for state-conditioned candidate generation.
+
+Extends the baseline Candidate/CandidateLibrary models with:
+- State conditioning metadata (which state/pocket drove the generation)
+- Pocket context snapshots
+- Cross-state comparison support
+"""
+
+from __future__ import annotations
+
+from enum import Enum
+
+from pydantic import BaseModel, Field
+
+from statebind.baselines.models import CandidateSource
+
+
+class GenerationStrategy(str, Enum):
+    """How the candidate was generated relative to the pocket."""
+
+    HINGE_OPTIMIZED = "hinge_optimized"           # Optimized for hinge H-bonds
+    BACK_POCKET_EXTENSION = "back_pocket_extension"  # Extended into DFG-out back pocket
+    GATEKEEPER_AVOIDING = "gatekeeper_avoiding"    # Avoids gatekeeper clash (T790M)
+    VOLUME_FILLING = "volume_filling"              # Fills larger pocket volume
+    COVALENT_WARHEAD = "covalent_warhead"           # Targets C797 covalent bond
+    P_LOOP_INTERACTION = "p_loop_interaction"       # Engages folded P-loop
+    REFERENCE = "reference"                         # Unmodified reference compound
+    ANALOG = "analog"                               # Simple analog enumeration
+
+
+class StateConditionedCandidate(BaseModel):
+    """A candidate molecule generated conditioned on a specific state."""
+
+    candidate_id: str
+    smiles: str
+    source: CandidateSource = CandidateSource.ENUMERATED
+    parent_id: str = ""
+    target_state: str = ""       # ConformationalState value
+    target_pdb_id: str = ""      # Representative structure for this state
+    strategy: GenerationStrategy = GenerationStrategy.ANALOG
+    pocket_volume: float = 0.0   # Pocket volume of target state (Å³)
+    back_pocket: bool = False    # Whether back pocket was accessible
+    gatekeeper_clearance: float = 0.0
+    notes: str = ""
+
+
+class StateConditionedLibrary(BaseModel):
+    """Library of candidates generated for a specific state."""
+
+    state: str                    # ConformationalState value
+    representative_pdb: str = ""  # PDB used for this state
+    pocket_volume: float = 0.0
+    back_pocket_accessible: bool = False
+    candidates: list[StateConditionedCandidate] = Field(default_factory=list)
+    n_candidates: int = 0
+    strategies_used: list[str] = Field(default_factory=list)
+    generation_config: dict[str, object] = Field(default_factory=dict)
+
+
+class MultiStateGenerationResult(BaseModel):
+    """Complete output from multi-state generation."""
+
+    version: str = "1.0.0"
+    states: list[str] = Field(default_factory=list)
+    libraries: list[StateConditionedLibrary] = Field(default_factory=list)
+    total_candidates: int = 0
+    total_unique_smiles: int = 0
+    cross_state_overlap: dict[str, int] = Field(default_factory=dict)
+    generated_at: str = ""
+    notes: str = ""
+
+
+class FilteredStateLibrary(BaseModel):
+    """Filtered candidates for a single state."""
+
+    state: str
+    n_input: int = 0
+    n_passed: int = 0
+    n_failed: int = 0
+    pass_rate: float = 0.0
+    candidates: list[StateConditionedCandidate] = Field(default_factory=list)
+    property_stats: dict[str, dict[str, float]] = Field(default_factory=dict)
+
+
+class MultiStateFilterResult(BaseModel):
+    """Filtered results across all states."""
+
+    version: str = "1.0.0"
+    states: list[str] = Field(default_factory=list)
+    libraries: list[FilteredStateLibrary] = Field(default_factory=list)
+    total_input: int = 0
+    total_passed: int = 0
+    overall_pass_rate: float = 0.0
+    generated_at: str = ""

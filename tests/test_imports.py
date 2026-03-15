@@ -101,3 +101,15 @@ def test_import_dynamics_modules():
     from statebind.dynamics.evaluation import (
         compare_models, evaluate_embedding_quality, evaluate_transition_model,
     )
+
+
+def test_import_generation_modules():
+    from statebind.generation.models import (
+        StateConditionedCandidate, StateConditionedLibrary,
+        MultiStateGenerationResult, GenerationStrategy,
+    )
+    from statebind.generation.conditioning import get_pocket_conditions
+    from statebind.generation.generator import generate_all_states, generate_for_state
+    from statebind.generation.filtering import filter_all_states, get_filters_for_state
+    from statebind.generation.diversity import analyze_cross_state_diversity
+    from statebind.generation.evaluation import evaluate_generation
