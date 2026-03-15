@@ -61,3 +61,11 @@ def test_import_baselines():
     from statebind.baselines.scoring import score_candidates
     from statebind.baselines.evaluation import evaluate_baseline
     from statebind.baselines.pipeline import run_static_baseline
+
+
+def test_import_structure_modules():
+    from statebind.structure.models import StateAtlas, AtlasEntry, StructuralFeatures
+    from statebind.structure.features import extract_features, get_available_pdb_ids
+    from statebind.structure.clustering import cluster_structures, compute_cluster_quality
+    from statebind.structure.pocket_comparison import compare_pockets_by_state
+    from statebind.structure.atlas import build_state_atlas
