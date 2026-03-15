@@ -50,3 +50,14 @@ def test_import_processing():
     from statebind.processing.mapping import build_mapping_tables
     from statebind.processing.validation import validate_dataset
     from statebind.processing.benchmark import assemble_benchmark
+
+
+def test_import_baselines():
+    import statebind.baselines
+    from statebind.baselines.models import PocketDefinition, Candidate, ScoredCandidate
+    from statebind.baselines.pocket import get_baseline_pocket
+    from statebind.baselines.candidates import build_candidate_library
+    from statebind.baselines.filtering import apply_filters
+    from statebind.baselines.scoring import score_candidates
+    from statebind.baselines.evaluation import evaluate_baseline
+    from statebind.baselines.pipeline import run_static_baseline
