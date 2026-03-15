@@ -85,3 +85,19 @@ def test_import_context_modules():
     from statebind.context.evaluation import (
         evaluate_model, compare_ablations, evaluation_to_dict,
     )
+
+
+def test_import_dynamics_modules():
+    from statebind.dynamics.sequences import (
+        build_transition_dataset, extract_transitions, StateSequence,
+    )
+    from statebind.dynamics.transitions import (
+        MarkovTransitionModel, UniformBaseline, estimate_transition_matrix,
+    )
+    from statebind.dynamics.embeddings import learn_embeddings, EmbeddingSpace
+    from statebind.dynamics.world_model import (
+        build_world_model, WorldModelConfig, save_world_model,
+    )
+    from statebind.dynamics.evaluation import (
+        compare_models, evaluate_embedding_quality, evaluate_transition_model,
+    )
