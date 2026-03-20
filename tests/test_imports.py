@@ -113,3 +113,35 @@ def test_import_generation_modules():
     from statebind.generation.filtering import filter_all_states, get_filters_for_state
     from statebind.generation.diversity import analyze_cross_state_diversity
     from statebind.generation.evaluation import evaluate_generation
+
+
+def test_import_ranking_modules():
+    from statebind.ranking.models import (
+        PipelineLabel, UnifiedScoreComponent, UnifiedScoredCandidate,
+        RankedPool, MergedRanking, RankShift,
+    )
+    from statebind.ranking.scoring import (
+        score_unified, rank_static_baseline, rank_state_aware, merge_rankings,
+    )
+    from statebind.ranking.aggregation import (
+        compute_rank_shifts, top_k_global, top_k_by_pipeline,
+        pipeline_representation_in_top_k, mean_rank_by_pipeline,
+        score_distribution_by_pipeline,
+    )
+
+
+def test_import_evaluation_modules():
+    from statebind.evaluation.comparison import (
+        compute_overlap, compute_diversity_comparison,
+        compute_score_comparison, compute_top_k_comparison,
+        compute_novelty, run_full_comparison,
+    )
+    from statebind.evaluation.tables import (
+        summary_table, top_candidates_table, per_pipeline_top_table,
+        rank_shift_table, novelty_by_strategy_table, novelty_by_state_table,
+    )
+    from statebind.evaluation.figures import (
+        score_distribution_ascii, diversity_comparison_ascii,
+        top_k_composition_ascii, novelty_breakdown_ascii,
+        overlap_venn_ascii, generate_all_figures,
+    )
