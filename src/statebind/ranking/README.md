@@ -88,3 +88,17 @@ Phase 7 of StateBind: provides a unified scoring and ranking framework that appl
 
 - **Workstream 02** will update scoring method strings and may adjust the diversity/similarity computation used in reference_similarity.
 - **Workstream 04** will replace the `docking_proxy` stub (constant 0.5) with an actual docking score using Vina or GNINA, following the MLP pattern from `statebind.dynamics.world_model`.
+
+## Current Status
+
+Complete but docking component is a stub (constant 0.5), wasting 20% of score weight. Three workstreams will modify `scoring.py` sequentially.
+
+## Remaining Work for AI Agents
+
+**CONFLICT ZONE**: Three workstreams modify `scoring.py`. They MUST execute in this order:
+1. **WS02** (first): Updates scoring method strings, wires in RDKit chemistry. Read `workstreams/02-scoring-integration.md`.
+2. **WS04** (second): Adds DockingProxy MLP as fallback. Read `workstreams/04-docking-proxy.md`.
+3. **WS08** (third): Adds MPNN as primary docking scorer with cascading fallback. Read `workstreams/08-mpnn-affinity.md`.
+
+Do NOT change `DEFAULT_WEIGHTS` values or `_validate_weights()` signature.
+See `ranking/CRITICAL.md` for non-obvious facts.

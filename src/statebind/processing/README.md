@@ -109,3 +109,11 @@ Exported from `__init__.py`:
 ## Planned Improvements
 
 No workstream modifications are currently planned for this module.
+
+## Current Status
+
+Complete. All 18 mutations, 16 structures, and 9 ligands are curated as Python literals. Benchmark assembly and validation are tested.
+
+## Remaining Work for AI Agents
+
+No pending workstream work. Future: expand mutation annotations for multi-state preferences if new literature data becomes available.

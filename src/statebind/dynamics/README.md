@@ -91,3 +91,11 @@ Phase 5 of StateBind: models the conformational state transition dynamics of EGF
 
 - No workstreams currently plan to modify this module directly.
 - Workstream 04 (docking proxy) will reuse the hand-rolled MLP pattern from `world_model.py` as a template for the docking scoring model.
+
+## Current Status
+
+Complete. Markov transition model, contrastive 4-D embeddings, and hand-rolled numpy MLP world model all trained and evaluated.
+
+## Remaining Work for AI Agents
+
+No pending workstream work. The MLP pattern here (`world_model.py`) was used as reference for WS04's docking proxy.

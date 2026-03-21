@@ -102,3 +102,11 @@ Mutation-to-state prediction module (Phase 4). Given an EGFR mutation profile (a
 ## Planned Improvements
 
 No currently planned workstream modifications targeting this module directly. Future improvements would involve expanding the mutation dataset with multi-state annotations and replacing proxy pathway features with real expression data.
+
+## Current Status
+
+Complete but limited by single-class dataset (all 17 mutations map to DFGin_aCin). Model evaluation is uninformative — accuracy is trivially 100% because there is only one class.
+
+## Remaining Work for AI Agents
+
+No pending workstream work. The single-class limitation is a data constraint, not a code issue. Future: expand mutation annotations to cover multi-state preferences.

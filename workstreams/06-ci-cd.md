@@ -141,3 +141,18 @@ pip install -e ".[full]"
 - [ ] CI workflow passes locally (`act` or push to test branch)
 - [ ] All existing 359+ tests pass
 - [ ] No changes to source code or test files
+
+---
+
+## Critical Information Maintenance
+
+When you discover non-obvious facts during implementation — edge cases, gotchas, implicit assumptions, or things that broke unexpectedly — add them to the relevant CRITICAL.md file(s):
+
+- **Module-level**: `src/statebind/{module}/CRITICAL.md` for facts specific to the module you modified
+- **Project-level**: `/CRITICAL.md` for facts that cross module boundaries
+
+Format: one fact per line, include `file:line` references. Be detailed yet concise.
+
+## Agent Instructions
+
+Be detailed yet concise in all code, comments, and documentation. Include `file:line` references when noting important locations. No fluff — every line should carry information.

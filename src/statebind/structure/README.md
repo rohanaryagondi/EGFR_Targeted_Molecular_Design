@@ -80,3 +80,11 @@ Conformational state atlas for the EGFR kinase domain (Phase 3). This module cla
 ## Planned Improvements
 
 No currently planned workstream modifications. Future work would involve computing features directly from PDB coordinates and expanding the structure set.
+
+## Current Status
+
+Complete. 16 structures classified into 4 states. Literature-curated 9-D feature vectors. Agglomerative clustering with quality metrics.
+
+## Remaining Work for AI Agents
+
+No pending workstream work. Future: compute features from PDB coordinates via BioPython instead of literature curation.

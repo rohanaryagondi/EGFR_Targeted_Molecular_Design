@@ -92,3 +92,14 @@ Static single-structure design pipeline (Phase 2) that serves as the baseline th
 - **Workstream 01 (Chemistry foundation):** Replace SMILES-based heuristics with RDKit-based property calculations and Morgan fingerprint similarity.
 - **Workstream 02 (Scoring integration):** Integrate validated scoring components from external tools.
 - **Workstream 04 (Docking proxy):** Replace the constant docking stub with AutoDock Vina, GNINA, or Smina for real docking scores.
+
+## Current Status
+
+Complete but uses crude approximations. Docking is a stub (constant 0.5). Similarity uses SMILES n-gram Tanimoto instead of Morgan fingerprints. Property estimation is heuristic.
+
+## Remaining Work for AI Agents
+
+- **WS02** modifies `scoring.py` and `filtering.py` to wire in RDKit chemistry from WS01. Read `workstreams/02-scoring-integration.md`.
+- **WS04** adds a trained MLP docking proxy as fallback. Read `workstreams/04-docking-proxy.md`.
+- **IMPORTANT**: Do NOT modify `scoring.py` until WS01 is complete. WS02 must run before WS04.
+- See `baselines/CRITICAL.md` for non-obvious facts about this module.

@@ -171,3 +171,31 @@ Install ML dependencies with: `pip install -e ".[ml]"`
 - Feature dimension constants (`ATOM_FEATURE_DIM`, `BOND_FEATURE_DIM`) are precomputed and exported for config validation.
 - Dataset classes handle both JSON and CSV input formats where applicable.
 - All checkpoint files include `model_state_dict`, `config`, `metrics`, and `timestamp` for reproducibility.
+
+## Current Status
+
+Architecture COMPLETE but models NOT YET TRAINED. All 13 source files, 3 training scripts, and 3 YAML configs are written and ready. Training requires GPU and prepared training data (which does not yet exist).
+
+## Remaining Work for AI Agents
+
+This is the most active module. Multiple workstreams touch it:
+
+1. **Data preparation** (immediate priority, no dependencies):
+   - Create `scripts/prepare_vae_data.py` — query ChEMBL EGFR → `data/processed/egfr_smiles_{train,val}.json`
+   - Create `scripts/prepare_mpnn_data.py` — ChEMBL IC50 → pIC50 → `data/processed/egfr_affinity.json`
+   - Create `scripts/prepare_admet_data.py` — TDC benchmarks → `data/processed/admet_combined.json`
+
+2. **Model training** (requires GPU + prepared data):
+   - `python scripts/train_vae.py --config configs/vae.yaml`
+   - `python scripts/train_mpnn.py --config configs/mpnn.yaml`
+   - `python scripts/train_admet.py --config configs/admet.yaml`
+
+3. **Integration adapters** (after training):
+   - WS08: Create `ml/affinity_predictor.py` — `predict_affinity(smiles) -> float`. See `workstreams/08-mpnn-affinity.md`.
+   - WS09: Create `ml/admet_predictor.py` — `predict_admet(smiles) -> dict`. See `workstreams/09-admet-predictor.md`.
+   - WS07: Create integration in `generation/` — VAE candidates as `StateConditionedCandidate`. See `workstreams/07-conditional-vae.md`.
+
+4. **Do NOT modify these existing files** (they are stable):
+   - `vae.py`, `mpnn.py`, `admet.py`, `trainer.py`, `tokenizer.py`, `vocabulary.py`, `graphs.py`, `utils.py`, all `*_dataset.py` files
+
+See `ml/CRITICAL.md` for non-obvious facts.

@@ -95,3 +95,13 @@ Head-to-head comparative analysis of the static baseline pipeline versus the sta
 
 - **Workstream 03:** A `statistics` sub-module will be added here to provide p-values and confidence intervals for score and diversity deltas.
 - **Workstream 05:** Matplotlib-based PNG plotting will be added alongside the existing ASCII figures via `generate_all_figures`.
+
+## Current Status
+
+Complete for basic comparison (tables, ASCII figures). No statistical testing. No matplotlib visualizations.
+
+## Remaining Work for AI Agents
+
+- **WS03** adds `evaluation/statistics.py` (Mann-Whitney U, bootstrap CI) and `evaluation/sensitivity.py` (weight sensitivity analysis). May add optional `run_statistics` param to `run_full_comparison()`. Read `workstreams/03-statistical-testing.md`.
+- **WS05** adds `evaluation/plotting.py` with matplotlib figures. Must run AFTER WS03. Read `workstreams/05-visualization.md`.
+- See `evaluation/CRITICAL.md` for non-obvious facts.

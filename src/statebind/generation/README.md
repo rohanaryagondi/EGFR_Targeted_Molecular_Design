@@ -100,3 +100,13 @@ Phase 6 of StateBind: generates candidate molecules conditioned on each EGFR con
 ## Planned Improvements
 
 - **Workstream 02** will upgrade diversity computation in `diversity.py` to use Morgan fingerprints instead of SMILES n-gram Tanimoto.
+
+## Current Status
+
+Complete for rule-based generation (7 strategies). VAE integration is pending (WS07). ADMET filtering is pending (WS09).
+
+## Remaining Work for AI Agents
+
+- **WS07** creates VAE integration to load ML-generated candidates as `StateConditionedCandidate` objects with `source=ML_GENERATED`, `strategy=VAE_GENERATED`. Read `workstreams/07-conditional-vae.md`.
+- **WS09** creates `generation/admet_filter.py` for ADMET safety filtering. Read `workstreams/09-admet-predictor.md`.
+- See `generation/CRITICAL.md` for non-obvious facts.
