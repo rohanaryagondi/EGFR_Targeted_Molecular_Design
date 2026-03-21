@@ -1,0 +1,66 @@
+# Multi-Task ADMET Predictor Configuration
+#
+# Predicts multiple ADMET properties simultaneously using a shared GNN backbone.
+# Tasks: Caco-2 permeability, hERG inhibition, CYP3A4 inhibition,
+#        Clearance, Lipophilicity, Solubility
+# Data source: Therapeutics Data Commons (TDC) ADMET benchmarks
+#
+# Expected training time: ~2-3 hours on single GPU
+
+model:
+  atom_feature_dim: 35
+  bond_feature_dim: 11
+  hidden_dim: 128
+  n_gnn_layers: 3
+  dropout: 0.2
+  gnn_type: gin
+  task_names:
+    - caco2
+    - herg
+    - cyp3a4
+    - clearance
+    - lipophilicity
+    - solubility
+  task_types:
+    caco2: regression
+    herg: classification
+    cyp3a4: classification
+    clearance: regression
+    lipophilicity: regression
+    solubility: regression
+
+training:
+  epochs: 150
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  lr_scheduler: cosine
+  patience: 20
+  gradient_clip: 1.0
+  device: auto
+  checkpoint_dir: artifacts/models/admet/
+  log_dir: artifacts/logs/admet/
+  seed: 42
+  num_workers: 4
+  mixed_precision: false
+
+data:
+  data_path: data/processed/admet_combined.json
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+  min_tasks: 1
+
+evaluation:
+  output_path: artifacts/evaluation/admet_metrics.json
+  # Per-task metrics computed automatically:
+  # regression: RMSE, MAE, R²
+  # classification: AUROC, AUPRC, accuracy
+
+task_weights:
+  caco2: 1.0
+  herg: 1.5       # Higher weight — safety critical
+  cyp3a4: 1.0
+  clearance: 1.0
+  lipophilicity: 1.0
+  solubility: 1.0

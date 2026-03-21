@@ -1,0 +1,46 @@
+# MPNN Binding Affinity Predictor Configuration
+#
+# Predicts pIC50 binding affinity from molecular graphs.
+# Trained on ChEMBL EGFR bioactivity data.
+# Replaces the docking_proxy stub (constant 0.5) in the scoring function.
+#
+# Expected training time: ~1-2 hours on single GPU
+
+model:
+  atom_feature_dim: 35
+  bond_feature_dim: 11
+  hidden_dim: 128
+  n_message_passing_layers: 3
+  dropout: 0.1
+  readout: mean_max
+
+training:
+  epochs: 150
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  lr_scheduler: cosine
+  patience: 20
+  gradient_clip: 1.0
+  device: auto
+  checkpoint_dir: artifacts/models/mpnn/
+  log_dir: artifacts/logs/mpnn/
+  seed: 42
+  num_workers: 4
+  mixed_precision: false
+
+data:
+  data_path: data/processed/egfr_affinity.json
+  smiles_column: smiles
+  target_column: pIC50
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+
+evaluation:
+  metrics:
+    - rmse
+    - mae
+    - r2
+    - pearson
+  output_path: artifacts/evaluation/mpnn_metrics.json

@@ -51,6 +51,11 @@ structure = [
 chemistry = [
     "rdkit",
 ]
+ml = [
+    "torch>=2.0",
+    "torch-geometric>=2.4",
+    "rdkit",
+]
 
 [project.scripts]
 statebind = "statebind.cli:app"

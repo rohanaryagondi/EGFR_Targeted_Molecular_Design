@@ -1,0 +1,53 @@
+# Conditional SMILES VAE Training Configuration
+#
+# This config drives the state-conditioned molecular generator.
+# The VAE learns to generate novel SMILES conditioned on EGFR
+# conformational states (DFGin_aCin, DFGin_aCout, DFGout_aCin, DFGout_aCout).
+#
+# Data: ChEMBL EGFR bioactivity (IC50 < 10μM) + known binders
+# Expected training time: ~2-4 hours on single GPU
+
+model:
+  vocab_size: 150        # Adjusted during training based on data
+  embed_dim: 128
+  hidden_dim: 256
+  latent_dim: 64
+  n_layers: 2
+  dropout: 0.1
+  n_states: 4
+  kl_weight: 0.01       # Final KL weight (annealed from 0)
+
+training:
+  epochs: 200
+  batch_size: 128
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  lr_scheduler: cosine
+  patience: 20
+  gradient_clip: 1.0
+  device: auto
+  checkpoint_dir: artifacts/models/vae/
+  log_dir: artifacts/logs/vae/
+  seed: 42
+  num_workers: 4
+  mixed_precision: false
+
+data:
+  train_path: data/processed/egfr_smiles_train.json
+  val_path: data/processed/egfr_smiles_val.json
+  max_len: 128
+  state_mapping:
+    DFGin_aCin: 0
+    DFGin_aCout: 1
+    DFGout_aCin: 2
+    DFGout_aCout: 3
+
+generation:
+  n_samples_per_state: 100
+  temperature: 0.8
+  max_len: 128
+  output_path: artifacts/generation/vae_candidates.json
+
+kl_annealing:
+  warmup_epochs: 20      # Linearly anneal KL weight from 0 to kl_weight over this many epochs
+  strategy: linear       # linear or cyclical
