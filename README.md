@@ -205,6 +205,23 @@ The state-aware pipeline produces 49 candidates absent from the static baseline:
 
 ---
 
+## Development Workstreams
+
+Six independent improvement workstreams are defined in [`workstreams/`](workstreams/README.md), designed for parallel development by multiple AI agents or contributors.
+
+| # | Workstream | Impact | Dependencies |
+|---|-----------|--------|-------------|
+| 01 | Chemistry Foundation (RDKit) | High | None |
+| 02 | Scoring Integration | High | 01 |
+| 03 | Statistical Testing (scipy) | High | None |
+| 04 | Docking Proxy (learned model) | Critical | 01 |
+| 05 | Visualization (matplotlib) | Moderate | 03 |
+| 06 | CI/CD (GitHub Actions) | Moderate | None |
+
+Workstreams 01, 03, and 06 can start in parallel. See [`workstreams/INTERFACES.md`](workstreams/INTERFACES.md) for cross-workstream contracts. Each `src/statebind/*/README.md` documents the module's API and dependencies. AI-specific guidance is in [`CLAUDE.md`](CLAUDE.md).
+
+---
+
 ## Project Structure
 
 ```
