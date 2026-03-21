@@ -1,132 +1,259 @@
 # StateBind
 
-**Context-Aware Conformational State Modeling for EGFR-Targeted Molecular Design**
+**Conformational State-Aware Molecular Design for EGFR-Targeted Drug Discovery**
 
-## Thesis
+> Does knowing which conformational state a kinase target occupies help you design better molecules than treating it as a single static structure?
 
-Most structure-based drug design treats protein targets as static entities—one crystal structure, one binding pocket, one docking campaign. But kinases like EGFR exist in multiple conformational states (active DFG-in, inactive DFG-out, αC-helix-in/out, and more), and clinically relevant resistance mutations shift the equilibrium between these states.
+StateBind is a computational pipeline that answers this question for EGFR, the most targeted kinase in lung cancer. It maps resistance mutations to conformational states, generates pocket-specific candidate molecules for each state, and benchmarks state-aware design against a conventional single-structure baseline under identical scoring.
 
-**StateBind** builds a pipeline that:
+---
 
-1. Starts from disease context (mutation profile, resistance mechanism)
-2. Infers the most relevant EGFR conformational states
-3. Models those states structurally
-4. Identifies state-specific binding pockets
-5. Generates candidate binders conditioned on pocket geometry
-6. Ranks candidates against strong baselines
+## Main Result
 
-**Core claim:** State-aware molecular design outperforms static single-structure design on EGFR, measured by docking scores, pocket complementarity, and selectivity across conformational states.
+| Metric | Static Baseline | State-Aware | Delta |
+|--------|:-:|:-:|:-:|
+| Unique candidates | 30 | 79 | **+49** |
+| Chemical diversity | 0.526 | 0.561 | **+0.035** |
+| Mean composite score | 0.584 | 0.604 | **+0.020** |
+| Global top-10 share | 5/10 | 5/10 | 0 |
+| Novel candidates | 0 | 49 | **+49** |
 
-## System Overview
+**Verdict:** State-aware design produces 49 chemically novel candidates inaccessible to a static pipeline — back-pocket extensions for DFG-out conformations, P-loop binders, and type-II inhibitor scaffolds — with higher diversity and competitive scores. The advantage is real but moderate. Without real docking validation, binding affinity claims are not supported. See [reports/phase7_comparison.md](reports/phase7_comparison.md) for the full analysis.
+
+---
+
+## Architecture
 
 ```
-Disease Context (mutations, resistance)
-        │
-        ▼
-┌──────────────────┐
-│ Context Module    │  Curate mutations, map to known resistance mechanisms
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│ Structure Module  │  Build conformational state atlas from PDB/AlphaFold
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│ Dynamics Module   │  Lightweight state/dynamics modeling
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│ Generation Module │  State-conditioned molecular generation
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│ Ranking Module    │  Score, rerank, compare to baselines
-└────────┴─────────┘
-         │
-         ▼
-    Artifacts & Reports
+  Mutation context          Structural data            Literature
+       │                         │                        │
+       ▼                         ▼                        ▼
+┌─────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
+│   Context    │  │   Structure Atlas     │  │   Dynamics / World   │
+│   Module     │  │   (4 EGFR states)    │  │   Model              │
+│              │  │                      │  │                      │
+│ 18 mutations │  │ 16 PDB structures    │  │ Markov transitions   │
+│ 7 mechanisms │  │ 9-D feature vectors  │  │ 4-D state embeddings │
+│ 33 features  │  │ 4 state clusters     │  │ Stationary dist.     │
+└──────┬───────┘  └──────────┬───────────┘  └──────────┬───────────┘
+       │                     │                         │
+       └─────────┬───────────┘─────────────────────────┘
+                 ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                    Generation Module                              │
+│                                                                  │
+│  Static baseline:  1 structure × 1 pocket → 30 candidates       │
+│  State-aware:      4 structures × 4 pockets → 79 candidates     │
+│                    (7 strategies: hinge opt, back-pocket ext,    │
+│                     gatekeeper avoidance, volume filling,        │
+│                     covalent warhead, P-loop interaction, analog) │
+└──────────────────────────────┬───────────────────────────────────┘
+                               ▼
+┌──────────────────────────────────────────────────────────────────┐
+│               Ranking & Evaluation Module                        │
+│                                                                  │
+│  Unified scoring: same function for both pipelines               │
+│  Comparison: overlap, diversity, score distributions, rank shifts│
+│  Verdict: qualified advantage for state-aware design             │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-## Phased Plan
+---
 
-| Phase | Name | Goal | Status |
-|-------|------|------|--------|
-| 0 | Scaffold | Repo structure, docs, CI basics | ✅ Complete |
-| 1 | Context & Data | EGFR mutation atlas, resistance context curation | 🔨 In progress |
-| 2 | Structure Atlas | Conformational state classification from PDB | 🔲 Not started |
-| 3 | Dynamics | Lightweight conformational state predictor | 🔲 Not started |
-| 4 | Generation | State-conditioned molecular generation | 🔲 Not started |
-| 5 | Ranking | Docking, reranking, baseline comparison | 🔲 Not started |
-| 6 | Integration | End-to-end pipeline, demo, report | 🔲 Not started |
+## Key Modules
 
-See [docs/PHASE_PLAN.md](docs/PHASE_PLAN.md) for detailed breakdowns.
+| Module | Location | Purpose |
+|--------|----------|---------|
+| **Data & Processing** | `src/statebind/data/`, `processing/` | Source registry, manifests, provenance-tracked dataset construction |
+| **Baselines** | `src/statebind/baselines/` | Static single-structure pipeline (1M17, active conformation) |
+| **Structure Atlas** | `src/statebind/structure/` | Conformational state classification, 9-D feature vectors, clustering |
+| **Context Model** | `src/statebind/context/` | Mutation-to-state prediction (29 mutation + 4 pathway features) |
+| **World Model** | `src/statebind/dynamics/` | Markov state transitions, contrastive embeddings |
+| **Generation** | `src/statebind/generation/` | Pocket-conditioned candidate generation with state-specific strategies |
+| **Ranking** | `src/statebind/ranking/` | Unified scoring, rank aggregation, merge deduplication |
+| **Evaluation** | `src/statebind/evaluation/` | Head-to-head comparison: overlap, novelty, diversity, figures |
 
-## Current Status
+---
 
-**Phase 1: Context & Data — In Progress**
+## Benchmark Setup
 
-- Data layer infrastructure built (manifests, registry, validation, paths)
-- Source registry defines all v1 data sources with provenance tracking
-- Data documentation: [DATA_SOURCES.md](docs/DATA_SOURCES.md), [DATA_SCHEMA.md](docs/DATA_SCHEMA.md)
-- Next: curate mutation atlas, download structural data
+**Target:** EGFR kinase domain (4 conformational states: DFGin/out × αC-helix in/out)
 
-## Quick Start
+**Dataset:**
+- 18 clinically relevant mutations (T790M, L858R, C797S, G719S, L861Q, ...)
+- 16 PDB structures across 4 states
+- 9 approved/clinical EGFR inhibitors as reference compounds
+
+**Comparison:**
+- **Static baseline:** 1 structure (1M17), 1 pocket, halogen/methyl analogs only
+- **State-aware:** 4 structures, 4 state-specific pockets, 7 generation strategies
+
+**Scoring** (applied identically to both pipelines):
+```
+composite = 0.35 × reference_similarity
+          + 0.30 × druglikeness
+          + 0.20 × docking_proxy     ← STUB (constant 0.5)
+          + 0.15 × state_specificity  ← 0 for static baseline
+```
+
+---
+
+## Setup
 
 ```bash
-# Clone
 git clone https://github.com/rohanaryagondi/EGFR_Targeted_Molecular_Design.git
 cd EGFR_Targeted_Molecular_Design
 
-# Install in development mode
 pip install -e ".[dev]"
 
-# Run tests
-pytest
-
-# CLI
-statebind --help
+pytest                    # 359 tests, all passing
+statebind --help          # CLI entry point
 ```
+
+**Requirements:** Python ≥ 3.10. Core dependencies: numpy, pandas, pydantic, typer, rich. No GPU required.
+
+---
+
+## Running Each Phase
+
+```bash
+# Phase 1: Build benchmark datasets
+python scripts/build_context_dataset.py
+python scripts/build_structure_dataset.py
+python scripts/build_ligand_dataset.py
+
+# Phase 2: Static baseline pipeline
+python scripts/run_static_baseline.py
+
+# Phase 3: Structural state atlas
+python scripts/build_state_atlas.py
+
+# Phase 4: Context-to-state prediction
+python scripts/train_context_state_model.py
+
+# Phase 5: World model (state transitions)
+python scripts/train_world_model.py
+
+# Phase 6: State-conditioned generation
+python scripts/generate_state_conditioned_candidates.py
+python scripts/filter_generated_candidates.py
+
+# Phase 7: Unified ranking and comparison
+python scripts/rerank_candidates.py
+python scripts/compare_baseline_vs_state_aware.py
+python scripts/report_comparative_results.py
+```
+
+All scripts are deterministic and produce artifacts under `artifacts/`.
+
+---
+
+## Key Results
+
+### Novel Chemistry by Strategy
+
+The state-aware pipeline produces 49 candidates absent from the static baseline:
+
+| Strategy | Novel Candidates | Rationale |
+|----------|:--:|-----------|
+| Back-pocket extension | 18 | CF3 tails and amide linkers for DFG-out back pocket |
+| Volume filling | 12 | Cyclohexyl/naphthyl groups for large inactive pockets |
+| P-loop interaction | 5 | Sulfonamide groups for folded P-loop in DFGout_aCout |
+| Hinge optimization | 5 | Pyridyl swaps for improved hinge H-bonds |
+| Covalent warhead | 4 | Acrylamide warheads targeting C797 |
+| Gatekeeper avoiding | 3 | Smaller substituents for T790M clearance |
+
+### Global Top-10 Candidates
+
+| Rank | Pipeline | Score | Strategy | Target State |
+|:--:|----------|:--:|----------|-------------|
+| 1 | State-aware | 0.796 | P-loop interaction | DFGout_aCout |
+| 2 | State-aware | 0.773 | Back-pocket extension | DFGout_aCin |
+| 3 | State-aware | 0.770 | P-loop interaction | DFGout_aCout |
+| 4 | State-aware | 0.751 | Volume filling | DFGin_aCout |
+| 5 | Static | 0.750 | Reference analog | — |
+| 6–10 | Mixed | 0.740–0.750 | Various | Various |
+
+### What the Pipeline Learned
+
+- **DFGin_aCin** (active): Compact pocket (450 Å³). Prioritize hinge H-bonds, avoid gatekeeper clash.
+- **DFGin_aCout** (Src-like): Moderate pocket (520 Å³). Fill extra space from αC rotation.
+- **DFGout_aCin**: Large pocket (790 Å³) with exposed back pocket. Type-II inhibitor opportunity.
+- **DFGout_aCout**: Largest pocket (850 Å³), folded P-loop. Design for P-loop contacts.
+
+---
+
+## Limitations
+
+1. **Docking is a stub.** The docking_proxy returns a constant. Without AutoDock Vina, GNINA, or FEP+, binding affinity claims are unsupported.
+2. **SMILES-level chemistry.** All modifications are string-level. No 3D pose generation or synthetic accessibility scoring.
+3. **Scoring bias.** The state_specificity component (weight 0.15) is structurally zero for the baseline, giving state-aware candidates a built-in advantage on that axis.
+4. **Small benchmark.** 18 mutations, 16 structures, ~80 candidates. Not a large-scale validation.
+5. **No experimental validation.** All results are computational. No IC50, no selectivity assays.
+6. **Single kinase family.** Results are specific to EGFR. Generalization to other targets is untested.
+
+---
+
+## Future Work
+
+- Replace docking stub with AutoDock Vina or GNINA scoring
+- Add ECFP4/Morgan fingerprint similarity (replacing SMILES n-grams)
+- Integrate synthetic accessibility scoring (SA score, ASKCOS)
+- Expand to additional kinase families (ABL, ALK, BRAF)
+- Add MD-derived transition matrices (replacing literature curation)
+- Validate top candidates with FEP+ binding free energy calculations
+
+---
 
 ## Project Structure
 
 ```
-├── src/statebind/          # Main package
-│   ├── context/            # Disease context & mutation curation
-│   ├── structure/          # Conformational state atlas
-│   ├── dynamics/           # State modeling & dynamics
-│   ├── generation/         # Molecular generation
-│   ├── ranking/            # Scoring & reranking
-│   ├── data/               # Data layer (registry, manifests, validation)
-│   └── utils/              # Shared utilities
-├── data/                   # Data directory (see below)
-│   ├── manifests/          # Provenance-tracking manifest files (committed)
-│   ├── raw/                # Downloaded source files (gitignored)
-│   └── processed/          # Derived data (gitignored)
-├── configs/                # YAML configuration files
-├── scripts/                # Runnable pipeline scripts
-├── tests/                  # Test suite
-├── notebooks/              # Analysis & visualization only
-├── artifacts/              # Pipeline outputs (gitignored)
-├── reports/                # Generated reports (gitignored)
-└── docs/                   # Project documentation
+src/statebind/           # Main package (10 submodules, 67 Python files)
+scripts/                 # 33 runnable pipeline scripts
+tests/                   # 13 test modules, 359 tests
+docs/                    # 17 documentation files
+reports/                 # 7 phase reports + final report
+configs/                 # YAML configuration files
+artifacts/               # Pipeline outputs (generated, gitignored)
 ```
+
+---
 
 ## Documentation
 
-- [Project Charter](docs/PROJECT_CHARTER.md) — Scope, hypotheses, success criteria
-- [Architecture](docs/ARCHITECTURE.md) — System design, module contracts, baselines, ablations
-- [Phase Plan](docs/PHASE_PLAN.md) — Detailed phase breakdown with pass/fail conditions
-- [Benchmark Spec](docs/BENCHMARK_SPEC.md) — Metrics, baselines, what constitutes a "win"
-- [Risk Register](docs/RISK_REGISTER.md) — Bottlenecks, limitations, fallback plans
-- [Data Sources](docs/DATA_SOURCES.md) — All public data sources with licensing and quality notes
-- [Data Schema](docs/DATA_SCHEMA.md) — Raw/processed schemas, canonical IDs, provenance
-- [GitHub Story](docs/GITHUB_STORY.md) — How to present and narrate the project
-- [Decisions](docs/DECISIONS.md) — Architecture decision records
-- [Runbook](docs/RUNBOOK.md) — How to run each phase
+| Document | Purpose |
+|----------|---------|
+| [Project Charter](docs/PROJECT_CHARTER.md) | Scope, hypotheses, success criteria |
+| [Architecture](docs/ARCHITECTURE.md) | System design, module contracts |
+| [Evaluation Framework](docs/EVALUATION.md) | Comparison methodology, fairness rules |
+| [Results Summary](docs/RESULTS_SUMMARY.md) | Main findings with key tables |
+| [Technical Deep Dive](docs/TECHNICAL_DEEP_DIVE.md) | Module-by-module design decisions |
+| [Recruiter Summary](docs/RECRUITER_SUMMARY.md) | Non-technical project overview |
+| [Benchmark Dataset](docs/BENCHMARK_DATASET_CARD.md) | Data composition and provenance |
+| [Runbook](docs/RUNBOOK.md) | Step-by-step execution guide |
+
+---
+
+## Test Coverage
+
+```
+359 tests across 13 modules — all passing
+├── test_imports.py          16 tests   Module import verification
+├── test_baselines.py        32 tests   Static baseline pipeline
+├── test_structure.py        31 tests   Structural state atlas
+├── test_context.py          52 tests   Context-to-state prediction
+├── test_dynamics.py         50 tests   World model / dynamics
+├── test_generation.py       40 tests   State-conditioned generation
+├── test_ranking.py          36 tests   Unified ranking pipeline
+├── test_evaluation.py       25 tests   Comparative evaluation
+├── test_processing.py       33 tests   Data processing
+├── test_data.py             24 tests   Data layer
+├── test_utils.py             5 tests   Utilities
+├── test_cli.py               7 tests   CLI interface
+└── test_baselines.py         8 tests   Baseline models
+```
+
+---
 
 ## License
 
