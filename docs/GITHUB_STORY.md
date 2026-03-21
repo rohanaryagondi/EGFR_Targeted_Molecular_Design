@@ -18,9 +18,9 @@ This document defines how the project should be narrated publicly. The goal is t
 >
 > StateBind tests a simple hypothesis: if you know which states matter for a given mutation, and you design molecules against those states specifically, do you get computationally better candidates than the standard single-structure approach?
 >
-> I built this as a modular pipeline in Python. It starts by curating EGFR resistance mutations — T790M, C797S, L858R — with annotations about which conformational states each mutation favors. Then it classifies 30+ PDB structures by conformational state, extracts binding pockets per state, and generates candidate molecules against state-specific pockets. Finally, it scores everything with docking and compares state-aware candidates to the static baseline using proper statistical tests.
+> I built this as a modular pipeline in Python. It starts by curating 18 EGFR resistance mutations — T790M, C797S, L858R — with annotations about which conformational states each mutation favors. Then it classifies 16 PDB structures into 4 conformational states, defines state-specific binding pockets, and generates candidate molecules conditioned on each pocket's geometry. Finally, it scores everything with a unified scoring function and compares state-aware candidates to the static baseline on diversity, novelty, and ranking metrics.
 >
-> The pipeline is config-driven, tested, and fully reproducible. Whether state-awareness helps or not, the answer is documented with effect sizes and honest limitations. I designed it as a real computational experiment, not a demo."
+> The pipeline is config-driven, tested (359 tests), and fully reproducible. The state-aware pipeline discovered 49 novel candidates inaccessible to the static approach, with higher chemical diversity. The docking component is currently a stub — binding affinity claims require future integration of Vina or GNINA. I designed it as a real computational experiment, not a demo."
 
 ---
 
@@ -32,19 +32,19 @@ This document defines how the project should be narrated publicly. The goal is t
 >
 > **The pipeline has five modules:**
 >
-> 1. **Context module** — curates 15-30 EGFR mutations with resistance mechanism annotations and known conformational effects. Data from COSMIC, ClinVar, and published structural studies.
+> 1. **Context module** — curates 18 EGFR mutations with resistance mechanism annotations and known conformational effects. Data from COSMIC, ClinVar, and published structural studies.
 >
-> 2. **Structure module** — downloads and classifies EGFR kinase domain structures from PDB into four canonical states: DFG-in/out crossed with αC-helix-in/out. Classification uses geometric criteria — Asp-Phe Cα distance for DFG, and Lys-Glu salt bridge distance for αC-helix. Each state gets a representative structure and an extracted binding pocket.
+> 2. **Structure module** — classifies 16 EGFR kinase domain structures from PDB into four canonical states: DFG-in/out crossed with αC-helix-in/out. Classification uses literature-curated 9-dimensional structural feature vectors. Each state gets a representative structure and a pocket descriptor.
 >
-> 3. **Dynamics module** — predicts which states are most relevant for a given mutation. The baseline is a curated lookup table from literature. If data supports it, I train a simple classifier on mutation-state co-occurrence from PDB metadata.
+> 3. **Dynamics module** — models state-transition dynamics using a Markov model fitted to 16 literature-curated conformational pathways. Learns 4-D contrastive embeddings where distance correlates with transition rarity (r = −0.91).
 >
-> 4. **Generation module** — generates candidate molecules conditioned on pocket geometry. Two parallel tracks run: state-aware (pocket from predicted state) and baseline (pocket from single best-resolution structure). Same generation method, different pockets. This is the controlled variable.
+> 4. **Generation module** — generates candidate molecules conditioned on pocket geometry. The static baseline uses one structure and simple analogs. The state-aware pipeline uses 4 structures × 7 strategies (hinge optimization, back-pocket extension, etc.). Same scoring, different generation — this is the controlled variable.
 >
-> 5. **Ranking module** — docks all candidates against all state pockets using Vina. Compares state-aware vs. baseline using Mann-Whitney U with effect sizes. Also measures cross-state selectivity — do state-aware candidates preferentially score well on their intended state?
+> 5. **Ranking module** — scores all candidates with an identical unified function (reference similarity, druglikeness, docking proxy stub, state specificity). Compares pipelines on diversity, novelty, score distributions, and top-K composition. Docking is a stub (constant 0.5) — real docking integration is planned future work.
 >
-> **Engineering choices:** src/ layout, Pydantic models, YAML configs, no hard-coded paths. Every module has typed inputs and outputs. Artifacts are serialized to disk between modules, so any module can be re-run independently. Tests cover imports, project structure, utilities, and the CLI.
+> **Engineering choices:** src/ layout, Pydantic models, YAML configs, no hard-coded paths. Every module has typed inputs and outputs. Artifacts are serialized to disk between modules, so any module can be re-run independently. 359 tests across 13 modules.
 >
-> **What makes this rigorous:** The baseline is defined before the experiment runs. The statistical test is specified in advance. I report effect sizes, not just p-values. And I'm explicit that docking scores are proxy metrics — this is a computational hypothesis, not a drug discovery claim. If state-awareness doesn't help, I'll report that too."
+> **What makes this rigorous:** The baseline is built and scored before the state-aware pipeline runs. Both pipelines are scored with the same function. The docking stub is labeled, not hidden. The result — a qualified advantage driven by structural novelty, not by scoring on shared chemistry — is reported with honest limitations."
 
 ---
 
@@ -78,8 +78,8 @@ The ideal README hero image is a single figure with 3-4 panels:
 | Conformational state atlas visualization | Show the structural diversity of EGFR states | README, report |
 | Mutation annotation table | Show curated mutation data | Report |
 | State classification scatter plot | DFG distance vs. αC-helix metric, colored by assigned state | Report, README |
-| Docking score comparison (violin plot) | Primary result figure: state-aware vs. baseline | README, report |
-| Cross-state selectivity comparison | Secondary result: selectivity of state-aware vs. baseline candidates | Report |
+| Score distribution comparison (ASCII bar chart) | Primary result figure: state-aware vs. baseline | README, report |
+| Novelty breakdown by strategy | Novel candidates by generation strategy | Report |
 | Pipeline diagram | System architecture | README |
 | Generation diversity scatter (UMAP/PCA of fingerprints) | Show chemical diversity of candidates | Report |
 

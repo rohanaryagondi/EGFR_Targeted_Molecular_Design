@@ -59,6 +59,11 @@ def _compute_state_specificity(
 ) -> float:
     """Reward candidates unique to their target state.
 
+    Uses geometric decay (1/2^(n-1)) because a candidate appearing in 2
+    states is substantially less specific than one in 1 state, while the
+    difference between 3 and 4 states is negligible. Linear decay would
+    overweight moderately-shared candidates.
+
     Returns:
         1.0 if candidate appears only in target_state
         0.5 if candidate appears in 2 states
@@ -81,6 +86,17 @@ def _compute_state_specificity(
     return 0.0
 
 
+def _validate_weights(weights: dict[str, float]) -> None:
+    """Verify scoring weights sum to 1.0 and all required keys present."""
+    required = {"reference_similarity", "druglikeness", "docking_proxy", "state_specificity"}
+    missing = required - set(weights.keys())
+    if missing:
+        raise ValueError(f"Missing scoring weight keys: {missing}")
+    total = sum(weights.values())
+    if abs(total - 1.0) > 1e-4:
+        raise ValueError(f"Scoring weights must sum to 1.0, got {total:.4f}")
+
+
 def score_unified(
     smiles: str,
     target_state: str,
@@ -95,6 +111,7 @@ def score_unified(
     """
     if weights is None:
         weights = DEFAULT_WEIGHTS
+    _validate_weights(weights)
 
     props = compute_properties(smiles)
     sim = _score_reference_similarity(smiles)

@@ -211,7 +211,7 @@ The state-aware pipeline produces 49 candidates absent from the static baseline:
 src/statebind/           # Main package (10 submodules, 67 Python files)
 scripts/                 # 33 runnable pipeline scripts
 tests/                   # 13 test modules, 359 tests
-docs/                    # 17 documentation files
+docs/                    # 20 documentation files
 reports/                 # 7 phase reports + final report
 configs/                 # YAML configuration files
 artifacts/               # Pipeline outputs (generated, gitignored)
@@ -228,6 +228,9 @@ artifacts/               # Pipeline outputs (generated, gitignored)
 | [Evaluation Framework](docs/EVALUATION.md) | Comparison methodology, fairness rules |
 | [Results Summary](docs/RESULTS_SUMMARY.md) | Main findings with key tables |
 | [Technical Deep Dive](docs/TECHNICAL_DEEP_DIVE.md) | Module-by-module design decisions |
+| [Limitations](docs/LIMITATIONS.md) | Complete accounting of what the project cannot claim |
+| [Future Work](docs/FUTURE_WORK.md) | Concrete next steps with effort estimates |
+| [Audit Report](docs/AUDIT_REPORT.md) | Full code and documentation audit findings |
 | [Recruiter Summary](docs/RECRUITER_SUMMARY.md) | Non-technical project overview |
 | [Benchmark Dataset](docs/BENCHMARK_DATASET_CARD.md) | Data composition and provenance |
 | [Runbook](docs/RUNBOOK.md) | Step-by-step execution guide |

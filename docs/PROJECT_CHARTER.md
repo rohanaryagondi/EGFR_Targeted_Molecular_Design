@@ -34,15 +34,15 @@ EGFR is a validated oncology target with extensive structural coverage in the PD
 
 1. **Mutation context curation:** Build a structured atlas of 15–30 clinically relevant EGFR kinase domain mutations with resistance mechanism annotations, sourced from public databases (COSMIC, ClinVar) and published reviews.
 
-2. **Conformational state atlas:** Classify 30–80 EGFR kinase domain PDB structures into conformational states (DFG-in/out × αC-helix-in/out = 4 canonical states) using geometric criteria (DFG Asp–Phe Cα distance, αC-helix RMSD to reference). Extract binding pocket geometries per state.
+2. **Conformational state atlas:** Classify 16 EGFR kinase domain PDB structures into conformational states (DFG-in/out × αC-helix-in/out = 4 canonical states) using literature-curated 9-dimensional structural feature vectors. Define pocket descriptors per state.
 
 3. **State relevance prediction:** Given a mutation (e.g., T790M), predict which conformational states are most relevant. Baseline: curated lookup table. Stretch: lightweight classifier trained on mutation-state co-occurrence from PDB metadata.
 
 4. **Molecular generation:** Generate candidate small molecules for state-specific pockets. Method: fragment-based enumeration or a lightweight pretrained SMILES generator conditioned on pocket descriptors. Baseline: generate against the single most-deposited PDB structure (typically 1M17 or similar).
 
-5. **Scoring and ranking:** Score all candidates by (a) Vina-like docking score against each state's representative structure, (b) cross-state selectivity (score variance across states), (c) basic chemical property filters (Lipinski, QED). Compare state-aware vs. static baseline using paired statistical tests.
+5. **Scoring and ranking:** Score all candidates with a unified function (reference similarity, druglikeness, docking proxy, state specificity). Apply Lipinski-like property filters. Compare state-aware vs. static baseline on diversity, novelty, score distributions, and top-K composition. _Note: docking proxy is currently a stub (constant 0.5). Real docking integration (Vina/GNINA) is planned future work._
 
-6. **Report:** A final comparison figure showing score distributions for state-aware vs. static design, with effect sizes and p-values.
+6. **Report:** A final comparison showing score distributions, overlap analysis, novelty breakdown, and an honest verdict with stated limitations.
 
 ### What v1 does NOT do
 

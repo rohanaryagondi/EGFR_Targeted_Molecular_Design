@@ -38,6 +38,15 @@ def get_pocket_conditions() -> dict[str, PocketCondition]:
     """Return pocket conditions for all 4 canonical EGFR states.
 
     Each condition maps a pocket geometry to generation strategies.
+
+    Pocket volumes are literature-curated estimates:
+    - DFGin_aCin (~450 Å³): Stamos et al., JBC 2002 (PDB 1M17)
+    - DFGin_aCout (~520 Å³): Zhang et al., Nature 2006 (PDB 2GS7)
+    - DFGout_aCin (~790 Å³): Yun et al., PNAS 2008 (PDB 3IKA/3IKU)
+    - DFGout_aCout (~850 Å³): Park et al., JACS 2015 (PDB 4ZAU)
+
+    Exact volumes vary by detection method. Values represent approximate
+    magnitude and relative ordering across states.
     """
     return {
         ConformationalState.DFGIN_ACIN.value: PocketCondition(
