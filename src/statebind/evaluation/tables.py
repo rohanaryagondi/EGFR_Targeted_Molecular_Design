@@ -175,3 +175,63 @@ def novelty_by_state_table(
     ):
         rows.append({"state": state, "n_novel": count})
     return rows
+
+
+def statistical_summary_table(
+    result: ComparativeResult,
+) -> list[dict[str, object]]:
+    """Format statistical test results as a table.
+
+    Returns empty list if no statistical tests have been run.
+    """
+    if not result.statistical_tests:
+        return []
+
+    rows: list[dict[str, object]] = []
+    for test in result.statistical_tests:
+        rows.append({
+            "test_name": test.name,
+            "statistic": round(test.statistic, 4),
+            "p_value": round(test.p_value, 4),
+            "effect_size": round(test.effect_size, 4),
+            "ci_lower": round(test.ci_lower, 4),
+            "ci_upper": round(test.ci_upper, 4),
+            "interpretation": test.interpretation,
+        })
+    return rows
+
+
+def sensitivity_table(
+    result: ComparativeResult,
+) -> list[dict[str, object]]:
+    """Format sensitivity analysis as a table.
+
+    Returns empty list if no sensitivity analysis has been run.
+    """
+    from statebind.evaluation.sensitivity import SensitivitySummary
+
+    if not isinstance(result.sensitivity, SensitivitySummary):
+        return []
+
+    summary = result.sensitivity
+    rows: list[dict[str, object]] = []
+
+    for sr in summary.results:
+        rows.append({
+            "weight_config": str({k: round(v, 3) for k, v in sr.weight_config.items()}),
+            "static_mean": sr.static_mean,
+            "state_aware_mean": sr.state_aware_mean,
+            "winner": sr.winner,
+            "delta": sr.delta,
+        })
+
+    # Summary row
+    rows.append({
+        "weight_config": "SUMMARY",
+        "static_mean": summary.static_wins,
+        "state_aware_mean": summary.state_aware_wins,
+        "winner": f"state_aware wins {summary.state_aware_win_fraction:.1%}",
+        "delta": summary.ties,
+    })
+
+    return rows

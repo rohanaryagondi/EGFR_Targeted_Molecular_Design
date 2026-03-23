@@ -116,6 +116,52 @@ def overlap_venn_ascii(result: ComparativeResult) -> str:
     return "\n".join(lines)
 
 
+def statistical_summary_ascii(result: ComparativeResult) -> str:
+    """ASCII visualization of statistical test results."""
+    lines = ["## Statistical Tests", ""]
+
+    if not result.statistical_tests:
+        lines.append("  No statistical tests have been run.")
+        return "\n".join(lines)
+
+    for test in result.statistical_tests:
+        lines.append(f"  {test.name}")
+        # p-value bar (lower = more significant, invert for visual)
+        p_bar = _bar(max(1.0 - test.p_value, 0.0), 1.0, 30)
+        lines.append(f"    p-value:     {p_bar} {test.p_value:.4f}")
+        lines.append(f"    Effect size: {test.effect_size:+.4f}")
+        lines.append(f"    95% CI:      [{test.ci_lower:.4f}, {test.ci_upper:.4f}]")
+        lines.append(f"    {test.interpretation}")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def sensitivity_heatmap_ascii(result: ComparativeResult) -> str:
+    """ASCII visualization of weight sensitivity results."""
+    from statebind.evaluation.sensitivity import SensitivitySummary
+
+    lines = ["## Weight Sensitivity", ""]
+
+    if not isinstance(result.sensitivity, SensitivitySummary):
+        lines.append("  No sensitivity analysis has been run.")
+        return "\n".join(lines)
+
+    summary = result.sensitivity
+    total = max(summary.n_configs, 1)
+
+    lines.append(f"  {summary.n_configs} random weight configurations tested")
+    lines.append("")
+    lines.append(f"  State-aware wins  {_bar(summary.state_aware_wins, total, 30)} "
+                 f"{summary.state_aware_wins}/{total} ({summary.state_aware_win_fraction:.1%})")
+    lines.append(f"  Static wins       {_bar(summary.static_wins, total, 30)} "
+                 f"{summary.static_wins}/{total} ({summary.static_wins / total:.1%})")
+    lines.append(f"  Ties              {_bar(summary.ties, total, 30)} "
+                 f"{summary.ties}/{total} ({summary.ties / total:.1%})")
+
+    return "\n".join(lines)
+
+
 def generate_all_figures(
     result: ComparativeResult,
     merged: MergedRanking,
@@ -133,6 +179,12 @@ def generate_all_figures(
         "novelty_breakdown": novelty_breakdown_ascii(result),
         "overlap_venn": overlap_venn_ascii(result),
     }
+
+    # Conditionally include statistical figures (preserves backward compat)
+    if result.statistical_tests:
+        figures["statistical_summary"] = statistical_summary_ascii(result)
+    if result.sensitivity is not None:
+        figures["sensitivity_heatmap"] = sensitivity_heatmap_ascii(result)
 
     if output_dir is not None:
         output_dir = Path(output_dir)
