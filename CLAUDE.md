@@ -520,6 +520,33 @@ previous.
 WS09 modifies the filtering pipeline (`generation/`) and does not conflict with
 scoring workstreams.
 
+### Worktree Naming Convention
+
+Each modular agent runs in its own isolated git worktree. Worktree names MUST
+reflect the workstream — never use auto-generated names.
+
+**Format:** `ws{NN}-{short-description}`
+**Branch:** `ws{NN}/{short-description}`
+**Location:** `.claude/worktrees/ws{NN}-{short-description}`
+
+| WS | Worktree Name | Branch |
+|----|---------------|--------|
+| 01 | `ws01-chemistry` | `ws01/chemistry` |
+| 02 | `ws02-scoring` | `ws02/scoring` |
+| 03 | `ws03-stats` | `ws03/stats` |
+| 04 | `ws04-docking` | `ws04/docking` |
+| 05 | `ws05-viz` | `ws05/viz` |
+| 06 | `ws06-cicd` | `ws06/cicd` |
+| 07 | `ws07-vae` | `ws07/vae` |
+| 08 | `ws08-mpnn` | `ws08/mpnn` |
+| 09 | `ws09-admet` | `ws09/admet` |
+
+For non-workstream tasks, use `task-{short-description}` (e.g., `task-docs-update`).
+
+**Head AI has no worktree.** The Head AI always operates directly on the `ML` branch
+in the main repository. It commits and pushes directly to `origin/ML`. It does not
+create or live in a worktree. Only modular agents use worktrees.
+
 ### How to Deploy an Agent on a Workstream
 
 Give the agent these files (in order of priority):
@@ -701,3 +728,56 @@ Two canonical labels defined in `ranking/models.py`:
 
 - **Do not run workstreams 02, 04, and 08 in parallel.** They all modify
   `ranking/scoring.py` and must execute sequentially (see Section 11).
+
+---
+
+## 16. Head AI: Worktree Merge Procedure
+
+The Head AI operates directly on the `ML` branch — no worktree. All commits and
+pushes go to `origin/ML`. The Head AI's job is to merge completed modular agent
+worktrees into ML and push.
+
+**Never merge without explicit human confirmation.**
+
+### Step-by-Step Procedure
+
+**1. Locate worktrees.**
+```bash
+ls .claude/worktrees/
+git worktree list
+```
+Worktrees follow the `ws{NN}-{description}` naming convention (Section 11). For ML
+work done on an HPC cluster, the worktree is not at the standard path — ask the user:
+"Where is the worktree for this work?" Do not guess.
+
+**2. Ask the user before merging each worktree.**
+For each ready branch, ask: "Is the work on `ws{NN}-{name}` ready to merge?" Do NOT
+proceed without a "yes". The user may want to review output, run additional tests, or
+hold a worktree for further iteration.
+
+**3. Check for file conflicts between branches.**
+```bash
+git diff --name-only ML...ws{NN}/{description}
+```
+If two pending branches modify the same file, flag it before merging. The scoring
+chain (WS02 → WS04 → WS08) always merges in that order — never simultaneously.
+
+**4. Run tests in each worktree before merging.**
+```bash
+cd .claude/worktrees/ws{NN}-{name} && pytest -v --tb=short
+```
+Do not merge a branch with failing tests.
+
+**5. Merge from the main repository (on ML branch).**
+```bash
+git merge ws{NN}/{description} -m "Merge WS{NN}: {title}"
+```
+Independent branches merge in any order. Dependent branches follow the dependency
+graph (Section 11).
+
+**6. Push and verify.**
+```bash
+git push origin ML
+git log --oneline -10
+```
+Confirm all expected commits appear on `origin/ML`.

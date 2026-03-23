@@ -6,13 +6,13 @@ Independent improvement tasks designed for parallel AI development. Each workstr
 
 | # | Name | Status | Effort | Impact | Dependencies |
 |---|------|--------|--------|--------|-------------|
-| 01 | [Chemistry Foundation](01-chemistry-foundation.md) | Not started | Moderate | High | None |
+| 01 | [Chemistry Foundation](01-chemistry-foundation.md) | **Complete** | Moderate | High | None |
 | 02 | [Scoring Integration](02-scoring-integration.md) | Not started | Low | High | 01 |
-| 03 | [Statistical Testing](03-statistical-testing.md) | Not started | Low | High | None |
+| 03 | [Statistical Testing](03-statistical-testing.md) | **Complete** | Low | High | None |
 | 04 | [Docking Proxy](04-docking-proxy.md) | Not started | Moderate | Critical | 01 |
 | 05 | [Visualization](05-visualization.md) | Not started | Low | Moderate | 03 |
-| 06 | [CI/CD](06-ci-cd.md) | Not started | Low | Moderate | None |
-| 07 | [Conditional VAE](07-conditional-vae.md) | Not started | High | High | None (01 helpful) |
+| 06 | [CI/CD](06-ci-cd.md) | **Complete** | Low | Moderate | None |
+| 07 | [Conditional VAE](07-conditional-vae.md) | **Complete** (data prep + integration) | High | High | None (01 helpful) |
 | 08 | [MPNN Affinity](08-mpnn-affinity.md) | Not started | High | Critical | 01 |
 | 09 | [ADMET Predictor](09-admet-predictor.md) | Not started | High | High | 01 |
 
@@ -56,6 +56,27 @@ Workstream 09 modifies the filtering pipeline (`generation/` module) but does no
 ## Interface Contracts
 
 See [INTERFACES.md](INTERFACES.md) for the exact function signatures and return types that workstreams must conform to. This is the contract that prevents workstreams from breaking each other.
+
+## Worktree Naming Convention
+
+Each modular agent runs in an isolated git worktree. Names must be descriptive —
+never use auto-generated names. The Head AI has **no worktree**; it works directly
+on the `ML` branch.
+
+| WS | Worktree Name | Branch | Description |
+|----|---------------|--------|-------------|
+| 01 | `ws01-chemistry` | `ws01/chemistry` | Chemistry Foundation |
+| 02 | `ws02-scoring` | `ws02/scoring` | Scoring Integration |
+| 03 | `ws03-stats` | `ws03/stats` | Statistical Testing |
+| 04 | `ws04-docking` | `ws04/docking` | Docking Proxy |
+| 05 | `ws05-viz` | `ws05/viz` | Visualization |
+| 06 | `ws06-cicd` | `ws06/cicd` | CI/CD |
+| 07 | `ws07-vae` | `ws07/vae` | Conditional VAE |
+| 08 | `ws08-mpnn` | `ws08/mpnn` | MPNN Affinity |
+| 09 | `ws09-admet` | `ws09/admet` | ADMET Predictor |
+
+All worktrees live under `.claude/worktrees/`. After a workstream completes, the Head
+AI merges the worktree branch into `ML` (see `CLAUDE.md` Section 16).
 
 ## How to Use a Workstream File
 

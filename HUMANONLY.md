@@ -64,13 +64,23 @@ The head AI should NOT execute workstreams directly. Its job is to:
 - Resolve interface conflicts between workstreams
 - Review modular agent output for correctness against INTERFACES.md
 - Decide when integration tasks (TODO.md Section 6) are ready to start
+- Merge completed modular agent worktrees into ML and push to GitHub
+
+**The Head AI has no worktree.** It always operates directly on the `ML` branch and
+pushes to `origin/ML`. See `CLAUDE.md` Section 16 for the full merge procedure.
 
 ---
 
 ## 3. Workstream Deployment Guide
 
-For each workstream below: copy the prompt, paste it into a fresh AI agent session, and
-let it execute. Each prompt tells the agent exactly which files to read and what to build.
+For each workstream below: launch a fresh AI agent session **in its own worktree**, copy
+the prompt, and let it execute. Each prompt tells the agent exactly which files to read
+and what to build.
+
+**Worktree naming:** Each agent's worktree MUST use the convention
+`ws{NN}-{short-description}` on branch `ws{NN}/{short-description}`. See the table in
+`CLAUDE.md` Section 11. Example: WS02 runs in worktree `ws02-scoring` on branch
+`ws02/scoring`. Never use auto-generated worktree names.
 
 
 ### WS01: Chemistry Foundation
@@ -322,6 +332,37 @@ print('ADMET filter importable')
 **Prerequisite:** WS01 complete. Does NOT modify `ranking/scoring.py`, so it can run
 in parallel with WS02/WS04/WS08.
 Training happens separately on HPC (Section 4).
+
+---
+
+## 3.5. Merging Completed Worktrees (Head AI Procedure)
+
+When modular agents finish their workstreams, use the Head AI to merge and push.
+The Head AI always works on the ML branch directly — no worktree of its own.
+
+### Before You Ask the Head AI to Merge
+
+1. Verify the agent's work: `cd .claude/worktrees/ws{NN}-{name} && pytest -v --tb=short`
+2. Check the "Definition of Done" in the workstream brief is fully satisfied
+3. Review `git diff --stat ML...ws{NN}/{description}` to confirm no out-of-scope files
+
+### Prompt for the Head AI (Merge & Push)
+
+> The following worktrees are ready to merge: ws{NN}-{name}, ws{NN}-{name}, ...
+> Check `.claude/worktrees/` for the branches. Verify no file conflicts exist.
+> Ask me before merging each one, then merge into ML and push to origin/ML.
+
+For ML work done on an HPC cluster (no local worktree), tell the Head AI:
+
+> The work for WS{NN} was done on the HPC cluster. The worktree/branch is at {path}.
+> Ask me if ready, then merge into ML and push.
+
+### Key Rules
+
+- Head AI asks for your confirmation before merging each worktree — do not skip this
+- Scoring chain (WS02 → WS04 → WS08) must merge strictly in order
+- Tests must pass before and after each merge
+- See `CLAUDE.md` Section 16 for the full procedure
 
 ---
 
