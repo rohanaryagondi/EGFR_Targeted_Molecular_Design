@@ -1,0 +1,16 @@
+{
+  "source": "chembl_api",
+  "generated_at": "2026-03-23T01:31:26.866850+00:00",
+  "seed": 42,
+  "n_train": 276,
+  "n_val": 69,
+  "train_path": "/Users/rohanaryagondi/Desktop/Projects/BioForge/.claude/worktrees/pedantic-galileo/data/processed/egfr_smiles_train.json",
+  "val_path": "/Users/rohanaryagondi/Desktop/Projects/BioForge/.claude/worktrees/pedantic-galileo/data/processed/egfr_smiles_val.json",
+  "state_mapping": {
+    "DFGin_aCin": 0,
+    "DFGin_aCout": 1,
+    "DFGout_aCin": 2,
+    "DFGout_aCout": 3
+  },
+  "notes": "State assignments use inhibitor-type heuristics. Compounds without known type are assigned randomly. Data source: chembl_api."
+}

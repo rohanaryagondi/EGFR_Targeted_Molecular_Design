@@ -11,6 +11,13 @@
 - `rank_state_aware()` deduplicates across states by SMILES, keeping the first occurrence -- `ranking/scoring.py:202-209`.
 - Cross-state overlap tracking at `models.py:69` is a `dict[str, int]` (pair label to count), populated during generation.
 
+- `vae_integration.py` has NO torch dependency — it reads JSON and wraps in Pydantic models. Safe to import unconditionally.
+- `load_vae_candidates()` filters out entries with `is_valid=False` AND entries with empty SMILES. Both are silently dropped (logged at DEBUG/INFO level).
+- `load_vae_candidates()` raises `ValueError` on unknown state labels rather than silently dropping them. This is intentional — bad state labels indicate upstream bugs that should not be masked.
+- `candidate_id` format is `"vae_{state}_{per_state_counter:04d}"` — counter resets per state, so IDs are unique only within a single `load_vae_candidates()` call.
+- `build_vae_libraries()` extracts temperature from the first candidate's `notes` field by string splitting on `"temperature="`. Fragile — will return 0.0 if notes format changes.
+- `DEFAULT_STATE_MAPPING` is imported from `ml/vae_dataset.py:41-46` for state validation. If that mapping changes, `vae_integration.py` automatically picks up the change.
+
 ---
 
 > AI agents: when you discover new critical facts about this module, add them here with file:line references.
