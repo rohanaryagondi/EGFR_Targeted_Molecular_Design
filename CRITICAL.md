@@ -45,6 +45,13 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 - `DataPaths` at `data/paths.py:18-21` walks up 4 parent directories from `paths.py` to find project root. This is fragile but has a `project_root` fallback parameter.
 - All pipeline artifacts go to `artifacts/` as JSON -- modules communicate via disk, never via in-memory shared state.
 
+## CI/CD
+
+- `.github/workflows/ci.yml` has 3 jobs: `test` (matrix 3.10/3.11/3.12), `lint` (3.12 only), `test-with-chemistry` (3.12 + `[dev,science,chemistry]`).
+- The `full` extras group in `pyproject.toml` bundles `[dev,science,structure,chemistry]` but excludes `ml` -- torch-geometric requires CUDA-matched installs incompatible with generic CI runners.
+- CI badge URL: `https://github.com/rohanaryagondi/EGFR_Targeted_Molecular_Design/actions/workflows/ci.yml/badge.svg`.
+- **~40 pre-existing ruff violations exist in `src/`** -- the `test` and `lint` jobs will fail until they are fixed. Affected files: `baselines/candidates.py` (F401 `re`), `baselines/filtering.py` (F401, I001), `baselines/models.py` (F401 `Literal`, I001, N815 `volume_A3`), `baselines/pipeline.py` (F401 `datetime/timezone`, F541 f-string), `baselines/pocket.py` (I001), `baselines/scoring.py` (F401 `re`, I001), `cli.py` (E501 line 9), `generation/filtering.py` (F401 unused imports, I001), `generation/generator.py` (I001, E501 lines 84/131), `ml/graphs.py` (F401 `numpy`, F401 `rdchem`, E501 line 98), plus I001/F401 violations in `context/`, `dynamics/`, `processing/`, `ranking/`, `structure/`. Run `ruff check --fix src/` to auto-fix all fixable violations, then manually resolve any remaining.
+
 ## Testing
 
 - 359 existing tests must continue to pass. Run: `pytest -v --tb=short`.

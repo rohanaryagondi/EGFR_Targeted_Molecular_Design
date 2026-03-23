@@ -1,5 +1,9 @@
 # StateBind
 
+[![CI](https://github.com/rohanaryagondi/EGFR_Targeted_Molecular_Design/actions/workflows/ci.yml/badge.svg)](https://github.com/rohanaryagondi/EGFR_Targeted_Molecular_Design/actions/workflows/ci.yml)
+![Python 3.10 | 3.11 | 3.12](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 **Conformational State-Aware Molecular Design for EGFR-Targeted Drug Discovery**
 
 > Does knowing which conformational state a kinase target occupies help you design better molecules than treating it as a single static structure?
