@@ -11,6 +11,17 @@
 - No cherry-picking: all candidates are included in comparisons, not selected subsets -- this is a project-wide rule.
 - `TopKComparison.state_aware_fraction` at `comparison.py:61` divides by `max(k, 1)` to avoid zero-division.
 
+## WS03: Statistical Testing
+
+- `statistics.py` uses dataclasses (not Pydantic) for `StatisticalTest` and `BootstrapCI` — consistent with evaluation module convention.
+- `statistics.py:14-18`: scipy is optional. `HAS_SCIPY` flag controls whether `mannwhitneyu` is used or falls back to `permutation_test()`.
+- `sensitivity.py:52-66` `_rescore_merged()` recomputes composites from stored component values via `candidate.get_score(name)` — does NOT call `score_unified()` (avoids needing `state_smiles_map` which isn't in `MergedRanking`).
+- `sensitivity.py:20` `_COMPONENT_NAMES` must match `DEFAULT_WEIGHTS` keys exactly: `["reference_similarity", "druglikeness", "docking_proxy", "state_specificity"]`.
+- `comparison.py:87-88`: `ComparativeResult` has two new fields (`statistical_tests: list`, `sensitivity: object`) with defaults. Backward-compatible — existing code that constructs `ComparativeResult` without these fields still works.
+- `comparison.py:200`: `run_full_comparison()` now accepts `run_statistics: bool = False`. Default preserves original behavior.
+- `figures.py:119-145` `generate_all_figures()` conditionally includes `statistical_summary` and `sensitivity_heatmap` figures only when data is present. Returns 5 figures when `run_statistics=False` (backward compat with `test_evaluation.py:227` assertion).
+- `sensitivity.py:110-128` ablation renormalization: remaining weights are divided by their sum to preserve ratios. A rounding fix adjusts the last non-zero component so weights sum exactly to 1.0.
+
 ---
 
 > AI agents: when you discover new critical facts about this module, add them here with file:line references.

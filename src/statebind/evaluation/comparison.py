@@ -83,6 +83,9 @@ class ComparativeResult:
     mean_ranks: dict[str, float] = field(default_factory=dict)
     static_n: int = 0
     state_aware_n: int = 0
+    # WS03: statistical testing results (populated when run_statistics=True)
+    statistical_tests: list = field(default_factory=list)
+    sensitivity: object = field(default=None)
 
 
 def compute_overlap(merged: MergedRanking) -> OverlapAnalysis:
@@ -176,14 +179,54 @@ def compute_novelty(merged: MergedRanking) -> NoveltyAnalysis:
 def run_full_comparison(
     merged: MergedRanking,
     top_k: int = 10,
+    run_statistics: bool = False,
 ) -> ComparativeResult:
-    """Run the complete comparison suite."""
+    """Run the complete comparison suite.
+
+    When run_statistics=True, also runs Mann-Whitney U, bootstrap CI,
+    and weight sensitivity analysis (requires numpy; scipy optional).
+    """
     overlap = compute_overlap(merged)
     diversity = compute_diversity_comparison(merged)
     scores = compute_score_comparison(merged)
     top_k_comp = compute_top_k_comparison(merged, k=top_k)
     novelty = compute_novelty(merged)
     ranks = mean_rank_by_pipeline(merged)
+
+    statistical_tests: list = []
+    sensitivity_result = None
+
+    if run_statistics:
+        try:
+            from statebind.evaluation.statistics import mann_whitney_u
+
+            # Extract composite scores per pipeline
+            static_scores = [
+                c.composite_score for c in merged.static_pool.candidates
+            ]
+            state_scores = [
+                c.composite_score for c in merged.state_aware_pool.candidates
+            ]
+
+            if static_scores and state_scores:
+                mw_result = mann_whitney_u(static_scores, state_scores)
+                statistical_tests.append(mw_result)
+        except ImportError:
+            pass
+
+        try:
+            from statebind.evaluation.sensitivity import (
+                run_ablation_analysis,
+                run_weight_sensitivity,
+            )
+
+            sens = run_weight_sensitivity(merged)
+            ablation = run_ablation_analysis(merged)
+            # Attach ablation results to sensitivity summary
+            sens.results.extend(ablation)
+            sensitivity_result = sens
+        except ImportError:
+            pass
 
     return ComparativeResult(
         overlap=overlap,
@@ -194,4 +237,6 @@ def run_full_comparison(
         mean_ranks=ranks,
         static_n=merged.static_pool.n_ranked,
         state_aware_n=merged.state_aware_pool.n_ranked,
+        statistical_tests=statistical_tests,
+        sensitivity=sensitivity_result,
     )
