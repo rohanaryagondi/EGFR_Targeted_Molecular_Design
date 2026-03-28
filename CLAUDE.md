@@ -814,6 +814,9 @@ progress report. These reports are the primary mechanism for:
 ```
 reports/workstreams/TEMPLATE.md     -- The template (copy for new reports)
 reports/workstreams/ws{NN}-report.md -- One report per workstream
+reports/head-ai-log.md              -- Head AI running log (merges, decisions, vision reviews)
+vision/log/assistant-log.md         -- Assistant AI running log (briefing sessions)
+vision/log/visionary-log.md         -- Visionary AI running log (idea sessions)
 ```
 
 ### When to Update Your Report
@@ -851,8 +854,14 @@ do the following before continuing work:
 
 ### Head AI Documentation
 
-The Head AI does not have a workstream report. Instead, it documents merge operations
-and cross-cutting decisions directly in commit messages and by updating:
+The Head AI maintains a running log at `reports/head-ai-log.md`. This log tracks:
+- **Merge log** -- every branch merged, with test counts and conflict notes
+- **Vision review log** -- every review of Visionary ideas, with accept/defer decisions
+- **Task assignments** -- which ideas became workstreams and who was assigned
+- **Decisions made** -- architectural and priority choices with rationale
+- **Current state and next steps** -- always accurate for context recovery
+
+The Head AI also updates these files as needed:
 - `workstreams/README.md` (workstream status table)
 - `CLAUDE.md` (if architectural decisions change)
 - `CRITICAL.md` (if cross-cutting issues arise)
@@ -868,3 +877,75 @@ new workstream. Key sections:
 - **Files Created/Modified** -- complete file inventory
 - **Architecture Decisions** -- non-obvious choices with rationale
 - **Handoff Notes** -- critical context for replacement agents
+
+---
+
+## 18. Vision System
+
+A strategic planning layer that continuously identifies improvements beyond the scope
+of current workstreams. Three AI roles collaborate to generate, evaluate, and execute
+bold ideas.
+
+### Roles
+
+| Role | Reads | Writes | Purpose |
+|------|-------|--------|---------|
+| **Assistant AI** | Full codebase, all docs, all reports | `vision/briefings/*.md`, `vision/log/assistant-log.md` | Translates project state into digestible briefings |
+| **Visionary AI** | ONLY files in `vision/` | `vision/ideas/{NNN}-*.md`, `vision/log/visionary-log.md` | Proposes bold improvements, never implements |
+| **Head AI** | `vision/ideas/*.md` (when reviewing) | Idea status updates, new workstream briefs | Accepts/defers ideas, plans workstreams |
+
+### Folder Structure
+
+```
+vision/
+├── README.md                   System overview (all three roles)
+├── briefings/
+│   ├── INSTRUCTIONS.md         Assistant AI's playbook
+│   ├── project-overview.md     What StateBind is
+│   ├── current-progress.md     What's done, what's pending
+│   ├── remaining-goals.md      Targets vs reality (gap analysis)
+│   ├── architecture.md         Modules, data flow, scoring
+│   └── known-limitations.md    Weaknesses and opportunities
+├── ideas/
+│   ├── README.md               Visionary AI rules and idea template
+│   └── {NNN}-{title}.md        Individual idea files
+└── log/
+    ├── visionary-log.md        Visionary AI's running log
+    └── assistant-log.md        Assistant AI's running log
+```
+
+### Idea Lifecycle
+
+Ideas move through these states. Only the Head AI changes status.
+
+```
+proposed  -->  accepted  -->  planned  -->  in-progress  -->  completed
+    |                                                    |
+    +----------->  deferred  <---------------------------+
+```
+
+- **proposed** -- written by Visionary AI, not yet reviewed
+- **accepted** -- Head AI agrees this is worth building
+- **planned** -- Head AI has created a workstream brief and agent prompt
+- **in-progress** -- a modular agent is executing the workstream
+- **completed** -- workstream merged to ML, idea fully realized
+- **deferred** -- not rejected, just not now (revisit later)
+
+### Head AI Obligations
+
+After completing current workstreams and merges, the Head AI must:
+
+1. Read all `proposed` ideas in `vision/ideas/`
+2. For each idea, decide: accept or defer (document rationale in `reports/head-ai-log.md`)
+3. For accepted ideas: create a workstream brief in `workstreams/`, add a prompt to
+   `HUMANONLY.md`, update `workstreams/README.md`
+4. Update the idea file's status field to `accepted` or `deferred`
+
+### Rules
+
+1. The Visionary AI reads ONLY `vision/`. It never reads source code.
+2. The Assistant AI reads everything but writes only to `vision/briefings/` and its log.
+3. Only the Head AI modifies idea status fields.
+4. Ideas are never deleted. Deferred ideas stay in the record.
+5. Briefings must be refreshed before every Visionary session.
+6. All three roles maintain running documentation (Rule 10 applies universally).

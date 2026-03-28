@@ -54,10 +54,13 @@ Use this prompt verbatim or adapt minimally:
 
 > Read CLAUDE.md completely. This is your primary reference for all development decisions.
 > Then read GOALS.md for project goals and success criteria, TODO.md for the current
-> roadmap and task status, and workstreams/README.md for the workstream system. Finally,
-> read CRITICAL.md for cross-cutting concerns. You are the head developer coordinating
-> 9 workstreams across 12 modules. When I ask about a workstream, read its brief in
-> workstreams/ before answering. Be detailed yet concise.
+> roadmap and task status, and workstreams/README.md for the workstream system. Read
+> CRITICAL.md for cross-cutting concerns. Read reports/head-ai-log.md for your running
+> log -- update it continuously after every major action (merge, decision, task
+> assignment). You are the head developer coordinating workstreams across 12+ modules.
+> When I ask about a workstream, read its brief in workstreams/ before answering. When
+> current work is complete, check vision/ideas/ for proposed improvements and plan new
+> workstreams from accepted ideas (see CLAUDE.md Section 18). Be detailed yet concise.
 
 The head AI should NOT execute workstreams directly. Its job is to:
 - Answer architectural questions ("Can WS04 run before WS02?")
@@ -65,6 +68,8 @@ The head AI should NOT execute workstreams directly. Its job is to:
 - Review modular agent output for correctness against INTERFACES.md
 - Decide when integration tasks (TODO.md Section 6) are ready to start
 - Merge completed modular agent worktrees into ML and push to GitHub
+- **Review Visionary ideas and convert accepted ones into new workstreams**
+- **Maintain its running log at `reports/head-ai-log.md`**
 
 **The Head AI has no worktree.** It always operates directly on the `ML` branch and
 pushes to `origin/ML`. See `CLAUDE.md` Section 16 for the full merge procedure.
@@ -605,3 +610,127 @@ ML training (Section 4) runs on HPC in parallel with all workstreams. The traini
 scripts and model code already exist. Workstreams WS07, WS08, and WS09 create the
 integration adapters that will wire trained checkpoints into the pipeline, but the
 training itself is independent.
+
+---
+
+## 8. Vision System
+
+The Vision System is a strategic planning layer that sits above the workstream system.
+It generates bold ideas for project improvement through a structured three-role workflow.
+
+### 8.1 Overview
+
+Three AI roles work together:
+
+1. **Assistant AI** -- Reads the full project, writes concise briefings into `vision/briefings/`
+2. **Visionary AI** -- Reads ONLY `vision/` files, writes improvement ideas into `vision/ideas/`
+3. **Head AI** -- Reviews ideas, converts accepted ones into new workstreams
+
+The workflow is always: **Assistant first, then Visionary, then Head AI reviews.**
+
+All three maintain running documentation:
+- Assistant: `vision/log/assistant-log.md`
+- Visionary: `vision/log/visionary-log.md`
+- Head AI: `reports/head-ai-log.md`
+
+### 8.2 When to Run the Vision System
+
+Run the Vision System at these milestones:
+
+- **After all Group A workstreams complete** (WS01/03/06/07) -- initial vision
+- **After all 9 workstreams complete** -- post-workstream vision
+- **After ML models are trained** -- post-training vision
+- **After full integration and final comparison** -- publication-readiness vision
+- **Any time the project feels stuck** -- strategic reset
+
+Always run the Assistant AI first to refresh briefings, then the Visionary.
+
+### 8.3 Assistant AI Prompt
+
+Launch in any session (no worktree needed -- the Assistant only writes to `vision/`).
+
+**Prompt:**
+> Read `vision/briefings/INSTRUCTIONS.md` completely -- this is your playbook. It lists
+> every file you must read and every briefing you must produce. Read ALL files listed
+> in the instructions (CLAUDE.md, GOALS.md, TODO.md, CRITICAL.md, all 9 workstream
+> reports in reports/workstreams/, reports/head-ai-log.md, workstreams/README.md,
+> workstreams/INTERFACES.md, pyproject.toml, and the key source files listed). Then
+> write or update all 5 briefing files in vision/briefings/. Be honest about
+> limitations -- the Visionary needs truth, not optimism. Quantify everything.
+> Include opportunity signals after every limitation. Update vision/log/assistant-log.md
+> continuously as you work.
+
+**Expected output:**
+- 5 briefing files in `vision/briefings/` (created or updated):
+  `project-overview.md`, `current-progress.md`, `remaining-goals.md`,
+  `architecture.md`, `known-limitations.md`
+- Updated `vision/log/assistant-log.md`
+
+**Verify:**
+```bash
+ls vision/briefings/*.md  # Should show 6 files (INSTRUCTIONS + 5 briefings)
+# Each briefing should have "Last updated:" at the top with today's date
+```
+
+### 8.4 Visionary AI Prompt
+
+Launch in a fresh session (no worktree needed).
+
+**Prompt:**
+> You are the Visionary AI for the StateBind project. Read ONLY files inside the
+> `vision/` directory -- you never read source code or any file outside this folder.
+> Start by reading `vision/ideas/README.md` for your rules and the idea template.
+> Then read all 5 briefings in `vision/briefings/`. Then read any existing idea files
+> in `vision/ideas/` to avoid repetition. Finally, read `vision/log/visionary-log.md`
+> for your running log. Generate 5-15 bold improvement ideas and write each as a
+> numbered file in `vision/ideas/` following the template in the README. Think like a
+> PI, a drug discovery veteran, and an ML researcher simultaneously. Be ambitious --
+> if an idea feels too bold, it's probably the right size. Update
+> `vision/log/visionary-log.md` continuously as you work.
+
+**Expected output:**
+- 5-15 new idea files in `vision/ideas/` (e.g., `001-ensemble-docking.md`)
+- Updated `vision/log/visionary-log.md`
+
+**Verify:**
+```bash
+ls vision/ideas/*.md      # Should show README.md + numbered idea files
+# Each idea should have Status: proposed, a filled-in template, and an
+# implementation sketch section
+```
+
+**Important:** The Visionary AI should NOT be told to read CLAUDE.md, source code, or
+any file outside `vision/`. Its entire context comes from the Assistant's briefings.
+This constraint forces the Visionary to think at the strategic level.
+
+### 8.5 Head AI: Processing Visionary Ideas
+
+After the Visionary completes a session, tell the Head AI:
+
+**Prompt:**
+> Read all idea files in `vision/ideas/` that have `Status: proposed`. For each idea,
+> decide whether to accept or defer. For accepted ideas, create a workstream brief in
+> `workstreams/`, add a deployment prompt to `HUMANONLY.md`, and update
+> `workstreams/README.md`. Update the idea file's Status field to `accepted` or
+> `deferred`. Document every decision with rationale in `reports/head-ai-log.md`.
+> Follow the workstream creation patterns in existing briefs (e.g.,
+> `workstreams/01-chemistry-foundation.md`).
+
+**Expected output:**
+- Idea status fields updated (`accepted` or `deferred`)
+- New workstream briefs for accepted ideas
+- Updated `HUMANONLY.md` with new deployment prompts
+- Updated `workstreams/README.md` with new entries
+- Updated `reports/head-ai-log.md` with decision rationale
+
+### 8.6 Running Documentation Requirement
+
+All AI roles must maintain their running logs continuously -- this is non-negotiable
+(CLAUDE.md Rule 10). The logs serve as context recovery when chat compacts and as
+handoff documents for replacement agents.
+
+| Role | Log File | Update Frequency |
+|------|----------|-----------------|
+| Assistant AI | `vision/log/assistant-log.md` | After each briefing written |
+| Visionary AI | `vision/log/visionary-log.md` | After every 2-3 ideas |
+| Head AI | `reports/head-ai-log.md` | After every merge, decision, or task assignment |

@@ -30,6 +30,7 @@ artifacts/*
 reports/*
 !reports/.gitkeep
 !reports/workstreams/
+!reports/head-ai-log.md
 
 # Raw data files (large, downloaded separately)
 data/raw/context/*
