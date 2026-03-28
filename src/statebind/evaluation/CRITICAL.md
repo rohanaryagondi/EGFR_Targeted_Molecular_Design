@@ -22,6 +22,16 @@
 - `figures.py:119-145` `generate_all_figures()` conditionally includes `statistical_summary` and `sensitivity_heatmap` figures only when data is present. Returns 5 figures when `run_statistics=False` (backward compat with `test_evaluation.py:227` assertion).
 - `sensitivity.py:110-128` ablation renormalization: remaining weights are divided by their sum to preserve ratios. A rounding fix adjusts the last non-zero component so weights sum exactly to 1.0.
 
+## WS05: Matplotlib Visualization
+
+- `plotting.py` uses `matplotlib.use("Agg")` at import time (`plotting.py:28`) — figures are always non-interactive. No display server required.
+- `_save_figure()` at `plotting.py:63` does NOT close the figure — the caller or `generate_all_plots` orchestrator closes via `plt.close(fig)`. This allows tests to inspect returned Figure objects.
+- `generate_all_plots()` at `plotting.py:330` returns dict keys prefixed with `plot_` (e.g., `plot_score_distributions`) to avoid collision with the 5 ASCII figure keys in `figures.py`.
+- `figures.py:generate_all_figures()` has `generate_plots: bool = False` default to preserve backward compat with `test_evaluation.py:227` which asserts `len(figures) == 5`. Only opt-in when `generate_plots=True AND output_dir is not None`.
+- `plot_score_distributions()` uses summary statistics (mean/std/min/max) from `ComparativeResult.scores`, NOT raw score arrays. Renders as grouped bar chart with error bars, not a violin plot.
+- `plot_sensitivity_heatmap()` accepts `object | None` type for the summary parameter and does `isinstance(summary, SensitivitySummary)` check — safe to call with `result.sensitivity` directly.
+- `plot_sa_score_distribution()` has a triple guard: HAS_MATPLOTLIB + import `chemistry.sa_score` + HAS_RDKIT. Returns None if any unavailable.
+
 ---
 
 > AI agents: when you discover new critical facts about this module, add them here with file:line references.
