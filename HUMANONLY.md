@@ -82,16 +82,25 @@ and what to build.
 `CLAUDE.md` Section 11. Example: WS02 runs in worktree `ws02-scoring` on branch
 `ws02/scoring`. Never use auto-generated worktree names.
 
+**Documentation requirement:** Every agent MUST continuously update its progress report
+at `reports/workstreams/ws{NN}-report.md` throughout its session. The report serves as
+the handoff mechanism if context compacts or a new agent takes over. See `CLAUDE.md`
+Section 17 for the full documentation system. Each agent prompt below includes the
+documentation instruction -- do not remove it.
+
+---
 
 ### WS01: Chemistry Foundation
 
 **Prompt:**
-> Read these files in order: (1) CLAUDE.md, (2) workstreams/01-chemistry-foundation.md,
+> Read these files in order: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/01-chemistry-foundation.md,
 > (3) workstreams/INTERFACES.md (Contract 1), (4) src/statebind/baselines/README.md,
-> (5) src/statebind/baselines/CRITICAL.md. Create the src/statebind/chemistry/ package
-> implementing Morgan fingerprints, molecular descriptors, SMILES validation, and SA
-> scoring. Follow the interface contracts exactly. Run all tests when done. Be detailed
-> yet concise.
+> (5) src/statebind/baselines/CRITICAL.md,
+> (6) reports/workstreams/ws01-report.md (your progress report -- update continuously).
+> Create the src/statebind/chemistry/ package implementing Morgan fingerprints, molecular
+> descriptors, SMILES validation, and SA scoring. Follow the interface contracts exactly.
+> Update your progress report after every major step. Run all tests when done.
 
 **Expected output:**
 - New package: `src/statebind/chemistry/` with `__init__.py`, `fingerprints.py`,
@@ -111,12 +120,15 @@ ruff check src/statebind/chemistry/
 ### WS02: Scoring Integration
 
 **Prompt:**
-> Read: (1) CLAUDE.md, (2) workstreams/02-scoring-integration.md,
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/02-scoring-integration.md,
 > (3) workstreams/INTERFACES.md (Contract 1 and 7), (4) src/statebind/baselines/scoring.py,
-> (5) src/statebind/ranking/scoring.py, (6) src/statebind/ranking/CRITICAL.md. Wire the
-> chemistry module from WS01 into scoring. Upgrade n-gram similarity to Morgan fingerprints
-> with fallback. Replace heuristic druglikeness with QED + Lipinski + SA score where RDKit
-> is available. Run all tests. Be detailed yet concise.
+> (5) src/statebind/ranking/scoring.py, (6) src/statebind/ranking/CRITICAL.md,
+> (7) reports/workstreams/ws02-report.md (your progress report -- update continuously).
+> Wire the chemistry module from WS01 into scoring. Upgrade n-gram similarity to Morgan
+> fingerprints with fallback. Replace heuristic druglikeness with QED + Lipinski + SA
+> score where RDKit is available. Update your progress report after every major step.
+> Run all tests.
 
 **Expected output:**
 - Modified: `src/statebind/baselines/scoring.py` (Morgan fingerprint integration)
@@ -139,12 +151,15 @@ python -c "from statebind.ranking.scoring import score_candidate; print('OK')"
 ### WS03: Statistical Testing
 
 **Prompt:**
-> Read: (1) CLAUDE.md, (2) workstreams/03-statistical-testing.md,
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/03-statistical-testing.md,
 > (3) workstreams/INTERFACES.md (Contract 3), (4) src/statebind/evaluation/README.md,
-> (5) src/statebind/evaluation/CRITICAL.md. Create evaluation/statistics.py with
-> Mann-Whitney U tests, bootstrap confidence intervals, and Cohen's d effect sizes.
-> Create evaluation/sensitivity.py for scoring weight sensitivity analysis. Run all
-> tests. Be detailed yet concise.
+> (5) src/statebind/evaluation/CRITICAL.md,
+> (6) reports/workstreams/ws03-report.md (your progress report -- update continuously).
+> Create evaluation/statistics.py with Mann-Whitney U tests, bootstrap confidence
+> intervals, and Cohen's d effect sizes. Create evaluation/sensitivity.py for scoring
+> weight sensitivity analysis. Update your progress report after every major step.
+> Run all tests.
 
 **Expected output:**
 - New: `src/statebind/evaluation/statistics.py`
@@ -166,12 +181,15 @@ python -c "from statebind.evaluation.statistics import mann_whitney_comparison; 
 ### WS04: Docking Proxy
 
 **Prompt:**
-> Read: (1) CLAUDE.md, (2) workstreams/04-docking-proxy.md,
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/04-docking-proxy.md,
 > (3) workstreams/INTERFACES.md (Contract 2), (4) src/statebind/baselines/scoring.py
-> (lines 135-149 for the stub), (5) src/statebind/baselines/CRITICAL.md. Create a small
-> MLP docking proxy trained on embedded SAR data from known EGFR inhibitors. The proxy
-> must return varied scores, not constant 0.5. Wire it into the scoring function as a
-> fallback between the MPNN and the stub. Run all tests. Be detailed yet concise.
+> (lines 135-149 for the stub), (5) src/statebind/baselines/CRITICAL.md,
+> (6) reports/workstreams/ws04-report.md (your progress report -- update continuously).
+> Create a small MLP docking proxy trained on embedded SAR data from known EGFR
+> inhibitors. The proxy must return varied scores, not constant 0.5. Wire it into the
+> scoring function as a fallback between the MPNN and the stub. Update your progress
+> report after every major step. Run all tests.
 
 **Expected output:**
 - New: `src/statebind/chemistry/docking_proxy.py` (MLP model + inference)
@@ -198,11 +216,14 @@ print('Scores vary:', scores)
 ### WS05: Visualization
 
 **Prompt:**
-> Read: (1) CLAUDE.md, (2) workstreams/05-visualization.md,
-> (3) src/statebind/evaluation/README.md, (4) src/statebind/evaluation/CRITICAL.md.
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/05-visualization.md,
+> (3) src/statebind/evaluation/README.md, (4) src/statebind/evaluation/CRITICAL.md,
+> (5) reports/workstreams/ws05-report.md (your progress report -- update continuously).
 > Create evaluation/plotting.py with matplotlib figures for score distributions, diversity
 > comparisons, top-K composition charts, and state atlas heatmaps. All figures must be
-> saveable to files without requiring a display. Run all tests. Be detailed yet concise.
+> saveable to files without requiring a display. Update your progress report after every
+> major step. Run all tests.
 
 **Expected output:**
 - New: `src/statebind/evaluation/plotting.py`
@@ -222,10 +243,12 @@ python -c "from statebind.evaluation.plotting import plot_score_distributions; p
 ### WS06: CI/CD
 
 **Prompt:**
-> Read: (1) CLAUDE.md, (2) workstreams/06-ci-cd.md, (3) pyproject.toml. Create
-> .github/workflows/ci.yml with a Python 3.10-3.12 test matrix running pytest and ruff
-> check on every push and pull request. Add status badges to README.md. Be detailed yet
-> concise.
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/06-ci-cd.md, (3) pyproject.toml,
+> (4) reports/workstreams/ws06-report.md (your progress report -- update continuously).
+> Create .github/workflows/ci.yml with a Python 3.10-3.12 test matrix running pytest
+> and ruff check on every push and pull request. Add status badges to README.md. Update
+> your progress report after every major step.
 
 **Expected output:**
 - New: `.github/workflows/ci.yml`
@@ -246,12 +269,15 @@ python -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml'))"
 ### WS07: Conditional VAE
 
 **Prompt:**
-> Read: (1) CLAUDE.md, (2) workstreams/07-conditional-vae.md,
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/07-conditional-vae.md,
 > (3) src/statebind/ml/README.md, (4) src/statebind/ml/CRITICAL.md,
-> (5) src/statebind/generation/CRITICAL.md. Create the data preparation script for
-> ChEMBL EGFR actives, and the VAE integration module that converts VAE output into
-> StateConditionedCandidate objects compatible with the existing generation pipeline.
-> Run all tests. Be detailed yet concise.
+> (5) src/statebind/generation/CRITICAL.md,
+> (6) reports/workstreams/ws07-report.md (your progress report -- update continuously).
+> Create the data preparation script for ChEMBL EGFR actives, and the VAE integration
+> module that converts VAE output into StateConditionedCandidate objects compatible
+> with the existing generation pipeline. Update your progress report after every major
+> step. Run all tests.
 
 **Expected output:**
 - New: `scripts/prepare_vae_data.py` (ChEMBL EGFR data download and processing)
@@ -273,13 +299,15 @@ python scripts/prepare_vae_data.py --help
 ### WS08: MPNN Affinity
 
 **Prompt:**
-> Read: (1) CLAUDE.md, (2) workstreams/08-mpnn-affinity.md,
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/08-mpnn-affinity.md,
 > (3) src/statebind/ml/README.md, (4) src/statebind/ml/CRITICAL.md,
-> (5) src/statebind/ranking/CRITICAL.md, (6) workstreams/INTERFACES.md (Contract 4).
+> (5) src/statebind/ranking/CRITICAL.md, (6) workstreams/INTERFACES.md (Contract 4),
+> (7) reports/workstreams/ws08-report.md (your progress report -- update continuously).
 > Create the data preparation script for ChEMBL EGFR affinity data, the affinity
 > predictor adapter that loads a trained MPNN checkpoint, and the cascading fallback in
-> ranking/scoring.py: MPNN -> docking proxy -> constant 0.5 stub. Run all tests. Be
-> detailed yet concise.
+> ranking/scoring.py: MPNN -> docking proxy -> constant 0.5 stub. Update your progress
+> report after every major step. Run all tests.
 
 **Expected output:**
 - New: `scripts/prepare_mpnn_data.py`
@@ -306,12 +334,15 @@ Training happens separately on HPC (Section 4).
 ### WS09: ADMET Predictor
 
 **Prompt:**
-> Read: (1) CLAUDE.md, (2) workstreams/09-admet-predictor.md,
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/09-admet-predictor.md,
 > (3) src/statebind/ml/README.md, (4) src/statebind/ml/CRITICAL.md,
-> (5) workstreams/INTERFACES.md (Contract 6). Create the data preparation script for
-> TDC ADMET benchmarks, the ADMET predictor adapter that loads a trained checkpoint, and
-> the ADMET filter gate that flags or excludes candidates with hERG liability or CYP3A4
-> inhibition. Run all tests. Be detailed yet concise.
+> (5) workstreams/INTERFACES.md (Contract 6),
+> (6) reports/workstreams/ws09-report.md (your progress report -- update continuously).
+> Create the data preparation script for TDC ADMET benchmarks, the ADMET predictor
+> adapter that loads a trained checkpoint, and the ADMET filter gate that flags or
+> excludes candidates with hERG liability or CYP3A4 inhibition. Update your progress
+> report after every major step. Run all tests.
 
 **Expected output:**
 - New: `scripts/prepare_admet_data.py`

@@ -91,7 +91,19 @@ Each workstream file contains:
 8. **Definition of done** — checklist for completion
 
 Before starting any workstream, read:
-1. `CLAUDE.md` (project rules)
+1. `CLAUDE.md` (project rules, especially Rule 10 and Section 17)
 2. The workstream file
 3. The relevant `src/statebind/*/README.md` files
 4. `workstreams/INTERFACES.md` (if the workstream produces or consumes interfaces)
+5. `reports/workstreams/ws{NN}-report.md` (your progress report -- update continuously)
+
+## Documentation Requirement
+
+Every agent **must** continuously maintain a progress report at
+`reports/workstreams/ws{NN}-report.md`. This is a non-negotiable rule (CLAUDE.md Rule 10).
+
+- Update after every major step (file created, test written, decision made)
+- Keep "Current State" and "Next Steps" always accurate
+- If context compacts, re-read your report to recover orientation
+- See `reports/workstreams/TEMPLATE.md` for the report format
+- See `CLAUDE.md` Section 17 for full documentation system details

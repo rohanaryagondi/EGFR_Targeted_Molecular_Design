@@ -29,6 +29,7 @@ artifacts/*
 !artifacts/.gitkeep
 reports/*
 !reports/.gitkeep
+!reports/workstreams/
 
 # Raw data files (large, downloaded separately)
 data/raw/context/*

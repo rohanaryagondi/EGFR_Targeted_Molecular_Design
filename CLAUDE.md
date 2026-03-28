@@ -119,6 +119,18 @@ distributions, not just top-K highlights.
 - BAD: "We selected the 5 best-scoring candidates to demonstrate superiority."
 - GOOD: "Score distributions across all 200 candidates (static) vs 180 candidates (state-aware)."
 
+### Rule 10: Continuous documentation
+Every AI agent must maintain a progress report at `reports/workstreams/ws{NN}-report.md`
+throughout its session. Update the report after every major step -- file created, test
+written, decision made. This serves as the handoff mechanism when context compacts or
+another agent takes over.
+
+- BAD: Writing code for 2 hours, then producing a summary at the end (or not at all).
+- GOOD: Updating the report after each completed step, keeping "Current State" and
+  "Next Steps" always accurate.
+
+See Section 17 for the full documentation system.
+
 ---
 
 ## 3. Complete Architecture
@@ -781,3 +793,78 @@ git push origin ML
 git log --oneline -10
 ```
 Confirm all expected commits appear on `origin/ML`.
+
+---
+
+## 17. Documentation System
+
+Every AI agent -- modular or head -- must produce and continuously maintain a detailed
+progress report. These reports are the primary mechanism for:
+
+1. **Context recovery** -- when the context window compacts, re-read your report to
+   know where you left off.
+2. **Agent handoff** -- if you are replaced by another agent, your report is the only
+   thing it reads (besides CLAUDE.md and the workstream brief).
+3. **Human review** -- the human operator uses your report to verify your work.
+4. **Historical record** -- future agents and humans can understand why decisions
+   were made.
+
+### Report Location and Naming
+
+```
+reports/workstreams/TEMPLATE.md     -- The template (copy for new reports)
+reports/workstreams/ws{NN}-report.md -- One report per workstream
+```
+
+### When to Update Your Report
+
+Update your report file **after every major action**:
+
+- Created a file -> log it in "Progress Log" and "Files Created"
+- Modified a file -> log it in "Progress Log" and "Files Modified"
+- Wrote tests -> log in "Tests Written" with count and coverage
+- Made a non-obvious decision -> log in "Decisions Made" with rationale
+- Hit a blocker -> log in "Issues Encountered" and update "Current State"
+- Completed a milestone -> update "Current State" and "Next Steps"
+
+**Minimum update frequency:** after every 2-3 tool calls that change the codebase.
+Do not wait until the end of your session.
+
+### What Must Always Be Accurate
+
+Two sections must be kept current at all times:
+
+1. **Current State** -- what is done, what is in progress, what remains, any blockers.
+2. **Next Steps** -- ordered list of what to do next.
+
+If your context compacts, these two sections are what you re-read to get oriented.
+
+### Context Recovery Procedure
+
+If you notice your conversation context has been compacted (prior messages summarized),
+do the following before continuing work:
+
+1. Read your report: `reports/workstreams/ws{NN}-report.md`
+2. Read your workstream brief: `workstreams/{NN}-{name}.md`
+3. Check git status: `git status` and `git log --oneline -5`
+4. Resume from "Next Steps" in your report
+
+### Head AI Documentation
+
+The Head AI does not have a workstream report. Instead, it documents merge operations
+and cross-cutting decisions directly in commit messages and by updating:
+- `workstreams/README.md` (workstream status table)
+- `CLAUDE.md` (if architectural decisions change)
+- `CRITICAL.md` (if cross-cutting issues arise)
+
+### Template Reference
+
+The full template is at `reports/workstreams/TEMPLATE.md`. Copy it when starting a
+new workstream. Key sections:
+- **Status** -- state, timestamps, counts
+- **Progress Log** -- chronological work log (newest first)
+- **Current State** -- always-accurate snapshot
+- **Next Steps** -- ordered action list
+- **Files Created/Modified** -- complete file inventory
+- **Architecture Decisions** -- non-obvious choices with rationale
+- **Handoff Notes** -- critical context for replacement agents
