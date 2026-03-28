@@ -18,7 +18,8 @@ from typing import TYPE_CHECKING, Any
 from statebind.data.paths import DataPaths
 
 if TYPE_CHECKING:
-    import torch
+    import torch  # noqa: I001
+
     from statebind.ml.admet import MultiTaskADMET
 
 logger = logging.getLogger(__name__)
@@ -118,9 +119,10 @@ def _load_model(
         etc.).  Never raises.
     """
     try:
-        import torch
+        import torch  # noqa: I001
+
         from statebind.ml.admet import ADMETConfig, MultiTaskADMET
-        from statebind.ml.utils import get_device, load_model
+        from statebind.ml.utils import get_device
     except ImportError:
         logger.warning(
             "ADMET predictor requires torch, torch_geometric, and rdkit. "

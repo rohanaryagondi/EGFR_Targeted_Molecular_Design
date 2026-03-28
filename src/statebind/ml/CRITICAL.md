@@ -1,6 +1,6 @@
 # Critical Information -- ML
 
-- All three models (VAE, MPNN, ADMET) are code-complete but UNTRAINED. VAE training data prep script exists (`scripts/prepare_vae_data.py`); MPNN and ADMET data prep scripts do not exist yet.
+- All three models (VAE, MPNN, ADMET) are code-complete but UNTRAINED. VAE training data prep script exists (`scripts/prepare_vae_data.py`); ADMET data prep script exists (`scripts/prepare_admet_data.py`); MPNN data prep script does not exist yet.
 - Pydantic configs (`VAEConfig` in `vae.py`, `MPNNConfig` in `mpnn.py`, `ADMETConfig` in `admet.py`) are ALWAYS importable without torch -- by design.
 - Optional dependency detection at `__init__.py:25-40`: `HAS_TORCH` and `HAS_TORCH_GEOMETRIC` flags. All neural network code is guarded behind these flags.
 - Training scripts live in `scripts/` (`train_vae.py`, `train_mpnn.py`, `train_admet.py`), NOT inside the `ml/` package.
@@ -19,6 +19,16 @@
 - State assignment for curated compounds uses inhibitor-type heuristics (Type-I→DFGin_aCin, Type-I½→DFGin_aCout, Type-II→DFGout_aCin, allosteric→DFGout_aCout). Unknown types get seeded random assignment — this is a documented limitation.
 - Reference binders from `baselines/scoring.py:59-66` are forced into the training split, never validation. See `_split_train_val()` in `scripts/prepare_vae_data.py`.
 - Tests `test_generate_with_temperature_zero` and `test_generate_empty_latent` in `tests/test_vae_integration.py` are skipped when torch is not installed (`pytest.importorskip("torch")`). They test VAE `.generate()` determinism and zero-latent behavior respectively.
+
+- `admet_predictor.py` is a singleton inference adapter. Module-level `_MODEL` and `_DEVICE` persist across calls. `_LOAD_ATTEMPTED` flag prevents repeated load failures. First `predict_admet()` call triggers lazy loading from `artifacts/models/admet/best_model.pt`.
+- `predict_admet()` and `predict_admet_batch()` NEVER raise — return `{}` or `[{}]` on any failure (missing model, invalid SMILES, torch not installed).
+- `check_admet_pass()` is pure Python (no torch) — safe to call unconditionally. Returns `(True, [])` when predictions dict is empty (permissive fallback).
+- `DEFAULT_ADMET_THRESHOLDS` at `admet_predictor.py`: operators `">"` = "fail if exceeds", `"<"` = "fail if below". 6 tasks with safety-critical thresholds.
+- `admet_predictor.py:_load_model()` reconstructs `ADMETConfig` from checkpoint's `config` key if present; falls back to default config. Architecture mismatch → load_model raises → caught → returns None.
+- Batch prediction in `predict_admet_batch()` uses `Batch.from_data_list()` + `model.forward()` (not `model.predict()`) for efficiency. Post-processing (sigmoid for classification, rounding to 4 dp) replicates `MultiTaskADMET.predict()` at `admet.py:333-364`. Chunks at 256 to avoid OOM.
+- `generation/admet_filter.py`: Pydantic models (`ADMETFilterResult`, `ADMETFilterSummary`) are always importable without torch. The `predict_admet_batch` import is inside `filter_candidates_admet()` body.
+- `scripts/prepare_admet_data.py` uses 3-tier fallback: PyTDC API → cached JSON at `data/raw/admet_tdc_cache.json` → curated ~55 drug molecules. Curated fallback always works with zero external dependencies.
+- ADMET combined data format: `[{"smiles": str, "caco2": float|null, ...}]` at `data/processed/admet_combined.json`. Null = JSON null. Duplicate SMILES resolved: median (regression), majority vote (classification).
 
 ---
 

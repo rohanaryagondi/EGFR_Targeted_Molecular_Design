@@ -23,7 +23,7 @@ _SCRIPTS_DIR = str(Path(__file__).resolve().parent.parent / "scripts")
 if _SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, _SCRIPTS_DIR)
 
-from prepare_admet_data import (
+from prepare_admet_data import (  # noqa: E402, I001
     _ADMET_TASKS,
     _CLASSIFICATION_TASKS,
     _REGRESSION_TASKS,
@@ -31,13 +31,13 @@ from prepare_admet_data import (
     _merge_by_smiles,
 )
 
-from statebind.generation.admet_filter import (
+from statebind.generation.admet_filter import (  # noqa: E402
     ADMETFilterResult,
     ADMETFilterSummary,
     filter_candidates_admet,
 )
-from statebind.generation.models import StateConditionedCandidate
-from statebind.ml.admet_predictor import (
+from statebind.generation.models import StateConditionedCandidate  # noqa: E402
+from statebind.ml.admet_predictor import (  # noqa: E402
     DEFAULT_ADMET_THRESHOLDS,
     check_admet_pass,
     predict_admet,

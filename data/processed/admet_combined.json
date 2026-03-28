@@ -1,0 +1,497 @@
+[
+  {
+    "smiles": "C#Cc1cccc(Nc2ncnc3cc(OCCOC)c(OCCOC)cc23)c1",
+    "caco2": -4.5234,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": 22.89,
+    "lipophilicity": 3.3,
+    "solubility": -3.89
+  },
+  {
+    "smiles": "CC(=O)CC(c1ccccc1)c1c(O)c2ccccc2oc1=O",
+    "caco2": -4.3245,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": 3.56,
+    "lipophilicity": 2.6,
+    "solubility": -3.39
+  },
+  {
+    "smiles": "CC(=O)N1CCN(c2ccc(OC[C@H]3CO[C@@](Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CC(=O)Nc1ccc(O)cc1",
+    "caco2": -4.8901,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": 8.91,
+    "lipophilicity": 0.46,
+    "solubility": -1.02
+  },
+  {
+    "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+    "caco2": -4.6575,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": 4.32,
+    "lipophilicity": 1.19,
+    "solubility": -1.68
+  },
+  {
+    "smiles": "CC(C)(C)c1ccc(C(O)CCCN2CCC(C(O)(c3ccccc3)c3ccccc3)CC2)cc1",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CC(C)Cc1ccc(C(C)C(=O)O)cc1",
+    "caco2": -4.3912,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": 12.56,
+    "lipophilicity": 3.5,
+    "solubility": -3.27
+  },
+  {
+    "smiles": "CC(C)NCC(O)COc1ccc(CC(N)=O)cc1",
+    "caco2": null,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": null,
+    "lipophilicity": 0.16,
+    "solubility": -1.21
+  },
+  {
+    "smiles": "CC(C)NCC(O)COc1cccc2ccccc12",
+    "caco2": -4.1456,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": 45.23,
+    "lipophilicity": 3.48,
+    "solubility": -2.74
+  },
+  {
+    "smiles": "CC(C)Oc1ccc(N2CCN(c3ccc(OC[C@H]4CO[C@@](Cn5cncn5)(c5ccc(Cl)cc5Cl)O4)cc3)CC2)cc1",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CC(C)c1c(C(=O)Nc2ccccc2)c(-c2ccccc2)c(-c2ccc(F)cc2)n1CC[C@@H](O)C[C@@H](O)CC(=O)O",
+    "caco2": -5.5301,
+    "herg": null,
+    "cyp3a4": 0.0,
+    "clearance": 23.45,
+    "lipophilicity": 4.06,
+    "solubility": -5.47
+  },
+  {
+    "smiles": "CC(C)c1nc(CN(C)C(=O)N[C@@H](C(=O)N[C@H](Cc2ccccc2)C[C@H](O)[C@H](Cc2ccccc2)NC(=O)OCc2cncs2)C(C)C)cs1",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CC(C)c1nc(N(C)S(C)(=O)=O)nc(-c2ccc(F)cc2)c1C=CC(O)CC(O)CC(=O)O",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": 8.45,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CC(Oc1cc(-c2cnn(C3CCNCC3)c2)cnc1N)c1c(Cl)ccc(F)c1Cl",
+    "caco2": -4.7801,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": 33.45,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CC1(C)S[C@@H]2[C@H](NC(=O)[C@@H](N)c3ccc(O)cc3)C(=O)N2[C@@H]1C(=O)O",
+    "caco2": -6.3215,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": null,
+    "lipophilicity": -1.49,
+    "solubility": null
+  },
+  {
+    "smiles": "CCC(=C(c1ccccc1)c1ccc(OCCN(C)C)cc1)c1ccccc1",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": 1.0,
+    "clearance": null,
+    "lipophilicity": 5.93,
+    "solubility": null
+  },
+  {
+    "smiles": "CCC(C)(C)C(=O)O[C@H]1C[C@@H](O)C=C2C=C[C@H](C)[C@H](CC[C@@H](O)CC(=O)O)[C@@H]21",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": 42.56,
+    "lipophilicity": null,
+    "solubility": -5.63
+  },
+  {
+    "smiles": "CCCC(CCC)C(=O)O",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": -1.35
+  },
+  {
+    "smiles": "CCCCc1nc(Cl)c(CO)n1Cc1ccc(-c2ccccc2-c2nn[nH]n2)cc1",
+    "caco2": -4.9123,
+    "herg": 0.0,
+    "cyp3a4": null,
+    "clearance": 19.89,
+    "lipophilicity": 4.01,
+    "solubility": -4.13
+  },
+  {
+    "smiles": "CCCc1nn(C)c2c(=O)[nH]c(-c3cc(S(=O)(=O)N4CCCC4)ccc3OCC)nc12",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CCN(CC)CCNC(=O)c1c(C)[nH]c(C=C2NC(=O)c3cc(F)ccc32)c1C",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": 35.67,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CCOC(=O)C1=C(COCCN)NC(C)=C(C(=O)OC)C1c1ccccc1Cl",
+    "caco2": -4.6312,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": 14.56,
+    "lipophilicity": 3.0,
+    "solubility": -3.52
+  },
+  {
+    "smiles": "CC[C@@H]1OC(=O)[C@H](C)[C@@H](O[C@H]2C[C@@](C)(OC)[C@@H](O)[C@H](C)O2)[C@H](C)[C@@H](O[C@@H]2O[C@H](C)C[C@H](N(C)C)[C@H]2O)[C@](C)(O)C[C@@H](C)C(=O)[C@H](C)[C@@H](O)[C@]1(C)O",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CN(C)C(=N)NC(=N)N",
+    "caco2": -6.4523,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": 3.89,
+    "lipophilicity": -1.43,
+    "solubility": -0.51
+  },
+  {
+    "smiles": "CN(Cc1cnc2nc(N)nc(N)c2n1)c1ccc(C(=O)N[C@@H](CCC(=O)O)C(=O)O)cc1",
+    "caco2": null,
+    "herg": 0.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CN1C(=O)CN=C(c2ccccc2)c2cc(Cl)ccc21",
+    "caco2": -4.1789,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": 18.78,
+    "lipophilicity": 2.82,
+    "solubility": -3.61
+  },
+  {
+    "smiles": "CNC(=C[N+](=O)[O-])NCCSCc1ccc(CN(C)C)o1",
+    "caco2": -5.7423,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CNC(=O)c1cc(Oc2ccc(NC(=O)Nc3ccc(Cl)c(C(F)(F)F)c3)cc2)ccn1",
+    "caco2": -5.1234,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": 19.45,
+    "lipophilicity": null,
+    "solubility": -5.82
+  },
+  {
+    "smiles": "CNCCC(Oc1ccc(C(F)(F)F)cc1)c1ccccc1",
+    "caco2": -4.2056,
+    "herg": 1.0,
+    "cyp3a4": 1.0,
+    "clearance": 31.23,
+    "lipophilicity": 4.05,
+    "solubility": -4.48
+  },
+  {
+    "smiles": "CN[C@H]1CC[C@@H](c2ccc(Cl)c(Cl)c2)c2ccccc21",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": 48.12,
+    "lipophilicity": 5.1,
+    "solubility": null
+  },
+  {
+    "smiles": "COC(=O)[C@H](c1ccccc1Cl)N1CCc2sccc2C1",
+    "caco2": null,
+    "herg": 0.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "COCCc1ccc(OCC(O)CNC(C)C)cc1",
+    "caco2": -4.6234,
+    "herg": null,
+    "cyp3a4": 0.0,
+    "clearance": 24.56,
+    "lipophilicity": 1.88,
+    "solubility": -1.78
+  },
+  {
+    "smiles": "COc1cc(N)c(Cl)cc1C(=O)N[C@H]1C[C@@H](OC)CCN1CCCOC1CCC1",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCCN1CCOCC1",
+    "caco2": -4.4567,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": 28.12,
+    "lipophilicity": 3.2,
+    "solubility": -4.21
+  },
+  {
+    "smiles": "COc1ccc(CCN(C)CCCC(C#N)(c2ccc(OC)c(OC)c2)C(C)C)cc1OC",
+    "caco2": -4.2789,
+    "herg": 1.0,
+    "cyp3a4": 1.0,
+    "clearance": 52.34,
+    "lipophilicity": 3.79,
+    "solubility": -3.92
+  },
+  {
+    "smiles": "COc1ccc(CCN2CCC(Nc3nc4ccccc4n3Cc3ccc(F)cc3)CC2)cc1",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "COc1ccc2[nH]c(S(=O)Cc3ncc(C)c(OC)c3C)nc2c1",
+    "caco2": -4.8923,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": 38.91,
+    "lipophilicity": 2.23,
+    "solubility": -3.12
+  },
+  {
+    "smiles": "COc1ccc2cc(C(C)C(=O)O)ccc2c1",
+    "caco2": -4.4756,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": 7.89,
+    "lipophilicity": 3.18,
+    "solubility": -3.18
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "CSc1ccc2c(c1)N(CC1CCCCN1C)c1ccccc1S2",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "C[C@@H]1C[C@H]2[C@@H]3CCC4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]2(C)[C@@]1(O)C(=O)CO",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": 1.83,
+    "solubility": -2.81
+  },
+  {
+    "smiles": "C[C@]12C[C@H](O)[C@H]3[C@@H](CCC4=CC(=O)C=C[C@]43C)[C@@H]1CC[C@]2(O)C(=O)CO",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": 1.46,
+    "solubility": null
+  },
+  {
+    "smiles": "Cc1ccc(-c2cc(C(F)(F)F)nn2-c2ccc(S(N)(=O)=O)cc2)cc1",
+    "caco2": -4.5123,
+    "herg": null,
+    "cyp3a4": 0.0,
+    "clearance": 25.67,
+    "lipophilicity": 3.53,
+    "solubility": -5.06
+  },
+  {
+    "smiles": "Cc1ccc(C(=O)Nc2cc(Nc3nccc(-c4cccnc4)n3)cc(C(F)(F)F)c2)cc1Nc1ccccc1",
+    "caco2": null,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "Cc1ccc(NC(=O)c2ccc(CN3CCN(C)CC3)cc2)cc1Nc1nccc(-c2cccnc2)n1",
+    "caco2": -4.8123,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": 15.67,
+    "lipophilicity": 3.5,
+    "solubility": -4.53
+  },
+  {
+    "smiles": "Cc1nc(Nc2ncc(C(=O)Nc3c(C)cccc3Cl)s2)cc(N2CCN(CCO)CC2)n1",
+    "caco2": -5.2345,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": 42.12,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "Cn1c(=O)c2c(ncn2C)n(C)c1=O",
+    "caco2": -4.4128,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": 6.12,
+    "lipophilicity": -0.07,
+    "solubility": -0.63
+  },
+  {
+    "smiles": "NC(=O)N1c2ccccc2C=Cc2ccccc21",
+    "caco2": -4.2178,
+    "herg": null,
+    "cyp3a4": 1.0,
+    "clearance": 11.23,
+    "lipophilicity": 2.45,
+    "solubility": -3.48
+  },
+  {
+    "smiles": "NS(=O)(=O)c1cc(C(=O)O)c(NCc2ccco2)cc1Cl",
+    "caco2": -5.9801,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": 6.78,
+    "lipophilicity": 2.03,
+    "solubility": -4.26
+  },
+  {
+    "smiles": "NS(=O)(=O)c1cc2c(cc1Cl)NCNS2(=O)=O",
+    "caco2": -6.1234,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": -1.82
+  },
+  {
+    "smiles": "O=C(CCCN1CCC(O)(c2ccc(Cl)cc2)CC1)c1ccc(F)cc1",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "O=C(O)c1cn(C2CC2)c2cc(N3CCNCC3)c(F)cc2c1=O",
+    "caco2": -5.8712,
+    "herg": 0.0,
+    "cyp3a4": 0.0,
+    "clearance": 5.67,
+    "lipophilicity": 0.28,
+    "solubility": -2.14
+  },
+  {
+    "smiles": "O=C1NC(=O)C(c2ccc(F)cc2)(c2ccc(F)cc2)CCN1CCCN1CCC(c2nc3ccccc3[nH]2)CC1",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  },
+  {
+    "smiles": "O=C1NC(=O)C(c2ccccc2)(c2ccccc2)N1",
+    "caco2": -4.5634,
+    "herg": null,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": 2.47,
+    "solubility": -3.32
+  },
+  {
+    "smiles": "O=c1[nH]c2ccccc2n1CCCN1CCC(c2ccc(F)cc2)(c2c[nH]c3ccc(Cl)cc23)CC1",
+    "caco2": null,
+    "herg": 1.0,
+    "cyp3a4": null,
+    "clearance": null,
+    "lipophilicity": null,
+    "solubility": null
+  }
+]

@@ -90,13 +90,14 @@ def _curated_admet_compounds() -> dict[str, list[tuple[str, float]]]:
     dasatinib = "Cc1nc(Nc2ncc(C(=O)Nc3c(C)cccc3Cl)s2)cc(N2CCN(CCO)CC2)n1"
     nilotinib = "CC1=C(C=C(C=C1)C(=O)NC2=CC(=CC(=C2)C(F)(F)F)NC3=NC=CC(=N3)C4=CN=CC=C4)NC5=CC=CC=C5"
     crizotinib = "CC(Oc1cc(-c2cnn(C3CCNCC3)c2)cnc1N)c1c(Cl)ccc(F)c1Cl"
-    vemurafenib = "CCCS(=O)(=O)Nc1ccc(-c2nc(-c3ccc(OC(F)(F)Cl)cc3)c(-c3ccnc(N)n3)[nH]2)cc1F"
 
     # Common drugs
     aspirin = "CC(=O)Oc1ccccc1C(=O)O"
     ibuprofen = "CC(C)Cc1ccc(C(C)C(=O)O)cc1"
     metformin = "CN(C)C(=N)NC(=N)N"
-    atorvastatin = "CC(C)c1n(CC[C@@H](O)C[C@@H](O)CC(=O)O)c(-c2ccc(F)cc2)c(-c2ccccc2)c1C(=O)Nc1ccccc1"
+    atorvastatin = (  # noqa: E501
+        "CC(C)c1n(CC[C@@H](O)C[C@@H](O)CC(=O)O)c(-c2ccc(F)cc2)c(-c2ccccc2)c1C(=O)Nc1ccccc1"
+    )
     omeprazole = "COc1ccc2[nH]c(S(=O)Cc3ncc(C)c(OC)c3C)nc2c1"
     diazepam = "CN1C(=O)CN=C(c2ccccc2)c2cc(Cl)ccc21"
     amoxicillin = "CC1(C)S[C@@H]2[C@H](NC(=O)[C@@H](N)c3ccc(O)cc3)C(=O)N2[C@@H]1C(=O)O"
@@ -112,7 +113,9 @@ def _curated_admet_compounds() -> dict[str, list[tuple[str, float]]]:
     fluoxetine = "CNCCC(Oc1ccc(C(F)(F)F)cc1)c1ccccc1"
     sertraline = "CN[C@H]1CC[C@@H](c2ccc(Cl)c(Cl)c2)c2ccccc21"
     verapamil = "COc1ccc(CCN(C)CCCC(C#N)(c2ccc(OC)c(OC)c2)C(C)C)cc1OC"
-    dexamethasone = "C[C@@H]1C[C@H]2[C@@H]3CCC4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]2(C)[C@@]1(O)C(=O)CO"
+    dexamethasone = (  # noqa: E501
+        "C[C@@H]1C[C@H]2[C@@H]3CCC4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]2(C)[C@@]1(O)C(=O)CO"
+    )
 
     # Known hERG blockers
     terfenadine = "CC(C)(C)c1ccc(C(O)CCCN2CCC(C(O)(c3ccccc3)c3ccccc3)CC2)cc1"
@@ -126,25 +129,29 @@ def _curated_admet_compounds() -> dict[str, list[tuple[str, float]]]:
     # CYP3A4 inhibitors
     ketoconazole = "CC(=O)N1CCN(c2ccc(OC[C@H]3CO[C@@](Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1"
     itraconazole = "CC(C)Oc1ccc(N2CCN(c3ccc(OC[C@H]4CO[C@@](Cn5cncn5)(c5ccc(Cl)cc5Cl)O4)cc3)CC2)cc1"
-    ritonavir = "CC(C)c1nc(CN(C)C(=O)N[C@@H](C(=O)N[C@H](Cc2ccccc2)C[C@H](O)[C@H](Cc2ccccc2)NC(=O)OCc2cncs2)C(C)C)cs1"
-    erythromycin = "CC[C@@H]1OC(=O)[C@H](C)[C@@H](O[C@H]2C[C@@](C)(OC)[C@@H](O)[C@H](C)O2)[C@H](C)[C@@H](O[C@@H]2O[C@H](C)C[C@@H]([C@H]2O)N(C)C)[C@](C)(O)C[C@@H](C)C(=O)[C@H](C)[C@@H](O)[C@]1(C)O"
+    ritonavir = (  # noqa: E501
+        "CC(C)c1nc(CN(C)C(=O)N[C@@H](C(=O)N[C@H](Cc2ccccc2)C[C@H](O)[C@H](Cc2ccccc2)NC(=O)OCc2cncs2)C(C)C)cs1"
+    )
+    erythromycin = (  # noqa: E501
+        "CC[C@@H]1OC(=O)[C@H](C)[C@@H](O[C@H]2C[C@@](C)(OC)[C@@H](O)[C@H](C)O2)"
+        "[C@H](C)[C@@H](O[C@@H]2O[C@H](C)C[C@@H]([C@H]2O)N(C)C)"
+        "[C@](C)(O)C[C@@H](C)C(=O)[C@H](C)[C@@H](O)[C@]1(C)O"
+    )
 
     # Additional drugs for coverage
     naproxen = "COc1ccc2cc(C(C)C(=O)O)ccc2c1"
     celecoxib = "Cc1ccc(-c2cc(C(F)(F)F)nn2-c2ccc(S(N)(=O)=O)cc2)cc1"
-    lisinopril = "NCCCC[C@@H](N[C@@H](CCc1ccccc1)C(=O)O)C(=O)N1CCC[C@H]1C(=O)O"
-    simvastatin = "CCC(C)(C)C(=O)O[C@H]1C[C@@H](O)C=C2C=C[C@H](C)[C@H](CC[C@@H](O)CC(=O)O)[C@@H]21"
+    simvastatin = (  # noqa: E501
+        "CCC(C)(C)C(=O)O[C@H]1C[C@@H](O)C=C2C=C[C@H](C)[C@H](CC[C@@H](O)CC(=O)O)[C@@H]21"
+    )
     ranitidine = "CNC(NCCSCc1ccc(CN(C)C)o1)=C[N+]([O-])=O"
     furosemide = "NS(=O)(=O)c1cc(C(=O)O)c(NCc2ccco2)cc1Cl"
     hydrochlorothiazide = "NS(=O)(=O)c1cc2c(cc1Cl)NCNS2(=O)=O"
     carbamazepine = "NC(=O)N1c2ccccc2C=Cc2ccccc21"
     phenytoin = "O=C1NC(=O)C(c2ccccc2)(c2ccccc2)N1"
     valproic_acid = "CCCC(CCC)C(=O)O"
-    lithium_carbonate_proxy = "OC(=O)O"  # proxy: Li2CO3 is inorganic; use carbonic acid
     tamoxifen = "CCC(=C(c1ccccc1)c1ccc(OCCN(C)C)cc1)c1ccccc1"
-    doxorubicin = "COc1cccc2c1C(=O)c1c(O)c3c(c(O)c1C2=O)C[C@@](O)(C(=O)CO)C[C@@H]3O[C@H]1C[C@H](N)[C@H](O)[C@H](C)O1"
     sildenafil = "CCCc1nn(C)c2c1nc(-c1cc(S(=O)(=O)N3CCCC3)ccc1OCC)[nH]c2=O"
-    tadalafil = "CN1CC(=O)N2[C@@H](Cc3c([nH]c4ccccc34)[C@@H]2c2ccc3c(c2)OCO3)C1=O"
     rosuvastatin = "CC(C)c1nc(N(C)S(C)(=O)=O)nc(-c2ccc(F)cc2)c1C=CC(O)CC(O)CC(=O)O"
     clopidogrel = "COC(=O)[C@H](c1ccccc1Cl)N1CCc2sccc2C1"
     methotrexate = "CN(Cc1cnc2nc(N)nc(N)c2n1)c1ccc(C(=O)N[C@@H](CCC(=O)O)C(=O)O)cc1"
@@ -426,11 +433,11 @@ def _load_tdc_datasets() -> dict[str, list[tuple[str, float]]] | None:
     try:
         from tdc.single_pred import ADME, Tox  # type: ignore[import-untyped]
 
-        HAS_TDC = True
+        has_tdc = True
     except ImportError:
-        HAS_TDC = False
+        has_tdc = False
 
-    if not HAS_TDC:
+    if not has_tdc:
         return None
 
     tdc_classes = {"ADME": ADME, "Tox": Tox}
@@ -555,7 +562,7 @@ def _validate_graph_conversion(records: list[dict]) -> list[dict]:
         Filtered records with only graph-convertible SMILES.
     """
     try:
-        from statebind.ml.graphs import (
+        from statebind.ml.graphs import (  # noqa: I001
             HAS_RDKIT as _GR_RDKIT,
             HAS_TORCH as _GR_TORCH,
             HAS_TORCH_GEOMETRIC as _GR_PYG,
