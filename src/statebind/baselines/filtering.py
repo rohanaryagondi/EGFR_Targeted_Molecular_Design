@@ -144,12 +144,8 @@ def _is_valid_smiles(smiles: str) -> bool:
     return True
 
 
-def compute_properties(smiles: str) -> dict[str, float | None]:
-    """Compute estimated molecular properties from SMILES.
-
-    Returns:
-        Dict of property_name -> value. Values are None if computation failed.
-    """
+def _compute_heuristic_properties(smiles: str) -> dict[str, float | None]:
+    """Heuristic property estimation from SMILES (no RDKit required)."""
     if not _is_valid_smiles(smiles):
         return {
             "estimated_mw": None,
@@ -168,6 +164,29 @@ def compute_properties(smiles: str) -> dict[str, float | None]:
         "n_rings": float(_count_rings(smiles)),
         "smiles_valid": 1.0,
     }
+
+
+def compute_properties(smiles: str) -> dict[str, float | None]:
+    """Compute molecular properties from SMILES.
+
+    Uses RDKit exact descriptors when available; falls back to heuristic
+    estimates otherwise.
+
+    Returns:
+        Dict of property_name -> value. Values are None if computation failed.
+    """
+    try:
+        from statebind.chemistry.descriptors import compute_exact_properties
+        from statebind.chemistry.fingerprints import HAS_RDKIT
+        if HAS_RDKIT:
+            props = compute_exact_properties(smiles)
+            # Add smiles_valid key for backward compat (tests assert on it)
+            all_none = all(v is None for v in props.values())
+            props["smiles_valid"] = 0.0 if all_none else 1.0
+            return props
+    except ImportError:
+        pass
+    return _compute_heuristic_properties(smiles)
 
 
 def apply_filters(

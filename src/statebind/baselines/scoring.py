@@ -66,13 +66,31 @@ _REFERENCE_BINDERS = [
 ]
 
 
+def _has_rdkit() -> bool:
+    """Check if RDKit is available via the chemistry module."""
+    try:
+        from statebind.chemistry.fingerprints import HAS_RDKIT
+        return HAS_RDKIT
+    except ImportError:
+        return False
+
+
 def _score_reference_similarity(smiles: str) -> float:
     """Score candidate by max Tanimoto similarity to reference binders.
+
+    Uses Morgan/ECFP4 fingerprints when RDKit is available; falls back to
+    SMILES character 3-gram Tanimoto otherwise.
 
     Returns value in [0, 1]. Higher = more similar to known binders.
     """
     if not smiles:
         return 0.0
+    try:
+        from statebind.chemistry.fingerprints import compute_max_reference_similarity
+        return compute_max_reference_similarity(smiles, _REFERENCE_BINDERS)
+    except ImportError:
+        pass
+    # Fallback: n-gram Tanimoto
     similarities = [_tanimoto_ngram(smiles, ref) for ref in _REFERENCE_BINDERS]
     return max(similarities) if similarities else 0.0
 
@@ -129,6 +147,55 @@ def _score_druglikeness(properties: dict[str, float | None]) -> float:
     return score / n_components if n_components > 0 else 0.0
 
 
+def _score_druglikeness_enhanced(smiles: str) -> float:
+    """Enhanced drug-likeness: QED(0.5) + Lipinski(0.25) + SA(0.25).
+
+    Requires RDKit. Returns value in [0, 1]. Higher = more drug-like.
+
+    Components:
+    - QED: Bickerton et al. quantitative estimate of drug-likeness [0, 1]
+    - Lipinski: (4 - n_violations) / 4 based on Rule-of-5 [0, 1]
+    - SA: normalized synthetic accessibility (10 - SA) / 9 [0, 1]
+    """
+    from rdkit import Chem
+    from rdkit.Chem import QED as _QED
+
+    from statebind.chemistry.descriptors import compute_exact_properties
+    from statebind.chemistry.sa_score import compute_sa_score
+
+    if not smiles:
+        return 0.0
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None or mol.GetNumAtoms() == 0:
+        return 0.0
+
+    # QED: comprehensive drug-likeness [0, 1]
+    qed_score = _QED.qed(mol)
+
+    # Lipinski Rule-of-5: count violations, normalize to [0, 1]
+    props = compute_exact_properties(smiles)
+    violations = 0
+    mw = props.get("estimated_mw")
+    if mw is not None and mw > 500:
+        violations += 1
+    hba = props.get("estimated_hba")
+    if hba is not None and hba > 10:
+        violations += 1
+    hbd = props.get("estimated_hbd")
+    if hbd is not None and hbd > 5:
+        violations += 1
+    logp = props.get("logp")
+    if logp is not None and logp > 5:
+        violations += 1
+    lipinski_score = (4 - violations) / 4
+
+    # SA: [1, 10] → [0, 1] where lower SA = better
+    sa_raw = compute_sa_score(smiles)
+    sa_normalized = (10.0 - sa_raw) / 9.0
+
+    return round(0.5 * qed_score + 0.25 * lipinski_score + 0.25 * sa_normalized, 4)
+
+
 # ── Docking score stub ──────────────────────────────────────────────────
 
 
@@ -179,6 +246,16 @@ def score_candidates(
             "docking_proxy": 0.3,
         }
 
+    _rdkit = _has_rdkit()
+    _sim_method = (
+        "Morgan/ECFP4 Tanimoto (radius=2, 2048 bits) vs erlotinib/gefitinib/osimertinib"
+        if _rdkit else "SMILES 3-gram Tanimoto vs erlotinib/gefitinib/osimertinib"
+    )
+    _drug_method = (
+        "QED(0.5) + Lipinski(0.25) + SA_score(0.25) via RDKit"
+        if _rdkit else "Property-based linear scoring (MW, HBA, HBD, rings)"
+    )
+
     scored = []
 
     for result in filtered.results:
@@ -187,7 +264,10 @@ def score_candidates(
 
         # Compute score components
         sim_score = _score_reference_similarity(result.smiles)
-        drug_score = _score_druglikeness(result.properties)
+        if _rdkit:
+            drug_score = _score_druglikeness_enhanced(result.smiles)
+        else:
+            drug_score = _score_druglikeness(result.properties)
         dock_score = _score_docking_stub(result.smiles, target_pdb_id)
 
         components = [
@@ -195,14 +275,14 @@ def score_candidates(
                 name="reference_similarity",
                 value=sim_score,
                 weight=weights.get("reference_similarity", 0.4),
-                method="SMILES 3-gram Tanimoto vs erlotinib/gefitinib/osimertinib",
+                method=_sim_method,
                 is_stub=False,
             ),
             ScoreComponent(
                 name="druglikeness",
                 value=drug_score,
                 weight=weights.get("druglikeness", 0.3),
-                method="Property-based linear scoring (MW, HBA, HBD, rings)",
+                method=_drug_method,
                 is_stub=False,
             ),
             ScoreComponent(
@@ -238,8 +318,9 @@ def score_candidates(
         target_pdb_id=target_pdb_id,
         pocket_id=f"{target_pdb_id}_A_ATP",
         scoring_method=(
-            "Weighted sum: reference_similarity(0.4) + druglikeness(0.3) + docking_proxy(0.3). "
-            "NOTE: docking_proxy is a STUB returning constant 0.5."
+            f"Weighted sum: reference_similarity(0.4, {'Morgan/ECFP4' if _rdkit else 'n-gram'}) + "
+            f"druglikeness(0.3, {'QED+Lipinski+SA' if _rdkit else 'heuristic'}) + "
+            f"docking_proxy(0.3). NOTE: docking_proxy is a STUB returning constant 0.5."
         ),
         candidates=scored,
         generated_at=now,

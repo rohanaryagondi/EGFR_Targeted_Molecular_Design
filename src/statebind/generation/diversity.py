@@ -53,6 +53,15 @@ class CrossStateDiversityReport:
     global_diversity: DiversityMetrics = field(default_factory=DiversityMetrics)
 
 
+def _pairwise_similarity(smiles_a: str, smiles_b: str) -> float:
+    """Pairwise similarity: Morgan when available, n-gram fallback."""
+    try:
+        from statebind.chemistry.fingerprints import compute_morgan_similarity
+        return compute_morgan_similarity(smiles_a, smiles_b)
+    except ImportError:
+        return _tanimoto_ngram(smiles_a, smiles_b)
+
+
 def compute_diversity(smiles_list: list[str], max_pairs: int = 500) -> DiversityMetrics:
     """Compute diversity metrics for a list of SMILES.
 
@@ -85,7 +94,7 @@ def compute_diversity(smiles_list: list[str], max_pairs: int = 500) -> Diversity
                 j += 1
             pairs.append((i, j))
 
-    tanimotos = [_tanimoto_ngram(unique[i], unique[j]) for i, j in pairs]
+    tanimotos = [_pairwise_similarity(unique[i], unique[j]) for i, j in pairs]
 
     mean_tan = sum(tanimotos) / len(tanimotos)
 

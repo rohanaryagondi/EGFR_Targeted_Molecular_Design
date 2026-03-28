@@ -14,6 +14,24 @@ from statebind.baselines.models import BaselineEvaluation, RankedCandidates
 from statebind.baselines.scoring import _tanimoto_ngram
 
 
+def _pairwise_similarity(smiles_a: str, smiles_b: str) -> float:
+    """Pairwise similarity: Morgan when available, n-gram fallback."""
+    try:
+        from statebind.chemistry.fingerprints import compute_morgan_similarity
+        return compute_morgan_similarity(smiles_a, smiles_b)
+    except ImportError:
+        return _tanimoto_ngram(smiles_a, smiles_b)
+
+
+def _has_rdkit_available() -> bool:
+    """Check if RDKit is available for diversity method reporting."""
+    try:
+        from statebind.chemistry.fingerprints import HAS_RDKIT
+        return HAS_RDKIT
+    except ImportError:
+        return False
+
+
 def evaluate_baseline(
     ranked: RankedCandidates,
     top_k: int = 10,
@@ -73,7 +91,8 @@ def evaluate_baseline(
         top_k_candidates=top_k_ids,
         notes=(
             f"Evaluated {n} candidates. "
-            f"Diversity computed via SMILES 3-gram Tanimoto (heuristic). "
+            f"Diversity computed via "
+            f"{'Morgan/ECFP4' if _has_rdkit_available() else 'SMILES 3-gram'} Tanimoto. "
             f"Score component 'docking_proxy' is a STUB (constant 0.5)."
         ),
     )
@@ -96,7 +115,7 @@ def _compute_diversity(candidates: list) -> float:
     if n * (n - 1) // 2 <= max_pairs:
         for i in range(n):
             for j in range(i + 1, n):
-                sim = _tanimoto_ngram(smiles_list[i], smiles_list[j])
+                sim = _pairwise_similarity(smiles_list[i], smiles_list[j])
                 similarities.append(sim)
     else:
         # Sample pairs deterministically

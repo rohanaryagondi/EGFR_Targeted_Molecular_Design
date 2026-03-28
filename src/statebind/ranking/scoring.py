@@ -17,7 +17,9 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from statebind.baselines.scoring import (
+    _has_rdkit,
     _score_druglikeness,
+    _score_druglikeness_enhanced,
     _score_reference_similarity,
     _score_docking_stub,
     _tanimoto_ngram,
@@ -50,6 +52,22 @@ SCORING_METHOD = (
     "docking_proxy is a STUB (constant 0.5). "
     "state_specificity is 0 for static baseline candidates."
 )
+
+
+def _get_scoring_method() -> str:
+    """Return scoring method string reflecting active backend."""
+    try:
+        from statebind.chemistry.fingerprints import HAS_RDKIT
+        if HAS_RDKIT:
+            return (
+                "Unified weighted sum: reference_similarity(0.35, Morgan/ECFP4) + "
+                "druglikeness(0.30, QED+Lipinski+SA) + docking_proxy(0.20) + "
+                "state_specificity(0.15). docking_proxy is a STUB (constant 0.5). "
+                "state_specificity is 0 for static baseline candidates."
+            )
+    except ImportError:
+        pass
+    return SCORING_METHOD
 
 
 def _compute_state_specificity(
@@ -115,22 +133,35 @@ def score_unified(
 
     props = compute_properties(smiles)
     sim = _score_reference_similarity(smiles)
-    drug = _score_druglikeness(props)
+    _rdkit = _has_rdkit()
+    if _rdkit:
+        drug = _score_druglikeness_enhanced(smiles)
+    else:
+        drug = _score_druglikeness(props)
     dock = _score_docking_stub(smiles, "unified")
     spec = _compute_state_specificity(smiles, target_state, state_smiles_map)
+
+    _sim_method = (
+        "Morgan/ECFP4 Tanimoto (radius=2, 2048 bits) vs erlotinib/gefitinib/osimertinib"
+        if _rdkit else "SMILES 3-gram Tanimoto vs erlotinib/gefitinib/osimertinib"
+    )
+    _drug_method = (
+        "QED(0.5) + Lipinski(0.25) + SA_score(0.25) via RDKit"
+        if _rdkit else "Property-based linear scoring (MW, HBA, HBD, rings)"
+    )
 
     components = [
         UnifiedScoreComponent(
             name="reference_similarity",
             value=round(sim, 4),
             weight=weights["reference_similarity"],
-            method="SMILES 3-gram Tanimoto vs erlotinib/gefitinib/osimertinib",
+            method=_sim_method,
         ),
         UnifiedScoreComponent(
             name="druglikeness",
             value=round(drug, 4),
             weight=weights["druglikeness"],
-            method="Property-based linear scoring (MW, HBA, HBD, rings)",
+            method=_drug_method,
         ),
         UnifiedScoreComponent(
             name="docking_proxy",
@@ -181,7 +212,7 @@ def rank_static_baseline(
     now = datetime.now(timezone.utc).isoformat()
     return RankedPool(
         pipeline=PipelineLabel.STATIC,
-        scoring_method=SCORING_METHOD,
+        scoring_method=_get_scoring_method(),
         candidates=scored,
         generated_at=now,
         notes="Static baseline scored under unified scheme. state_specificity=0 for all.",
@@ -232,7 +263,7 @@ def rank_state_aware(
     now = datetime.now(timezone.utc).isoformat()
     return RankedPool(
         pipeline=PipelineLabel.STATE_AWARE,
-        scoring_method=SCORING_METHOD,
+        scoring_method=_get_scoring_method(),
         candidates=scored,
         generated_at=now,
         notes="State-conditioned candidates scored under unified scheme.",

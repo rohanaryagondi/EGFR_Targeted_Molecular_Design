@@ -37,6 +37,7 @@ from statebind.baselines.models import (
 from statebind.baselines.pipeline import run_static_baseline
 from statebind.baselines.pocket import get_baseline_pocket, select_baseline_structure
 from statebind.baselines.scoring import (
+    _has_rdkit,
     _score_reference_similarity,
     _tanimoto_ngram,
     score_candidates,
@@ -344,3 +345,94 @@ class TestPipeline:
         assert result.library.target_pdb_id == "1m17"
         assert result.ranked.target_pdb_id == "1m17"
         assert result.ranked.pipeline == "static_baseline"
+
+
+# ── WS02: Scoring Integration Tests ──────────────────────────────────
+
+
+_HAS_RDKIT = _has_rdkit()
+
+
+class TestScoringIntegration:
+    """Tests for WS02: chemistry module wired into scoring."""
+
+    def test_compute_properties_uses_rdkit_when_available(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        # Erlotinib exact MW is ~393.44; heuristic gives ~350-400 range
+        props = compute_properties("COCCOc1cc2ncnc(Nc3cccc(C#C)c3)c2cc1OCCOC")
+        assert props["estimated_mw"] == pytest.approx(393.44, rel=0.01)
+
+    def test_compute_properties_has_smiles_valid_key_rdkit(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        props = compute_properties("CCO")
+        assert "smiles_valid" in props
+        assert props["smiles_valid"] == 1.0
+
+    def test_compute_properties_invalid_smiles_rdkit(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        props = compute_properties("")
+        assert props["smiles_valid"] == 0.0
+        assert props["estimated_mw"] is None
+
+    def test_compute_properties_extra_keys_rdkit(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        props = compute_properties("CCO")
+        assert "tpsa" in props
+        assert "logp" in props
+        assert "n_rotatable_bonds" in props
+
+    def test_score_reference_similarity_uses_morgan(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        # Erlotinib IS the reference — Morgan self-similarity is exactly 1.0
+        erlotinib = "COCCOc1cc2ncnc(Nc3cccc(C#C)c3)c2cc1OCCOC"
+        sim = _score_reference_similarity(erlotinib)
+        assert sim == pytest.approx(1.0, abs=1e-6)
+
+    def test_score_reference_similarity_fallback(self):
+        from unittest.mock import patch
+        with patch.dict("sys.modules", {"statebind.chemistry": None, "statebind.chemistry.fingerprints": None}):
+            sim = _score_reference_similarity("CCO")
+            assert 0.0 <= sim <= 1.0
+
+    def test_druglikeness_enhanced_valid_range(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        from statebind.baselines.scoring import _score_druglikeness_enhanced
+        # Erlotinib is an approved drug — should score well
+        score = _score_druglikeness_enhanced("COCCOc1cc2ncnc(Nc3cccc(C#C)c3)c2cc1OCCOC")
+        assert 0.0 <= score <= 1.0
+
+    def test_druglikeness_enhanced_drugs_score_well(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        from statebind.baselines.scoring import _score_druglikeness_enhanced
+        score = _score_druglikeness_enhanced("COCCOc1cc2ncnc(Nc3cccc(C#C)c3)c2cc1OCCOC")
+        assert score > 0.4, f"Erlotinib (approved drug) scored only {score}"
+
+    def test_druglikeness_enhanced_invalid_smiles(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        from statebind.baselines.scoring import _score_druglikeness_enhanced
+        assert _score_druglikeness_enhanced("") == 0.0
+        assert _score_druglikeness_enhanced("not_a_smiles") == 0.0
+
+    def test_method_strings_reflect_backend(self):
+        lib = build_candidate_library(enumerate_analogs=False)
+        filtered = apply_filters(lib)
+        ranked = score_candidates(filtered)
+        if ranked.n_ranked == 0:
+            pytest.skip("No candidates to check")
+        c = ranked.candidates[0]
+        sim_comp = next(s for s in c.scores if s.name == "reference_similarity")
+        drug_comp = next(s for s in c.scores if s.name == "druglikeness")
+        if _HAS_RDKIT:
+            assert "Morgan" in sim_comp.method
+            assert "QED" in drug_comp.method
+        else:
+            assert "3-gram" in sim_comp.method
+            assert "Property-based" in drug_comp.method

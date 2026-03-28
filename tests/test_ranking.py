@@ -30,9 +30,11 @@ from statebind.ranking.models import (
     UnifiedScoreComponent,
     UnifiedScoredCandidate,
 )
+from statebind.baselines.scoring import _has_rdkit
 from statebind.ranking.scoring import (
     DEFAULT_WEIGHTS,
     _compute_state_specificity,
+    _get_scoring_method,
     merge_rankings,
     rank_state_aware,
     rank_static_baseline,
@@ -299,3 +301,40 @@ class TestAggregation:
                 assert "std" in stats
                 assert "min" in stats
                 assert "max" in stats
+
+
+# ── WS02: Scoring Integration Tests ──────────────────────────────────
+
+
+_HAS_RDKIT = _has_rdkit()
+
+
+class TestScoringMethodIntegration:
+    """Tests for WS02: dynamic scoring method strings."""
+
+    def test_scoring_method_string_reflects_backend(self):
+        method = _get_scoring_method()
+        if _HAS_RDKIT:
+            assert "Morgan" in method
+            assert "QED" in method
+        else:
+            assert "reference_similarity(0.35)" in method
+            assert "druglikeness(0.30)" in method
+
+    def test_unified_druglikeness_method_string(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        components, _ = score_unified(
+            "CCO", "", PipelineLabel.STATIC, {}, DEFAULT_WEIGHTS,
+        )
+        drug_comp = next(c for c in components if c.name == "druglikeness")
+        assert "QED" in drug_comp.method
+
+    def test_unified_similarity_method_string(self):
+        if not _HAS_RDKIT:
+            pytest.skip("RDKit not installed")
+        components, _ = score_unified(
+            "CCO", "", PipelineLabel.STATIC, {}, DEFAULT_WEIGHTS,
+        )
+        sim_comp = next(c for c in components if c.name == "reference_similarity")
+        assert "Morgan" in sim_comp.method

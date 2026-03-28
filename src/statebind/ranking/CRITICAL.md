@@ -13,6 +13,13 @@
 - `rank_in_pipeline` is assigned post-sort by index+1 at `scoring.py:178-179` and `scoring.py:229-230`.
 - `scoring.py` imports `_score_druglikeness`, `_score_reference_similarity`, `_score_docking_stub`, `_tanimoto_ngram` FROM `baselines/scoring.py` at lines 19-24.
 
+**WS02 Scoring Integration (chemistry module wiring):**
+- `baselines/scoring.py` imports from `chemistry.fingerprints` and `chemistry.descriptors` inside function bodies (lazy imports) to avoid circular imports with `chemistry/fingerprints.py` which imports `_tanimoto_ngram` and `_REFERENCE_BINDERS` at module level.
+- `_score_druglikeness_enhanced(smiles: str) -> float` at `baselines/scoring.py` is the RDKit path (QED+Lipinski+SA); `_score_druglikeness(properties)` is the heuristic fallback. Callers check `_has_rdkit()` to choose.
+- `compute_properties()` in `baselines/filtering.py` returns extra keys (`tpsa`, `logp`, `n_rotatable_bonds`) when RDKit available. Safe because all consumers use `.get()`.
+- `compute_properties()` must always return `smiles_valid` key — `compute_exact_properties` from chemistry module does NOT include it; the integration code adds it explicitly.
+- `SCORING_METHOD` module constant at `scoring.py:49-54` is unchanged. `_get_scoring_method()` at `scoring.py:57-69` returns the dynamic version used in `RankedPool` artifacts.
+
 ---
 
 > AI agents: when you discover new critical facts about this module, add them here with file:line references.
