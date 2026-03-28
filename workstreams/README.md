@@ -13,7 +13,7 @@ Independent improvement tasks designed for parallel AI development. Each workstr
 | 05 | [Visualization](05-visualization.md) | **Complete** | Low | Moderate | 03 |
 | 06 | [CI/CD](06-ci-cd.md) | **Complete** | Low | Moderate | None |
 | 07 | [Conditional VAE](07-conditional-vae.md) | **Complete** (data prep + integration) | High | High | None (01 helpful) |
-| 08 | [MPNN Affinity](08-mpnn-affinity.md) | Not started | High | Critical | 01 |
+| 08 | [MPNN Affinity](08-mpnn-affinity.md) | **Complete** (integration; training on HPC) | High | Critical | 01 |
 | 09 | [ADMET Predictor](09-admet-predictor.md) | **Complete** | High | High | 01 |
 
 ## Dependency Graph
