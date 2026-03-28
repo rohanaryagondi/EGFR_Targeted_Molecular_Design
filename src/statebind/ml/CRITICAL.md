@@ -30,6 +30,15 @@
 - `scripts/prepare_admet_data.py` uses 3-tier fallback: PyTDC API → cached JSON at `data/raw/admet_tdc_cache.json` → curated ~55 drug molecules. Curated fallback always works with zero external dependencies.
 - ADMET combined data format: `[{"smiles": str, "caco2": float|null, ...}]` at `data/processed/admet_combined.json`. Null = JSON null. Duplicate SMILES resolved: median (regression), majority vote (classification).
 
+- `affinity_predictor.py` is a singleton inference adapter (same pattern as `admet_predictor.py`). Module-level `_MODEL`, `_DEVICE`, `_LOAD_ATTEMPTED` persist across calls. First `predict_affinity()` call triggers lazy loading from `artifacts/models/mpnn/best_model.pt`.
+- `predict_affinity()` and `predict_affinity_batch()` NEVER raise — return `0.5` (float) on any failure (missing model, invalid SMILES, torch not installed).
+- `_model_loaded() -> bool` at `affinity_predictor.py` exposes singleton status. Used by `ranking/scoring.py:_score_docking()` to distinguish "MPNN predicted 0.5" (legitimate for pIC50=5) from "MPNN failed to load".
+- `_normalize_pic50(pic50)` at `affinity_predictor.py`: sigmoid((pIC50 - 5) / 2). Centers at pIC50=5 (IC50=10µM → 0.5). pIC50=7 → 0.731, pIC50=9 → 0.881.
+- `affinity_predictor.py:_load_model()` reconstructs `MPNNConfig` from checkpoint's `config` key if present; falls back to default config.
+- Batch prediction in `predict_affinity_batch()` uses `Batch.from_data_list()` + `model.forward()` for efficiency. Chunks at 256 to avoid OOM.
+- `scripts/prepare_mpnn_data.py` uses 3-tier fallback: local file → ChEMBL REST API (stdlib `urllib.request` only, target CHEMBL203, pchembl_value ≥ 3) → curated ~90 compounds. The curated fallback always works with zero external dependencies.
+- MPNN training data format: `[{"smiles": str, "pIC50": float}, ...]` at `data/processed/egfr_affinity.json`. Single file (not split); `affinity_dataset.py:split_dataset` handles train/val/test splitting.
+
 ---
 
 > AI agents: when you discover new critical facts about this module, add them here with file:line references.

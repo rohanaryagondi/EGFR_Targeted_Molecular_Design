@@ -3,7 +3,7 @@
 Scoring components (applied identically to static and state-aware candidates):
 1. reference_similarity — Tanimoto-like similarity to known EGFR binders
 2. druglikeness — property-based drug-likeness score
-3. docking_proxy — STUB (constant 0.5)
+3. docking_proxy — MPNN affinity, docking proxy MLP, or stub (cascading fallback)
 4. state_specificity — bonus for candidates unique to their target state
    (always 0 for static baseline; 0–1 for state-aware)
 
@@ -27,15 +27,31 @@ from statebind.baselines.scoring import (
 
 
 def _score_docking(smiles: str, pdb_id: str) -> tuple[float, bool, str]:
-    """Score docking via learned proxy with stub fallback.
+    """Score docking via learned models with stub fallback.
 
     Cascading fallback:
-    1. DockingProxy MLP (WS04) — if trained and RDKit available
-    2. Constant 0.5 stub — always available
+    1. MPNN affinity predictor (WS08) — if trained and torch available
+    2. DockingProxy MLP (WS04) — if trained and RDKit available
+    3. Constant 0.5 stub — always available
 
     Returns:
         (score, is_stub, method_string)
     """
+    # Priority 1: MPNN affinity predictor
+    try:
+        from statebind.ml.affinity_predictor import _model_loaded, predict_affinity
+
+        score = predict_affinity(smiles)
+        if _model_loaded():
+            return (
+                score,
+                False,
+                "MPNN binding affinity predictor (pIC50, sigmoid-normalized)",
+            )
+    except (ImportError, Exception):
+        pass
+
+    # Priority 2: DockingProxy MLP (WS04)
     try:
         from statebind.chemistry.docking_proxy import get_default_proxy
 
@@ -49,6 +65,8 @@ def _score_docking(smiles: str, pdb_id: str) -> tuple[float, bool, str]:
             )
     except (ImportError, Exception):
         pass
+
+    # Priority 3: Stub
     return _score_docking_stub(smiles, pdb_id), True, "STUB: constant 0.5"
 from statebind.baselines.filtering import compute_properties
 from statebind.baselines.models import FilteredLibrary
@@ -82,15 +100,23 @@ SCORING_METHOD = (
 def _get_scoring_method() -> str:
     """Return scoring method string reflecting active backend.
 
-    Checks both RDKit availability and docking proxy status at runtime.
+    Checks MPNN, docking proxy, and RDKit availability at runtime.
     """
-    # Check docking proxy status
+    # Check docking backend: MPNN > proxy > stub
     try:
-        from statebind.chemistry.docking_proxy import get_default_proxy
-        proxy = get_default_proxy()
-        dock_desc = "learned_proxy" if proxy.fitted else "STUB(0.5)"
+        from statebind.ml.affinity_predictor import _model_loaded
+
+        if _model_loaded():
+            dock_desc = "MPNN_affinity(pIC50)"
+        else:
+            raise ImportError  # fall through to proxy check
     except (ImportError, Exception):
-        dock_desc = "STUB(0.5)"
+        try:
+            from statebind.chemistry.docking_proxy import get_default_proxy
+            proxy = get_default_proxy()
+            dock_desc = "learned_proxy" if proxy.fitted else "STUB(0.5)"
+        except (ImportError, Exception):
+            dock_desc = "STUB(0.5)"
 
     try:
         from statebind.chemistry.fingerprints import HAS_RDKIT
