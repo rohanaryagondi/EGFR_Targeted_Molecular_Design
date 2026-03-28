@@ -1,0 +1,34 @@
+{
+  "source": "curated_fallback",
+  "generated_at": "2026-03-28T16:30:00.229941+00:00",
+  "seed": 42,
+  "n_molecules": 55,
+  "tasks": [
+    "caco2",
+    "herg",
+    "cyp3a4",
+    "clearance",
+    "lipophilicity",
+    "solubility"
+  ],
+  "classification_tasks": [
+    "cyp3a4",
+    "herg"
+  ],
+  "regression_tasks": [
+    "caco2",
+    "clearance",
+    "lipophilicity",
+    "solubility"
+  ],
+  "output_path": "/Users/rohanaryagondi/Desktop/Projects/BioForge/.claude/worktrees/epic-bell/data/processed/admet_combined.json",
+  "per_task_counts": {
+    "caco2": 30,
+    "herg": 30,
+    "cyp3a4": 30,
+    "clearance": 30,
+    "lipophilicity": 30,
+    "solubility": 30
+  },
+  "notes": "Multi-task ADMET training data merged by canonical SMILES. Regression tasks deduplicated by median; classification by majority vote. Data source: curated_fallback."
+}

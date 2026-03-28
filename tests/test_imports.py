@@ -145,3 +145,20 @@ def test_import_evaluation_modules():
         top_k_composition_ascii, novelty_breakdown_ascii,
         overlap_venn_ascii, generate_all_figures,
     )
+
+
+def test_import_admet_predictor():
+    from statebind.ml.admet_predictor import (
+        DEFAULT_ADMET_THRESHOLDS,
+        check_admet_pass,
+        predict_admet,
+        predict_admet_batch,
+    )
+
+
+def test_import_admet_filter():
+    from statebind.generation.admet_filter import (
+        ADMETFilterResult,
+        ADMETFilterSummary,
+        filter_candidates_admet,
+    )

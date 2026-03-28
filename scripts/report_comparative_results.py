@@ -278,6 +278,69 @@ def main() -> None:
                  "or chemically valid beyond basic SMILES parsing.")
     lines.append("")
 
+    # ── 12. ADMET Safety Screening (optional) ─────────────────────────
+    try:
+        from statebind.generation.admet_filter import filter_candidates_admet
+        from statebind.generation.models import StateConditionedCandidate
+        from statebind.ml.admet_predictor import predict_admet
+
+        # Quick probe: is the model actually available?
+        _probe = predict_admet("CCO")
+        if _probe:
+            lines.append("## 12. ADMET Safety Screening")
+            lines.append("")
+            lines.append("ADMET predictions from the trained MultiTaskADMET model "
+                         "(GIN backbone, 6 endpoints).")
+            lines.append("")
+
+            # Collect candidates from both pipelines
+            static_candidates = [
+                StateConditionedCandidate(candidate_id=fr.candidate_id, smiles=fr.smiles)
+                for fr in baseline.filtered.results
+                if fr.passed
+            ]
+            state_candidates = [
+                c for lib in filtered.libraries for c in lib.candidates
+            ]
+
+            _, static_admet = filter_candidates_admet(static_candidates)
+            _, state_admet = filter_candidates_admet(state_candidates)
+
+            lines.append("### Per-Pipeline ADMET Pass Rates")
+            lines.append("")
+            lines.append("| Pipeline | Input | Passed | Failed | Skipped | Pass Rate |")
+            lines.append("| --- | --- | --- | --- | --- | --- |")
+            lines.append(
+                f"| Static Baseline | {static_admet.n_input} | "
+                f"{static_admet.n_passed} | {static_admet.n_failed} | "
+                f"{static_admet.n_skipped} | {static_admet.pass_rate:.4f} |"
+            )
+            lines.append(
+                f"| State-Aware | {state_admet.n_input} | "
+                f"{state_admet.n_passed} | {state_admet.n_failed} | "
+                f"{state_admet.n_skipped} | {state_admet.pass_rate:.4f} |"
+            )
+            lines.append("")
+
+            # Per-task failure counts
+            all_tasks = sorted(set(
+                list(static_admet.failure_counts.keys())
+                + list(state_admet.failure_counts.keys())
+            ))
+            if all_tasks:
+                lines.append("### Per-Task Failure Counts")
+                lines.append("")
+                lines.append("| Task | Static Baseline | State-Aware |")
+                lines.append("| --- | --- | --- |")
+                for task in all_tasks:
+                    s_n = static_admet.failure_counts.get(task, 0)
+                    sa_n = state_admet.failure_counts.get(task, 0)
+                    lines.append(f"| {task} | {s_n} | {sa_n} |")
+                lines.append("")
+
+    except ImportError:
+        pass  # ADMET section silently skipped if modules not available
+
     # ── Write report ─────────────────────────────────────────────────
     with open(report_path, "w") as f:
         f.write("\n".join(lines))
