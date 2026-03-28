@@ -166,11 +166,18 @@ def generate_all_figures(
     result: ComparativeResult,
     merged: MergedRanking,
     output_dir: Path | None = None,
-) -> dict[str, str]:
+    generate_plots: bool = False,
+) -> dict[str, str | Path]:
     """Generate all ASCII figures. Optionally write to files.
 
+    When *generate_plots* is True and *output_dir* is not None,
+    also generates matplotlib PNG plots (if matplotlib is available)
+    and includes their paths in the returned dict under ``plot_``
+    prefixed keys.
+
     Returns:
-        Dict mapping figure name to ASCII content.
+        Dict mapping figure name to ASCII content (str) or plot
+        file path (Path, only when *generate_plots* is True).
     """
     figures = {
         "score_distribution": score_distribution_ascii(result),
@@ -192,5 +199,18 @@ def generate_all_figures(
         for name, content in figures.items():
             with open(output_dir / f"{name}.txt", "w") as f:
                 f.write(content)
+
+    # Optionally generate matplotlib PNG plots alongside ASCII figures
+    if generate_plots and output_dir is not None:
+        try:
+            from statebind.evaluation.plotting import HAS_MATPLOTLIB, generate_all_plots
+            if HAS_MATPLOTLIB:
+                plot_paths = generate_all_plots(
+                    result, merged, Path(output_dir),
+                    sensitivity=getattr(result, "sensitivity", None),
+                )
+                figures.update({k: str(v) for k, v in plot_paths.items()})
+        except ImportError:
+            pass
 
     return figures
