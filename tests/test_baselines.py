@@ -243,14 +243,20 @@ class TestScoring:
             assert "druglikeness" in names
             assert "docking_proxy" in names
 
-    def test_docking_stub_is_labeled(self):
+    def test_docking_proxy_is_labeled(self):
         lib = build_candidate_library(enumerate_analogs=False)
         filtered = apply_filters(lib)
         ranked = score_candidates(filtered)
         for c in ranked.candidates:
             dock = next(s for s in c.scores if s.name == "docking_proxy")
-            assert dock.is_stub, "Docking stub should be marked as stub"
-            assert dock.value == 0.5, "Docking stub should return 0.5"
+            # With RDKit: learned proxy (is_stub=False, varied scores)
+            # Without RDKit: stub fallback (is_stub=True, constant 0.5)
+            if _has_rdkit():
+                assert dock.is_stub is False
+                assert 0.0 <= dock.value <= 1.0
+            else:
+                assert dock.is_stub is True
+                assert dock.value == 0.5
 
     def test_known_drugs_rank_high(self):
         """Known EGFR drugs should rank in top half (sanity check)."""

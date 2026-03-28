@@ -24,6 +24,32 @@ from statebind.baselines.scoring import (
     _score_docking_stub,
     _tanimoto_ngram,
 )
+
+
+def _score_docking(smiles: str, pdb_id: str) -> tuple[float, bool, str]:
+    """Score docking via learned proxy with stub fallback.
+
+    Cascading fallback:
+    1. DockingProxy MLP (WS04) — if trained and RDKit available
+    2. Constant 0.5 stub — always available
+
+    Returns:
+        (score, is_stub, method_string)
+    """
+    try:
+        from statebind.chemistry.docking_proxy import get_default_proxy
+
+        proxy = get_default_proxy()
+        if proxy.fitted:
+            score = proxy.predict(smiles)
+            return (
+                score,
+                False,
+                "Learned EGFR binding proxy (MLP on Morgan+descriptors)",
+            )
+    except (ImportError, Exception):
+        pass
+    return _score_docking_stub(smiles, pdb_id), True, "STUB: constant 0.5"
 from statebind.baselines.filtering import compute_properties
 from statebind.baselines.models import FilteredLibrary
 from statebind.generation.models import (
@@ -49,25 +75,39 @@ DEFAULT_WEIGHTS = {
 SCORING_METHOD = (
     "Unified weighted sum: reference_similarity(0.35) + druglikeness(0.30) "
     "+ docking_proxy(0.20) + state_specificity(0.15). "
-    "docking_proxy is a STUB (constant 0.5). "
-    "state_specificity is 0 for static baseline candidates."
+    "Use _get_scoring_method() for runtime-accurate version."
 )
 
 
 def _get_scoring_method() -> str:
-    """Return scoring method string reflecting active backend."""
+    """Return scoring method string reflecting active backend.
+
+    Checks both RDKit availability and docking proxy status at runtime.
+    """
+    # Check docking proxy status
+    try:
+        from statebind.chemistry.docking_proxy import get_default_proxy
+        proxy = get_default_proxy()
+        dock_desc = "learned_proxy" if proxy.fitted else "STUB(0.5)"
+    except (ImportError, Exception):
+        dock_desc = "STUB(0.5)"
+
     try:
         from statebind.chemistry.fingerprints import HAS_RDKIT
         if HAS_RDKIT:
             return (
                 "Unified weighted sum: reference_similarity(0.35, Morgan/ECFP4) + "
-                "druglikeness(0.30, QED+Lipinski+SA) + docking_proxy(0.20) + "
-                "state_specificity(0.15). docking_proxy is a STUB (constant 0.5). "
+                f"druglikeness(0.30, QED+Lipinski+SA) + docking_proxy(0.20, {dock_desc}) + "
+                "state_specificity(0.15). "
                 "state_specificity is 0 for static baseline candidates."
             )
     except ImportError:
         pass
-    return SCORING_METHOD
+    return (
+        "Unified weighted sum: reference_similarity(0.35) + druglikeness(0.30) "
+        f"+ docking_proxy(0.20, {dock_desc}) + state_specificity(0.15). "
+        "state_specificity is 0 for static baseline candidates."
+    )
 
 
 def _compute_state_specificity(
@@ -138,7 +178,7 @@ def score_unified(
         drug = _score_druglikeness_enhanced(smiles)
     else:
         drug = _score_druglikeness(props)
-    dock = _score_docking_stub(smiles, "unified")
+    dock, dock_is_stub, dock_method = _score_docking(smiles, "unified")
     spec = _compute_state_specificity(smiles, target_state, state_smiles_map)
 
     _sim_method = (
@@ -167,8 +207,8 @@ def score_unified(
             name="docking_proxy",
             value=round(dock, 4),
             weight=weights["docking_proxy"],
-            method="STUB: constant 0.5 — replace with Vina/GNINA",
-            is_stub=True,
+            method=dock_method,
+            is_stub=dock_is_stub,
         ),
         UnifiedScoreComponent(
             name="state_specificity",

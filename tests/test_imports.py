@@ -147,6 +147,19 @@ def test_import_evaluation_modules():
     )
 
 
+def test_import_docking_proxy():
+    from statebind.chemistry.docking_data import (
+        EGFR_BINDERS,
+        DECOYS,
+        TrainingCompound,
+        get_training_data,
+    )
+    from statebind.chemistry.docking_proxy import (
+        DockingProxy,
+        get_default_proxy,
+    )
+
+
 def test_import_admet_predictor():
     from statebind.ml.admet_predictor import (
         DEFAULT_ADMET_THRESHOLDS,
