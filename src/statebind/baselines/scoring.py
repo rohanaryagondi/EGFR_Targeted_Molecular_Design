@@ -216,6 +216,32 @@ def _score_docking_stub(smiles: str, pdb_id: str) -> float:
     return 0.5
 
 
+def _score_docking(smiles: str, pdb_id: str) -> tuple[float, bool, str]:
+    """Score docking via learned proxy with stub fallback.
+
+    Cascading fallback:
+    1. DockingProxy MLP (WS04) — if trained and RDKit available
+    2. Constant 0.5 stub — always available
+
+    Returns:
+        (score, is_stub, method_string)
+    """
+    try:
+        from statebind.chemistry.docking_proxy import get_default_proxy
+
+        proxy = get_default_proxy()
+        if proxy.fitted:
+            score = proxy.predict(smiles)
+            return (
+                score,
+                False,
+                "Learned EGFR binding proxy (MLP on Morgan+descriptors)",
+            )
+    except (ImportError, Exception):
+        pass
+    return _score_docking_stub(smiles, pdb_id), True, "STUB: constant 0.5"
+
+
 # ── Composite scoring ──────────────────────────────────────────────────
 
 
@@ -256,6 +282,14 @@ def score_candidates(
         if _rdkit else "Property-based linear scoring (MW, HBA, HBD, rings)"
     )
 
+    # Determine docking proxy status for method string
+    try:
+        from statebind.chemistry.docking_proxy import get_default_proxy
+        _proxy = get_default_proxy()
+        _dock_label = "learned_proxy" if _proxy.fitted else "STUB(0.5)"
+    except (ImportError, Exception):
+        _dock_label = "STUB(0.5)"
+
     scored = []
 
     for result in filtered.results:
@@ -268,7 +302,9 @@ def score_candidates(
             drug_score = _score_druglikeness_enhanced(result.smiles)
         else:
             drug_score = _score_druglikeness(result.properties)
-        dock_score = _score_docking_stub(result.smiles, target_pdb_id)
+        dock_score, _dock_is_stub, _dock_method = _score_docking(
+            result.smiles, target_pdb_id,
+        )
 
         components = [
             ScoreComponent(
@@ -289,8 +325,8 @@ def score_candidates(
                 name="docking_proxy",
                 value=dock_score,
                 weight=weights.get("docking_proxy", 0.3),
-                method="STUB: constant 0.5 — replace with Vina/GNINA",
-                is_stub=True,
+                method=_dock_method,
+                is_stub=_dock_is_stub,
             ),
         ]
 
@@ -320,7 +356,7 @@ def score_candidates(
         scoring_method=(
             f"Weighted sum: reference_similarity(0.4, {'Morgan/ECFP4' if _rdkit else 'n-gram'}) + "
             f"druglikeness(0.3, {'QED+Lipinski+SA' if _rdkit else 'heuristic'}) + "
-            f"docking_proxy(0.3). NOTE: docking_proxy is a STUB returning constant 0.5."
+            f"docking_proxy(0.3, {_dock_label})."
         ),
         candidates=scored,
         generated_at=now,

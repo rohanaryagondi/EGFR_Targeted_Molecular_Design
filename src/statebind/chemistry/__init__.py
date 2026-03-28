@@ -22,6 +22,7 @@ from statebind.chemistry.fingerprints import (
 )
 from statebind.chemistry.sa_score import compute_sa_score
 from statebind.chemistry.validation import canonicalize_smiles, validate_smiles
+from statebind.chemistry.docking_proxy import DockingProxy, get_default_proxy
 
 __all__ = [
     "compute_morgan_fingerprint",
@@ -32,4 +33,6 @@ __all__ = [
     "canonicalize_smiles",
     "compute_sa_score",
     "HAS_RDKIT",
+    "DockingProxy",
+    "get_default_proxy",
 ]

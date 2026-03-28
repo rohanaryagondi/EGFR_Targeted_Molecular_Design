@@ -175,11 +175,18 @@ class TestUnifiedScoring:
         expected = sum(c.value * c.weight for c in components)
         assert abs(composite - round(expected, 4)) < 1e-4
 
-    def test_docking_proxy_is_stub(self):
+    def test_docking_proxy_status(self):
         components, _ = score_unified("CCO", "", PipelineLabel.STATIC, {})
         dock = [c for c in components if c.name == "docking_proxy"][0]
-        assert dock.is_stub is True
-        assert dock.value == 0.5
+        # With RDKit: learned proxy (is_stub=False, varied scores)
+        # Without RDKit: stub fallback (is_stub=True, constant 0.5)
+        from statebind.baselines.scoring import _has_rdkit
+        if _has_rdkit():
+            assert dock.is_stub is False
+            assert 0.0 <= dock.value <= 1.0
+        else:
+            assert dock.is_stub is True
+            assert dock.value == 0.5
 
     def test_default_weights_sum(self):
         total = sum(DEFAULT_WEIGHTS.values())

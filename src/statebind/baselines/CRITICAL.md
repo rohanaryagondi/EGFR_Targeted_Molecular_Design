@@ -12,6 +12,12 @@
 - `ScoreComponent` at `models.py:119-126` is distinct from `UnifiedScoreComponent` in `ranking/models.py:21-28` -- do not confuse them.
 - DEFAULT_FILTERS in `filtering.py:25-31` define Lipinski-like thresholds (MW 200-600, HBA 1-10, HBD 0-5, heavy atoms 15-50, rings 1-8).
 
+- `_score_docking()` at `scoring.py:219-240` implements cascading fallback: DockingProxy MLP → constant 0.5 stub. Returns `(score, is_stub, method_string)` tuple.
+- `_score_docking_stub()` at `scoring.py:202-216` is KEPT as the final fallback — do NOT delete it.
+- Docking stub line numbers shifted after WS04 additions. The stub is now around line 202, `_score_docking` is around line 219.
+- `score_candidates()` now uses `_score_docking()` instead of `_score_docking_stub()` directly. The `is_stub` and `method` on `ScoreComponent` are dynamic.
+- WS08 should extend `_score_docking()` to check MPNN first: MPNN → DockingProxy → stub.
+
 ---
 
 > AI agents: when you discover new critical facts about this module, add them here with file:line references.
