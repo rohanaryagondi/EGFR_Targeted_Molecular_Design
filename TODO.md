@@ -1,6 +1,6 @@
 # StateBind -- Development Roadmap
 
-Last updated: 2026-03-21
+Last updated: 2026-03-28
 
 This document tracks every completed phase, active task, and planned workstream.
 For success criteria and numeric targets, see `GOALS.md`.
@@ -58,13 +58,13 @@ For workstream briefs and interface contracts, see `workstreams/README.md`.
 
 These four workstreams have zero prerequisites and can execute simultaneously.
 
-- [ ] **WS01: Chemistry Foundation** -- Replace all SMILES string heuristics with RDKit-backed operations: Morgan/ECFP4 fingerprints, canonical SMILES, molecular validation, synthetic accessibility scores. *Moderate complexity. High impact. Blocks WS02, WS04, WS08, WS09.* This is the most important unblocking task.
+- [x] **WS01: Chemistry Foundation** -- Replace all SMILES string heuristics with RDKit-backed operations: Morgan/ECFP4 fingerprints, canonical SMILES, molecular validation, synthetic accessibility scores. *Moderate complexity. High impact. Blocks WS02, WS04, WS08, WS09.* **Complete.**
 
-- [ ] **WS03: Statistical Testing** -- Add scipy-based significance tests to `evaluation/`: Mann-Whitney U, bootstrap confidence intervals, Cohen's d effect sizes, sensitivity analysis over scoring weights. *Low complexity. High impact. Blocks WS05.* Required to formally reject or retain the null hypothesis.
+- [x] **WS03: Statistical Testing** -- Add scipy-based significance tests to `evaluation/`: Mann-Whitney U, bootstrap confidence intervals, Cohen's d effect sizes, sensitivity analysis over scoring weights. *Low complexity. High impact. Blocks WS05.* **Complete.**
 
-- [ ] **WS06: CI/CD** -- GitHub Actions workflow running `pytest`, `ruff check`, and type checking on every push and PR. Badge in README. *Low complexity. Moderate impact. Blocks nothing.* Prevents silent regressions.
+- [x] **WS06: CI/CD** -- GitHub Actions workflow running `pytest`, `ruff check`, and type checking on every push and PR. Badge in README. *Low complexity. Moderate impact. Blocks nothing.* **Complete.**
 
-- [ ] **WS07: Conditional VAE** -- End-to-end VAE pipeline: data prep, training loop, generation script, integration into `generation/` as a new strategy. Produces genuinely novel molecules from learned latent space, conditioned on conformational state. *High complexity. High impact. Blocks nothing directly (WS01 helpful but not required).*
+- [x] **WS07: Conditional VAE** -- End-to-end VAE pipeline: data prep, training loop, generation script, integration into `generation/` as a new strategy. Produces genuinely novel molecules from learned latent space, conditioned on conformational state. *High complexity. High impact.* **Complete (data prep + integration; training on HPC).**
 
 ---
 
@@ -72,19 +72,19 @@ These four workstreams have zero prerequisites and can execute simultaneously.
 
 All four depend on `statebind.chemistry` from WS01. Within the scoring chain (WS02/WS04/WS08), execution must be **sequential** to avoid merge conflicts in `ranking/scoring.py`.
 
-- [ ] **WS02: Scoring Integration** -- Wire RDKit chemistry into the unified scoring function. Replace n-gram Tanimoto with Morgan/ECFP4 similarity, replace heuristic druglikeness with QED + Lipinski + SA score. *Low complexity. High impact.* **Run FIRST in scoring chain.**
+- [x] **WS02: Scoring Integration** -- Wire RDKit chemistry into the unified scoring function. Replace n-gram Tanimoto with Morgan/ECFP4 similarity, replace heuristic druglikeness with QED + Lipinski + SA score. *Low complexity. High impact.* **Complete.**
 
-- [ ] **WS04: Docking Proxy** -- Build a small MLP discriminator on molecular descriptors as an intermediate docking proxy. Replaces the constant-0.5 stub with a model that at least discriminates between structures. *Moderate complexity. Critical impact.* **Run SECOND in scoring chain.**
+- [x] **WS04: Docking Proxy** -- Build a small MLP discriminator on molecular descriptors as an intermediate docking proxy. Replaces the constant-0.5 stub with a model that at least discriminates between structures. *Moderate complexity. Critical impact.* **Complete.**
 
-- [ ] **WS08: MPNN Affinity** -- Integration adapter wiring the trained MPNN into `ranking/scoring.py`. Cascading fallback: MPNN -> docking proxy -> stub. Normalized pIC50 output. *High complexity. Critical impact.* **Run THIRD in scoring chain.**
+- [x] **WS08: MPNN Affinity** -- Integration adapter wiring the trained MPNN into `ranking/scoring.py`. Cascading fallback: MPNN -> docking proxy -> stub. Normalized pIC50 output. *High complexity. Critical impact.* **Complete (integration; training on HPC).**
 
-- [ ] **WS09: ADMET Predictor** -- Integration adapter wiring the trained ADMET model into the filtering pipeline. Pass/fail gate for hERG liability (probability > 0.5) and CYP3A4 inhibition. Does NOT modify `ranking/scoring.py` -- no conflict with scoring chain. *High complexity. High impact.*
+- [x] **WS09: ADMET Predictor** -- Integration adapter wiring the trained ADMET model into the filtering pipeline. Pass/fail gate for hERG liability (probability > 0.5) and CYP3A4 inhibition. Does NOT modify `ranking/scoring.py` -- no conflict with scoring chain. *High complexity. High impact.* **Complete.**
 
 ---
 
 ## 5. Planned: Group C (After WS03 Completes)
 
-- [ ] **WS05: Visualization** -- Publication-quality matplotlib/seaborn figures: score distributions, chemical space UMAP, state atlas heatmaps, comparison bar charts with error bars. Requires statistical testing infrastructure from WS03 for confidence intervals and p-values on plots. *Low complexity. Moderate impact.*
+- [x] **WS05: Visualization** -- Publication-quality matplotlib/seaborn figures: score distributions, chemical space UMAP, state atlas heatmaps, comparison bar charts with error bars. Requires statistical testing infrastructure from WS03 for confidence intervals and p-values on plots. *Low complexity. Moderate impact.* **Complete.**
 
 ---
 
@@ -200,9 +200,9 @@ ML training (Section 2) runs in parallel with all workstreams and feeds into Int
 
 | Area | Status | Next Action |
 |------|--------|-------------|
-| Pipeline (Phases 0-7) | Complete (12 modules, 359 tests) | Maintain |
-| ML code | Written, untrained | Prepare training data |
-| Scoring function | 20% dead weight (docking stub) | WS01 -> WS02 -> WS08 |
-| Statistical testing | None (descriptive only) | WS03 |
-| Null hypothesis | Not rejected | Pending real scoring + stats |
-| Workstreams | 0 of 9 complete | Start Group A |
+| Pipeline (Phases 0-7) | Complete (13 modules, 540 tests) | Maintain |
+| ML code | Written, untrained (all integration adapters complete) | Train on GPU (VAE, MPNN, ADMET) |
+| Scoring function | Cascading fallback: MPNN -> DockingProxy MLP -> stub | Train MPNN model on GPU |
+| Statistical testing | Complete (Mann-Whitney U, bootstrap CI, sensitivity) | Re-run with real scores post-training |
+| Null hypothesis | Not rejected | Pending trained models + re-run comparison |
+| Workstreams | 9 of 9 complete (540 tests passing) | Run Vision System, plan next round |

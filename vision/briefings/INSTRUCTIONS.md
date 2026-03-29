@@ -48,8 +48,13 @@ skip any. The Visionary's ideas are only as good as the context you provide.
 22. `vision/ideas/*.md` -- Read all existing idea files so you can reference them
     in your briefings and avoid duplicating what the Visionary has already proposed.
 
+### Admin System (context for infrastructure health)
+23. `admin/suggestions.md` -- Active infrastructure suggestions (what's being fixed
+    vs what's still broken)
+24. `admin/log/admin-log.md` -- Admin AI's latest audit findings
+
 ### Your Own Log
-23. `vision/log/assistant-log.md` -- Your running documentation from prior sessions
+25. `vision/log/assistant-log.md` -- Your running documentation from prior sessions
 
 ---
 

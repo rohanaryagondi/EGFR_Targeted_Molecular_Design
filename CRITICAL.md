@@ -26,7 +26,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 ## ML Infrastructure
 
-- ML models (VAE, MPNN, ADMET) are code-complete but UNTRAINED -- no training data prep scripts exist yet.
+- ML models (VAE, MPNN, ADMET) are code-complete but UNTRAINED. Training data prep scripts exist (`scripts/prepare_vae_data.py`, `scripts/prepare_mpnn_data.py`, `scripts/prepare_admet_data.py`) and integration adapters are complete (`ml/affinity_predictor.py`, `ml/admet_predictor.py`, `ml/vae_integration.py`). Training requires GPU.
 - Optional dependency pattern used everywhere: `try: import torch; HAS_TORCH = True except ImportError: HAS_TORCH = False` -- see `ml/__init__.py:25-30`.
 - Pydantic configs (`VAEConfig`, `MPNNConfig`, `ADMETConfig`) are ALWAYS importable without torch -- by design for config validation without ML deps.
 - `ATOM_FEATURE_DIM=35` and `BOND_FEATURE_DIM=11` are computed at `ml/graphs.py:98-101` -- MPNN and ADMET models must match these dimensions.
@@ -54,7 +54,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 ## Testing
 
-- 359 existing tests must continue to pass. Run: `pytest -v --tb=short`.
+- 540 existing tests must continue to pass (was 359 pre-workstreams). Run: `pytest -v --tb=short`.
 - Every new module/function needs tests in `tests/`.
 
 ## Model Types
@@ -69,6 +69,45 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 - All floating-point scores: `round(value, 4)`.
 - Private functions prefixed with `_` (e.g., `_score_docking_stub`, `_tanimoto_ngram`).
 - `compute_properties()` in `baselines/filtering.py` returns heuristic SMILES-based estimates, NOT RDKit calculations.
+
+## Operational Gotchas
+
+### Worktree Naming
+- Agents consistently use auto-generated worktree names (e.g., `claude/charming-liskov`) instead of the required `ws{NN}-{description}` convention from CLAUDE.md Section 11.
+- The human operator must either rename worktrees after creation or explicitly instruct agents with the worktree name in the prompt: "Name your worktree `ws{NN}-{description}` on branch `ws{NN}/{description}`."
+- Worktrees live under `.claude/worktrees/`. Use `git worktree list` to see all active worktrees.
+
+### Editable Install Cross-Contamination
+- Running `pip install -e .` in one git worktree makes ALL worktrees' imports resolve to that worktree's `src/` directory (pip overwrites the path entry globally in the virtualenv).
+- **Solution:** Always run `pip install -e ".[dev]"` on the ML branch before running definitive tests.
+- Never trust test results from a worktree if another worktree ran `pip install -e .` in the same virtualenv. Import errors in this situation are artifacts, not real failures.
+
+### Shell CWD After Worktree Removal
+- After `git worktree remove --force <path>`, if the shell's current working directory was inside the deleted path, ALL subsequent Bash commands fail with "No such file or directory."
+- **Fix:** Run `mkdir -p <deleted-path>` to recreate the directory, then `git worktree prune` to clean stale references. Or `cd` to a valid path before removing.
+- `.claude/worktrees/epic-clarke` exists as an empty stub directory specifically to prevent this problem for prior sessions. It can be safely removed once no shell session has it as CWD.
+
+### Agents Don't Always Commit
+- Modular agents sometimes complete their code work but do not `git commit` or `git push`.
+- Head AI must always: (1) `cd` into the worktree, (2) check `git status` for uncommitted changes, (3) stage and commit if needed, (4) verify tests pass before merging.
+- Never assume a worktree is ready to merge just because the agent reported "done."
+
+### Scoring Chain Merge Order
+- WS02 -> WS04 -> WS08 must merge to ML in strictly sequential order.
+- All three modify `ranking/scoring.py`. Merging out of order creates conflicts because each workstream builds a fallback layer on top of the previous one.
+- The cascading fallback chain after all three are merged: MPNN (WS08) -> DockingProxy MLP (WS04) -> constant 0.5 stub.
+
+### ML Branch Is Default
+- The default branch on GitHub was changed from `main` to `ML`. All work happens on `ML`.
+- The Head AI always operates directly on `ML` -- no worktree.
+- Push with `git push origin ML`.
+
+### Test Count History
+- Base: 359 tests (pre-workstream)
+- After WS01/02/03/05/06/07/09: 498 tests
+- After WS04: 518 tests
+- After WS08: 540 tests (current)
+- Target: 500+ (exceeded)
 
 ---
 

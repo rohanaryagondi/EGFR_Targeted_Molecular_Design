@@ -419,7 +419,9 @@ BioForge/
 |-- reports/                     Generated markdown reports
 |-- docs/                        PROJECT_CHARTER.md and other documentation
 |-- notebooks/                   Jupyter notebooks
-+-- workstreams/                 9 independent improvement task briefs + INTERFACES.md
+|-- workstreams/                 9 independent improvement task briefs + INTERFACES.md
+|-- vision/                      Vision System: briefings, ideas, logs (see Section 18)
++-- admin/                       Admin AI: infrastructure suggestions and audit log (see Section 19)
 ```
 
 ---
@@ -949,3 +951,76 @@ After completing current workstreams and merges, the Head AI must:
 4. Ideas are never deleted. Deferred ideas stay in the record.
 5. Briefings must be refreshed before every Visionary session.
 6. All three roles maintain running documentation (Rule 10 applies universally).
+
+**For the complete AI role directory** (all 5 roles, reporting structure, information
+flow, and dependencies), see `HUMANONLY.md` Section 10.
+
+---
+
+## 19. Admin AI System
+
+An infrastructure quality monitoring layer. The Admin AI reads project scaffolding,
+documentation, configs, and test structure to identify staleness, inconsistencies, and
+quality gaps. It writes structured suggestions but NEVER implements changes.
+
+### Role
+
+| Role | Reads | Writes | Purpose |
+|------|-------|--------|---------|
+| **Admin AI** | CLAUDE.md, CRITICAL.md, GOALS.md, TODO.md, all `__init__.py`, all module READMEs, configs/, reports/, pyproject.toml, test structure | `admin/suggestions.md`, `admin/log/admin-log.md` | Identifies documentation staleness, scaffolding issues, config drift |
+
+### Folder Structure
+
+```
+admin/
+├── README.md            System overview and rules
+├── INSTRUCTIONS.md      Admin AI's audit playbook
+├── suggestions.md       Structured suggestion list (Head AI triages)
+└── log/
+    └── admin-log.md     Admin AI's running documentation
+```
+
+### Suggestion Lifecycle
+
+Suggestions move through these states. Only the Head AI changes status.
+
+```
+suggested  -->  accepted  -->  implemented
+    |
+    +--------->  wont-fix
+```
+
+- **suggested** -- written by Admin AI, not yet reviewed
+- **accepted** -- Head AI agrees this needs fixing
+- **implemented** -- fix merged to ML
+- **wont-fix** -- Head AI decided not to act (with rationale)
+
+### Head AI Obligations
+
+After an Admin AI session, the Head AI must:
+
+1. Read all `suggested` entries in `admin/suggestions.md`
+2. For P0 items (broken/wrong): fix immediately on ML branch
+3. For P1 items (stale/misleading): fix or schedule
+4. For P2/P3 items: accept, defer, or mark `wont-fix` with rationale
+5. Update status fields and add notes in `admin/suggestions.md`
+6. Log decisions in `reports/head-ai-log.md`
+
+### When to Run the Admin AI
+
+- Before a new Head AI takes over (knowledge transfer audit)
+- After merging a batch of workstreams
+- After major documentation updates
+- Any time docs feel stale or a new agent reports confusion
+
+### Rules
+
+1. The Admin AI writes ONLY to files inside `admin/`.
+2. The Admin AI NEVER implements changes -- it only suggests.
+3. Only the Head AI changes suggestion status fields.
+4. Suggestions are never deleted. Resolved suggestions stay in the record.
+5. The Admin AI focuses on infrastructure quality, not scientific or architectural
+   decisions (those belong to the Visionary AI).
+6. Running documentation is mandatory (Rule 10 applies).
+
+**For how the Admin AI fits into the full org chart,** see `HUMANONLY.md` Section 10.

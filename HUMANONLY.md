@@ -734,3 +734,253 @@ handoff documents for replacement agents.
 | Assistant AI | `vision/log/assistant-log.md` | After each briefing written |
 | Visionary AI | `vision/log/visionary-log.md` | After every 2-3 ideas |
 | Head AI | `reports/head-ai-log.md` | After every merge, decision, or task assignment |
+| Admin AI | `admin/log/admin-log.md` | After every batch of suggestions |
+
+---
+
+## 9. Admin AI
+
+The Admin AI monitors infrastructure quality -- documentation accuracy, scaffolding
+completeness, config consistency, and stale content. It does NOT execute workstreams
+or make architectural decisions. It audits and suggests.
+
+### 9.1 When to Run
+
+- Before handing off to a new Head AI (knowledge transfer audit)
+- After merging a batch of workstreams
+- After major documentation changes
+- When a new agent reports confusion from stale docs
+- Periodically as a health check
+
+### 9.2 Admin AI Prompt
+
+Launch in any session (no worktree needed -- the Admin AI only writes to `admin/`).
+
+**Prompt:**
+> Read `admin/INSTRUCTIONS.md` completely -- this is your audit playbook. It lists every
+> file you must read and every check you must perform. Read ALL files listed in the
+> instructions (CLAUDE.md, CRITICAL.md, GOALS.md, TODO.md, pyproject.toml, all
+> `__init__.py` files in src/statebind/, all module READMEs, all config files, CI
+> workflow, reports, workstreams/README.md). Then systematically audit the project's
+> infrastructure: documentation accuracy, scaffolding completeness, config consistency,
+> cross-reference integrity, and stale content. Write structured suggestions to
+> `admin/suggestions.md` following the template in that file. Prioritize P0 items
+> (things that are broken or actively misleading) above all else. Update
+> `admin/log/admin-log.md` continuously as you work. Focus on infrastructure health,
+> not scientific or architectural decisions.
+
+**Expected output:**
+- Updated `admin/suggestions.md` with structured suggestions (ID, priority, category)
+- Updated `admin/log/admin-log.md` with audit session details
+
+**Verify:**
+```bash
+cat admin/suggestions.md | head -30
+# Should show suggestions with IDs (S001, S002...), priorities, and categories
+# Each suggestion should have a specific file:line reference
+```
+
+### 9.3 Processing Admin AI Suggestions (Head AI)
+
+After the Admin AI session, tell the Head AI:
+
+**Prompt:**
+> Read `admin/suggestions.md`. For each suggestion with Status: suggested, decide
+> whether to accept and implement, or mark as wont-fix. For P0 items (broken/wrong),
+> fix immediately. For P1 items (stale/misleading), fix or schedule. For P2/P3, use
+> your judgment. Update each suggestion's status field and add notes. Log your
+> decisions in `reports/head-ai-log.md`.
+
+**Expected output:**
+- Suggestion status fields updated (`accepted`, `implemented`, or `wont-fix`)
+- Fixes applied directly to ML branch for small items
+- Updated `reports/head-ai-log.md` with decision rationale
+
+---
+
+## 10. AI Employee Directory
+
+Complete reference for every AI role in the StateBind development system. This directory
+is the authoritative source for understanding who does what, who reports to whom, and
+where to find each role's documentation and prompts.
+
+### 10.1 Organizational Chart
+
+```
+                    +-----------------------+
+                    |    Human Operator     |
+                    |    (You)              |
+                    +---+-------+-------+---+
+                        |       |       |
+           +------------+   +---+---+   +------------+
+           |                |       |                |
+  +--------v--------+  +---v---+  +v-----------+  +-v-----------+
+  |    Head AI       |  | Admin |  | Assistant  |  | Modular     |
+  |  (Coordinator)   |  |  AI   |  |    AI      |  | Agents      |
+  |                  |  |(Audit)|  | (Briefing  |  | (WS01-WS09) |
+  +--+----------+----+  +---+---+  |  Writer)   |  +-------------+
+     |          |            |     +------+------+
+     |          |            |            |
+     |     Merges completed  |     +------v------+
+     |     agent worktrees   |     | Visionary   |
+     |     into ML branch    |     |    AI       |
+     |                       |     | (Ideas)     |
+     |   Reviews suggestions |     +-------------+
+     |   from Admin AI       |
+     |                       |
+     |   Reviews ideas       |
+     |   from Visionary AI   |
+     |                       |
+     +--- Creates new        |
+          workstream briefs   |
+          for Modular Agents  |
+```
+
+### 10.2 Role Details
+
+#### Head AI -- Coordinator & Decision Maker
+
+| Attribute | Value |
+|-----------|-------|
+| **Branch** | ML (always, no worktree) |
+| **Reads** | CLAUDE.md, GOALS.md, TODO.md, CRITICAL.md, workstreams/README.md, reports/head-ai-log.md, vision/ideas/*.md, admin/suggestions.md |
+| **Writes** | reports/head-ai-log.md, workstreams/ (new briefs), HUMANONLY.md (new prompts), CLAUDE.md (architecture changes), CRITICAL.md (new gotchas), idea status fields, suggestion status fields |
+| **Reports to** | Human Operator |
+| **Receives from** | Modular Agents (completed worktrees), Visionary AI (ideas), Admin AI (suggestions) |
+| **Documentation** | `reports/head-ai-log.md` |
+| **Prompt location** | HUMANONLY.md Section 2 |
+
+**Key responsibilities:**
+- Merge completed worktrees into ML and push to `origin/ML`
+- Triage Visionary ideas (accept/defer) and create workstream briefs
+- Triage Admin suggestions (implement/schedule/wont-fix)
+- Resolve cross-workstream conflicts
+- Make architectural decisions with rationale
+- Maintain running log continuously
+
+---
+
+#### Modular Agent -- Workstream Executor
+
+| Attribute | Value |
+|-----------|-------|
+| **Branch** | `ws{NN}/{description}` in isolated worktree at `.claude/worktrees/ws{NN}-{description}` |
+| **Reads** | CLAUDE.md, workstreams/{NN}-*.md, relevant module README.md/CRITICAL.md, INTERFACES.md, its own report |
+| **Writes** | Source code in its scope, tests, reports/workstreams/ws{NN}-report.md |
+| **Reports to** | Head AI (via completed worktree + report) |
+| **Receives from** | Human Operator (prompt with worktree name) |
+| **Documentation** | `reports/workstreams/ws{NN}-report.md` |
+| **Prompt location** | HUMANONLY.md Section 3 (one prompt per workstream) |
+
+**Key responsibilities:**
+- Execute one workstream in isolation
+- Follow interface contracts from INTERFACES.md
+- Write tests for all new code (test count must not decrease)
+- Continuously update progress report
+- Stay within scope (never modify files listed in "Files NOT to Touch")
+
+---
+
+#### Assistant AI -- Briefing Writer
+
+| Attribute | Value |
+|-----------|-------|
+| **Branch** | Any (no worktree needed, writes only to `vision/`) |
+| **Reads** | Everything: CLAUDE.md, GOALS.md, TODO.md, CRITICAL.md, all reports, key source files, workstreams/README.md, INTERFACES.md, pyproject.toml, admin/ directory |
+| **Writes** | `vision/briefings/*.md` (5 briefing files), `vision/log/assistant-log.md` |
+| **Reports to** | Human Operator |
+| **Receives from** | The entire codebase (read-only) |
+| **Documentation** | `vision/log/assistant-log.md` |
+| **Prompt location** | HUMANONLY.md Section 8.3 |
+| **Playbook** | `vision/briefings/INSTRUCTIONS.md` |
+
+**Key responsibilities:**
+- Translate full project state into digestible briefings for Visionary AI
+- Produce 5 briefing files: project-overview, current-progress, remaining-goals, architecture, known-limitations
+- Be honest and quantitative (no optimism bias)
+- Refresh briefings before every Visionary session
+- Include "opportunity signals" after every limitation
+
+---
+
+#### Visionary AI -- Strategic Thinker
+
+| Attribute | Value |
+|-----------|-------|
+| **Branch** | Any (no worktree needed, writes only to `vision/`) |
+| **Reads** | ONLY files inside `vision/` (briefings, own ideas, own log) -- NEVER source code |
+| **Writes** | `vision/ideas/{NNN}-*.md` (idea files), `vision/log/visionary-log.md` |
+| **Reports to** | Head AI (via ideas) |
+| **Receives from** | Assistant AI (via briefings in `vision/briefings/`) |
+| **Documentation** | `vision/log/visionary-log.md` |
+| **Prompt location** | HUMANONLY.md Section 8.4 |
+| **Playbook** | `vision/ideas/README.md` |
+
+**Key responsibilities:**
+- Propose 5-15 bold improvement ideas per session
+- Think simultaneously as PI, drug discovery veteran, and ML researcher
+- Never read source code or implement anything
+- Reference briefings to ground ideas in project reality
+- Categorize ideas: Scientific Rigor, Pipeline Gaps, ML Improvements, Validation, Novel Approaches, Infrastructure
+
+---
+
+#### Admin AI -- Infrastructure Monitor
+
+| Attribute | Value |
+|-----------|-------|
+| **Branch** | Any (no worktree needed, writes only to `admin/`) |
+| **Reads** | CLAUDE.md, CRITICAL.md, GOALS.md, TODO.md, all `__init__.py`, all module READMEs, configs/, reports/, pyproject.toml, test structure, .gitignore, CI workflow |
+| **Writes** | `admin/suggestions.md`, `admin/log/admin-log.md` |
+| **Reports to** | Head AI (via suggestions) |
+| **Receives from** | The infrastructure layer of the codebase (read-only) |
+| **Documentation** | `admin/log/admin-log.md` |
+| **Prompt location** | HUMANONLY.md Section 9.2 |
+| **Playbook** | `admin/INSTRUCTIONS.md` |
+
+**Key responsibilities:**
+- Audit documentation accuracy, scaffolding completeness, config consistency
+- Write structured suggestions with priority (P0-P3) and category
+- Never implement changes -- only observe and suggest
+- Focus on infrastructure quality, not scientific or architectural decisions
+
+---
+
+### 10.3 Information Flow
+
+```
+Full Codebase ----(reads)----> Assistant AI ----(briefings)----> Visionary AI
+                                                                      |
+                                                                (ideas, proposed)
+                                                                      |
+                                                                      v
+Full Codebase ----(reads)----> Head AI <-------(suggestions)---- Admin AI
+                                  |
+                            (accepts ideas,
+                             creates workstreams,
+                             implements suggestions)
+                                  |
+                                  v
+                            Modular Agents
+                            (execute workstreams
+                             in isolated worktrees)
+                                  |
+                            (completed worktrees
+                             with code + tests)
+                                  |
+                                  v
+                            Head AI merges
+                            to ML branch
+```
+
+### 10.4 Dependencies Between Roles
+
+| Producer | Consumer | What Flows | Where It Lives |
+|----------|----------|------------|----------------|
+| Assistant AI | Visionary AI | 5 briefing files | `vision/briefings/*.md` |
+| Visionary AI | Head AI | Numbered idea files | `vision/ideas/{NNN}-*.md` |
+| Admin AI | Head AI | Structured suggestions | `admin/suggestions.md` |
+| Head AI | Modular Agents | Workstream brief files | `workstreams/{NN}-*.md` |
+| Head AI | Human Operator | Agent prompts | `HUMANONLY.md` Sections 3, 8, 9 |
+| Modular Agents | Head AI | Completed worktrees | `.claude/worktrees/ws{NN}-*` |
+| All roles | Future selves | Running documentation | See log file per role above |
