@@ -2,42 +2,90 @@
 
 ## Status
 
-- **Last session:** _none yet_
-- **Total ideas proposed:** 0
-- **Last updated:** _not started_
+- **Last session:** Session 1 -- 2026-03-30
+- **Total ideas proposed:** 12
+- **Last updated:** 2026-03-30
 
 ---
 
 ## Sessions
 
-<!-- Newest entries first. Each session gets its own heading. -->
-
-_No sessions yet. When you start your first session, add a heading like:_
-
-### Session 1 -- {YYYY-MM-DD}
+### Session 1 -- 2026-03-30
 
 #### Ideas Proposed
-- {NNN}: {title} -- {one-line summary}
+
+- 001: Continuous Conformational Conditioning via Protein Language Models -- Replace discrete 4-state model with ESM-2 continuous embeddings for VAE conditioning (P0)
+- 002: 3D Pocket-Conditioned Diffusion Model -- Replace SMILES VAE with DiffSBDD-style 3D generation directly in the binding pocket (P1)
+- 003: Kinome-Wide Selectivity Panel -- Add multi-kinase selectivity scoring against 10-20 off-target kinases (P0)
+- 004: Ensemble Uncertainty and Active Learning Loop -- Train model ensembles for uncertainty, use for iterative candidate improvement (P1)
+- 005: GNINA Integration for Physics-Informed Docking -- Add real molecular docking with binding poses via GNINA (P1)
+- 006: Learned Chemical Similarity from Activity Cliffs -- Replace 3-molecule Tanimoto with contrastive learned metric on thousands of EGFR actives (P1)
+- 007: Retrosynthetic Feasibility Gate -- Assess synthesis routes for top candidates via retrosynthesis API or model (P2)
+- 008: Pareto Multi-Objective Optimization -- Replace weighted-sum scoring with Pareto front and hypervolume comparison (P1)
+- 009: Retrospective Time-Split Validation -- Validate pipeline by predicting post-2015 EGFR drugs from pre-2015 data only (P0)
+- 010: Self-Supervised Pre-Training for GNN Backbone -- Pre-train graph encoder on millions of molecules before fine-tuning on EGFR (P1)
+- 011: Water Thermodynamics and Solvation Analysis -- Map pocket water networks per state and score candidates by water displacement (P2)
+- 012: Reinforcement Learning for State-Conditioned Molecular Optimization -- RL layer on top of VAE to optimize latent space navigation toward high-scoring state-specific molecules (P2)
 
 #### Themes Explored
-- {What categories or areas you focused on}
+
+1. **Strengthening the central hypothesis** (Ideas 001, 005, 008, 009) -- The 4-state discretization, lack of physics-based docking, arbitrary scoring weights, and absence of validation all weaken the central claim. These ideas directly address the foundations of the state-aware vs static comparison.
+
+2. **Upgrading the scoring function** (Ideas 003, 005, 006, 008) -- Three of the four scoring components have fundamental weaknesses: similarity uses only 3 references, docking is a toy proxy, and weights are arbitrary. These ideas upgrade each component individually and collectively.
+
+3. **Next-generation molecular generation** (Ideas 002, 012) -- Moving beyond SMILES-based generation to 3D-aware design and optimization-driven generation. These are the most ambitious ideas and would place StateBind at the ML frontier.
+
+4. **Practical drug design credibility** (Ideas 003, 007, 011) -- Selectivity, synthesis feasibility, and solvation are what practitioners expect. These ideas bridge the gap between academic pipeline and actionable drug design tool.
+
+5. **ML best practices for small data** (Ideas 004, 010) -- Pre-training and ensemble uncertainty are standard best practices that the project currently lacks. These are the lowest-risk, highest-return ML improvements.
+
+6. **Validation without wet lab** (Idea 009) -- The retrospective time-split is the most creative validation strategy available. It addresses the #1 peer reviewer concern without any experimental work.
 
 #### Briefing Gaps Noticed
-- {Information you needed but the briefings didn't provide -- flag for Assistant AI}
+
+1. **ChEMBL EGFR active compound count.** Several ideas (003, 006, 009, 010) depend on the volume of EGFR data in ChEMBL. The briefings mention 1,678 compounds for MPNN training but do not specify the total EGFR active count. Need the Assistant AI to query ChEMBL for: total EGFR compounds (any activity), EGFR actives (pIC50 >= 6.0), and EGFR compounds with deposition dates for time-split analysis.
+
+2. **PDB structure count and resolution per state.** Ideas 005 and 011 need to know: how many PDB structures per conformational state? What is their resolution? Do they include crystallographic waters? The briefings mention 16 PDB structures total but not per-state distribution or resolution.
+
+3. **Existing pre-trained molecular models.** Idea 010 would benefit from knowing which pre-trained GNN checkpoints are available (GEM, MolCLR, GraphMVP, etc.) and whether they are architecturally compatible with the existing MPNN (NNConv-based). The briefings describe the MPNN architecture but do not survey the pre-trained model landscape.
+
+4. **GNINA availability and throughput.** Idea 005 depends on GNINA being installable and fast enough. The briefings do not mention any existing docking infrastructure or conda environment constraints.
+
+5. **Multi-kinase bioactivity data availability.** Idea 003 needs ChEMBL bioactivity data for 10-20 kinases. The briefings focus exclusively on EGFR. A brief survey of kinase data volume per target would help scope the selectivity panel idea.
 
 #### Reflections
-- {What felt high-impact? What felt like a dead end? What to explore next time?}
+
+**What felt high-impact:**
+- Ideas 001 (continuous conformational conditioning) and 009 (retrospective validation) feel like the two most transformative proposals. 001 redefines the scientific hypothesis; 009 provides validation. Together they could make the project publishable.
+- Idea 003 (selectivity panel) is the most important practical improvement. Without selectivity, the pipeline is not a drug design tool.
+- Idea 005 (GNINA) is the highest-return investment for the docking component. It activates 20% of scoring weight with real physics.
+
+**What felt like diminishing returns:**
+- Idea 011 (water thermodynamics) is intellectually exciting but may be too specialized for the current project scope. It requires extensive structural biology expertise and the payoff is uncertain until the more fundamental scoring issues are fixed.
+- Idea 002 (3D diffusion) is the most ambitious idea and would be transformative, but the effort is Epic-scale and depends on many prerequisites.
+
+**Priority ordering for the Head AI:**
+1. **Tier 1 (do first):** 009 (validation), 001 (continuous conditioning), 003 (selectivity)
+2. **Tier 2 (do next):** 005 (GNINA), 006 (learned similarity), 010 (pre-training), 004 (uncertainty)
+3. **Tier 3 (do when foundation is solid):** 008 (Pareto), 012 (RL), 007 (retrosynthesis)
+4. **Tier 4 (aspirational):** 002 (3D diffusion), 011 (water thermodynamics)
+
+**What to explore next session:**
+- Protein-ligand interaction fingerprints (mentioned in `known-limitations.md` Section 4.2 but not addressed in any idea)
+- Comparison benchmarking against published generative models (REINVENT, GraphAF, MolGPT) -- the peer reviewer concern about missing SOTA comparisons
+- Federated or multi-site learning across kinase targets
+- IP/patent freedom-to-operate analysis mentioned in practitioner critique
 
 ---
 
 ## Current State
 
-**What is done:** Nothing yet.
+**What is done:** 12 ideas proposed in session 1, covering 6 categories. All ideas follow the template and reference the briefings. Running log is current.
 
 **Next steps:**
-1. Read all briefings in `vision/briefings/`
-2. Read `vision/ideas/README.md` for rules and template
-3. Begin generating ideas
+1. Wait for Head AI review and status updates on proposed ideas
+2. In next session, explore remaining gaps: interaction fingerprints, SOTA benchmarking, IP analysis
+3. Address any briefing gaps flagged above (pending Assistant AI refresh)
 
 ---
 
