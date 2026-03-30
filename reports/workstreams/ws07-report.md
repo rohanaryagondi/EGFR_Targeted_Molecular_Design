@@ -39,12 +39,12 @@ in `ml/vae.py`; this workstream creates the surrounding integration code.
 
 ## Current State
 
-**What is done:** All code and integration. Model training requires HPC (see HUMANONLY.md Section 4).
+**What is done:** All code and integration. Model training requires HPC (see HumanOnly/AI-Operations-Manual.md Section 4).
 
 ---
 
 ## Handoff Notes
 
 Workstream code is complete. Model training is a separate HPC task -- see
-`HUMANONLY.md` Section 4 for training instructions. The integration code works in
+`HumanOnly/AI-Operations-Manual.md` Section 4 for training instructions. The integration code works in
 fallback mode without a trained checkpoint.

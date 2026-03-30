@@ -710,7 +710,7 @@ After the Visionary completes a session, tell the Head AI:
 **Prompt:**
 > Read all idea files in `vision/ideas/` that have `Status: proposed`. For each idea,
 > decide whether to accept or defer. For accepted ideas, create a workstream brief in
-> `workstreams/`, add a deployment prompt to `HUMANONLY.md`, and update
+> `workstreams/`, add a deployment prompt to `HumanOnly/AI-Operations-Manual.md`, and update
 > `workstreams/README.md`. Update the idea file's Status field to `accepted` or
 > `deferred`. Document every decision with rationale in `reports/head-ai-log.md`.
 > Follow the workstream creation patterns in existing briefs (e.g.,
@@ -719,7 +719,7 @@ After the Visionary completes a session, tell the Head AI:
 **Expected output:**
 - Idea status fields updated (`accepted` or `deferred`)
 - New workstream briefs for accepted ideas
-- Updated `HUMANONLY.md` with new deployment prompts
+- Updated `HumanOnly/AI-Operations-Manual.md` with new deployment prompts
 - Updated `workstreams/README.md` with new entries
 - Updated `reports/head-ai-log.md` with decision rationale
 
@@ -844,11 +844,11 @@ where to find each role's documentation and prompts.
 |-----------|-------|
 | **Branch** | ML (always, no worktree) |
 | **Reads** | CLAUDE.md, GOALS.md, TODO.md, CRITICAL.md, workstreams/README.md, reports/head-ai-log.md, vision/ideas/*.md, admin/suggestions.md |
-| **Writes** | reports/head-ai-log.md, workstreams/ (new briefs), HUMANONLY.md (new prompts), CLAUDE.md (architecture changes), CRITICAL.md (new gotchas), idea status fields, suggestion status fields |
+| **Writes** | reports/head-ai-log.md, workstreams/ (new briefs), HumanOnly/AI-Operations-Manual.md (new prompts), CLAUDE.md (architecture changes), CRITICAL.md (new gotchas), idea status fields, suggestion status fields |
 | **Reports to** | Human Operator |
 | **Receives from** | Modular Agents (completed worktrees), Visionary AI (ideas), Admin AI (suggestions) |
 | **Documentation** | `reports/head-ai-log.md` |
-| **Prompt location** | HUMANONLY.md Section 2 |
+| **Prompt location** | HumanOnly/AI-Operations-Manual.md Section 2 |
 
 **Key responsibilities:**
 - Merge completed worktrees into ML and push to `origin/ML`
@@ -870,7 +870,7 @@ where to find each role's documentation and prompts.
 | **Reports to** | Head AI (via completed worktree + report) |
 | **Receives from** | Human Operator (prompt with worktree name) |
 | **Documentation** | `reports/workstreams/ws{NN}-report.md` |
-| **Prompt location** | HUMANONLY.md Section 3 (one prompt per workstream) |
+| **Prompt location** | HumanOnly/AI-Operations-Manual.md Section 3 (one prompt per workstream) |
 
 **Key responsibilities:**
 - Execute one workstream in isolation
@@ -891,7 +891,7 @@ where to find each role's documentation and prompts.
 | **Reports to** | Human Operator |
 | **Receives from** | The entire codebase (read-only) |
 | **Documentation** | `vision/log/assistant-log.md` |
-| **Prompt location** | HUMANONLY.md Section 8.3 |
+| **Prompt location** | HumanOnly/AI-Operations-Manual.md Section 8.3 |
 | **Playbook** | `vision/briefings/INSTRUCTIONS.md` |
 
 **Key responsibilities:**
@@ -913,7 +913,7 @@ where to find each role's documentation and prompts.
 | **Reports to** | Head AI (via ideas) |
 | **Receives from** | Assistant AI (via briefings in `vision/briefings/`) |
 | **Documentation** | `vision/log/visionary-log.md` |
-| **Prompt location** | HUMANONLY.md Section 8.4 |
+| **Prompt location** | HumanOnly/AI-Operations-Manual.md Section 8.4 |
 | **Playbook** | `vision/ideas/README.md` |
 
 **Key responsibilities:**
@@ -935,7 +935,7 @@ where to find each role's documentation and prompts.
 | **Reports to** | Head AI (via suggestions) |
 | **Receives from** | The infrastructure layer of the codebase (read-only) |
 | **Documentation** | `admin/log/admin-log.md` |
-| **Prompt location** | HUMANONLY.md Section 9.2 |
+| **Prompt location** | HumanOnly/AI-Operations-Manual.md Section 9.2 |
 | **Playbook** | `admin/INSTRUCTIONS.md` |
 
 **Key responsibilities:**
@@ -981,6 +981,6 @@ Full Codebase ----(reads)----> Head AI <-------(suggestions)---- Admin AI
 | Visionary AI | Head AI | Numbered idea files | `vision/ideas/{NNN}-*.md` |
 | Admin AI | Head AI | Structured suggestions | `admin/suggestions.md` |
 | Head AI | Modular Agents | Workstream brief files | `workstreams/{NN}-*.md` |
-| Head AI | Human Operator | Agent prompts | `HUMANONLY.md` Sections 3, 8, 9 |
+| Head AI | Human Operator | Agent prompts | `HumanOnly/AI-Operations-Manual.md` Sections 3, 8, 9 |
 | Modular Agents | Head AI | Completed worktrees | `.claude/worktrees/ws{NN}-*` |
 | All roles | Future selves | Running documentation | See log file per role above |

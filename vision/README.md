@@ -60,7 +60,7 @@ modular agents, and updates all documentation.
 - Updates idea status fields: `proposed` -> `accepted` -> `planned` -> `in-progress`
   -> `completed` / `deferred`
 - Creates new workstream briefs in `workstreams/`
-- Updates `HUMANONLY.md` with new agent prompts
+- Updates `HumanOnly/AI-Operations-Manual.md` with new agent prompts
 - Updates `reports/head-ai-log.md` with decisions
 
 ---

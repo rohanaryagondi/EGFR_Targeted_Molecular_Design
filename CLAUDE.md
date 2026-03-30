@@ -420,7 +420,8 @@ BioForge/
 |-- notebooks/                   Jupyter notebooks
 |-- workstreams/                 9 independent improvement task briefs + INTERFACES.md
 |-- vision/                      Vision System: briefings, ideas, logs (see Section 18)
-+-- admin/                       Admin AI: infrastructure suggestions and audit log (see Section 19)
+|-- admin/                       Admin AI: infrastructure suggestions and audit log (see Section 19)
++-- HumanOnly/                   Human-only documentation (AI agents must not read this folder)
 ```
 
 ---
@@ -739,6 +740,9 @@ Two canonical labels defined in `ranking/models.py`:
 
 - **Do not create new top-level directories** without updating this guide (Section 9).
 
+- **Do not read files in `HumanOnly/`.** That folder is exclusively for the human
+  operator. AI agents should never read it for instructions or context.
+
 - **Do not run workstreams 02, 04, and 08 in parallel.** They all modify
   `ranking/scoring.py` and must execute sequentially (see Section 11).
 
@@ -939,7 +943,7 @@ After completing current workstreams and merges, the Head AI must:
 1. Read all `proposed` ideas in `vision/ideas/`
 2. For each idea, decide: accept or defer (document rationale in `reports/head-ai-log.md`)
 3. For accepted ideas: create a workstream brief in `workstreams/`, add a prompt to
-   `HUMANONLY.md`, update `workstreams/README.md`
+   `HumanOnly/AI-Operations-Manual.md`, update `workstreams/README.md`
 4. Update the idea file's status field to `accepted` or `deferred`
 
 ### Rules
@@ -952,7 +956,7 @@ After completing current workstreams and merges, the Head AI must:
 6. All three roles maintain running documentation (Rule 10 applies universally).
 
 **For the complete AI role directory** (all 5 roles, reporting structure, information
-flow, and dependencies), see `HUMANONLY.md` Section 10.
+flow, and dependencies), see `HumanOnly/AI-Operations-Manual.md` Section 10.
 
 ---
 
@@ -1022,4 +1026,4 @@ After an Admin AI session, the Head AI must:
    decisions (those belong to the Visionary AI).
 6. Running documentation is mandatory (Rule 10 applies).
 
-**For how the Admin AI fits into the full org chart,** see `HUMANONLY.md` Section 10.
+**For how the Admin AI fits into the full org chart,** see `HumanOnly/AI-Operations-Manual.md` Section 10.

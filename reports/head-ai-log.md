@@ -135,7 +135,7 @@ then review ideas here.
 - Vision System scaffolded: `vision/` directory with README, instructions, templates, logs
 - Admin AI run (Session 1, 2026-03-30): 12 suggestions, all triaged
 - Documentation system established: all 9 workstream reports exist, TEMPLATE.md, this log
-- AI Employee Directory added to HUMANONLY.md Section 10
+- AI Employee Directory added to HumanOnly/AI-Operations-Manual.md Section 10
 - Admin AI suggestions triaged: 10 implemented, 1 accepted/deferred, 1 wont-fix
 - Documentation drift fixed: CLAUDE.md, GOALS.md, CRITICAL.md, TODO.md, 4 module READMEs,
   INTERFACES.md all updated to reflect post-workstream state
@@ -158,7 +158,7 @@ then review ideas here.
 ## Next Steps
 
 1. **Run Vision System** -- refresh briefings (Assistant AI), generate ideas (Visionary AI),
-   then review ideas. See HUMANONLY.md Sections 8.3-8.5 for prompts.
+   then review ideas. See HumanOnly/AI-Operations-Manual.md Sections 8.3-8.5 for prompts.
 
 2. **Fix ruff violations (S010)** -- ~40 pre-existing violations block CI. Run
    `ruff check --fix src/` to auto-fix, then manually resolve remaining.
@@ -167,7 +167,7 @@ then review ideas here.
    - VAE: `python scripts/train_vae.py --config configs/vae.yaml`
    - MPNN: `python scripts/train_mpnn.py --config configs/mpnn.yaml`
    - ADMET: `python scripts/train_admet.py --config configs/admet.yaml`
-   See HUMANONLY.md Section 4 for HPC instructions.
+   See HumanOnly/AI-Operations-Manual.md Section 4 for HPC instructions.
 
 4. **After training** -- re-run full comparison pipeline, apply statistical tests,
    update reports with real results. This is the path to rejecting the null hypothesis.
@@ -208,7 +208,7 @@ If your context compacts:
 5. **Read `CRITICAL.md` carefully.** It has operational gotchas about worktree naming,
    editable installs, shell CWD issues, and the scoring chain that will save you time.
 
-6. **The AI org chart** is in HUMANONLY.md Section 10. Five roles: Head AI (you),
+6. **The AI org chart** is in HumanOnly/AI-Operations-Manual.md Section 10. Five roles: Head AI (you),
    Modular Agents, Assistant AI, Visionary AI, Admin AI. You consume output from
    Visionary (ideas) and Admin (suggestions).
 

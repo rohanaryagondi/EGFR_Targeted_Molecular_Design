@@ -67,6 +67,6 @@ screening to the generation pipeline.
 
 ## Handoff Notes
 
-Workstream code is complete. Model training requires HPC -- see `HUMANONLY.md`
+Workstream code is complete. Model training requires HPC -- see `HumanOnly/AI-Operations-Manual.md`
 Section 4. The filter gate works in permissive fallback mode without a checkpoint
 (all candidates pass).
