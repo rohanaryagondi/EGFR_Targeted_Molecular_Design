@@ -33,9 +33,9 @@ comparison is fair. The only axis where state-aware can win is the `state_specif
 component (15% weight).
 
 **Key numbers:**
-- 72 Python source files across 12 subpackages (~13,700 lines)
+- 84 Python source files across 12 subpackages
 - 37 pipeline scripts in `scripts/`
-- 12 test modules + `test_imports.py` + `test_cli.py` = 14 test files, 359 tests
+- 19 test files, 548 tests
 - 3 neural network architectures (VAE, MPNN, ADMET)
 - 6 YAML config files
 - All results are computational hypotheses, never biological claims
@@ -91,7 +91,7 @@ project root by walking up from `src/statebind/data/paths.py`.
 - GOOD: `paths = DataPaths(); paths.raw_dir / "mutations.json"`
 
 ### Rule 6: Tests required
-Every new module/function needs tests in `tests/`. Existing 359 tests must continue to
+Every new module/function needs tests in `tests/`. Existing 548 tests must continue to
 pass. Run `pytest -v --tb=short` before every commit.
 
 - BAD: Adding a new scoring function with no test file.
@@ -138,22 +138,22 @@ See Section 17 for the full documentation system.
 12 subpackages in a sequential, acyclic pipeline:
 
 ```
-data/ + utils/           Shared infrastructure (paths, config, I/O)
+data/ + utils/ + chemistry/   Shared infrastructure (paths, config, I/O, fingerprints, descriptors)
        |
-  processing/            Phase 1: Raw data -> validated datasets
+  processing/                 Phase 1: Raw data -> validated datasets
        |
-  baselines/             Phase 2: Static single-structure pipeline
-  structure/             Phase 3: Conformational state atlas
-  context/               Phase 4: Mutation-to-state prediction
-  dynamics/              Phase 5: State transition world model
+  baselines/                  Phase 2: Static single-structure pipeline
+  structure/                  Phase 3: Conformational state atlas
+  context/                    Phase 4: Mutation-to-state prediction
+  dynamics/                   Phase 5: State transition world model
        |
-  ml/                    ML infrastructure: VAE, MPNN, ADMET
+  ml/                         ML infrastructure: VAE, MPNN, ADMET
        |
-  generation/            Phase 6: State-conditioned candidate generation
+  generation/                 Phase 6: State-conditioned candidate generation
        |
-  ranking/               Phase 7: Unified scoring for both pipelines
+  ranking/                    Phase 7: Unified scoring for both pipelines
        |
-  evaluation/            Phase 7: Head-to-head comparison
+  evaluation/                 Phase 7: Head-to-head comparison
 ```
 
 ### Module Details
@@ -162,37 +162,38 @@ data/ + utils/           Shared infrastructure (paths, config, I/O)
 |--------|-------|-------|---------|-----------|
 | `data/` | 5 | Infra | Path resolution, source registry, manifests, validation | `paths.py` (DataPaths), `registry.py`, `manifest.py`, `validation.py` |
 | `utils/` | 3 | Infra | Config loading, JSON I/O, directory management | `config.py` (load_config), `io.py` (save_json, load_json, ensure_dir) |
+| `chemistry/` | 7 | Infra | RDKit molecular fingerprints, descriptors, SA scores, docking proxy | `fingerprints.py`, `descriptors.py`, `validation.py`, `sa_score.py`, `docking_proxy.py` |
 | `processing/` | 8 | 1 | Raw data -> validated datasets (mutations, structures, ligands) | `context.py`, `structures.py`, `benchmark.py`, `models.py` |
-| `baselines/` | 8 | 2 | Static single-structure pipeline (1M17, one pocket, no state info) | `scoring.py` (:59-66 reference binders, :135 docking stub), `filtering.py`, `pipeline.py` |
+| `baselines/` | 8 | 2 | Static single-structure pipeline (1M17, one pocket, no state info) | `scoring.py` (:59 `_REFERENCE_BINDERS`, :202 `_score_docking_stub`), `filtering.py`, `pipeline.py` |
 | `structure/` | 6 | 3 | Conformational state atlas (4 states via 9D feature vectors) | `atlas.py`, `features.py`, `clustering.py`, `pocket_comparison.py` |
 | `context/` | 6 | 4 | Mutation-to-state prediction (T790M -> which states?) | `features.py`, `training.py`, `preprocessing.py`, `evaluation.py` |
 | `dynamics/` | 6 | 5 | State transition world model (inter-state dynamics) | `world_model.py`, `transitions.py`, `sequences.py`, `embeddings.py` |
-| `ml/` | 13 | ML | 3 neural nets + shared training (requires `[ml]` extras) | `vae.py`, `mpnn.py`, `admet.py`, `trainer.py`, `graphs.py`, `tokenizer.py` |
-| `generation/` | 7 | 6 | State-conditioned candidate generation + filtering | `generator.py`, `filtering.py`, `conditioning.py`, `diversity.py` |
-| `ranking/` | 4 | 7a | Unified scoring for BOTH pipelines (heart of fair comparison) | `scoring.py` (:40 DEFAULT_WEIGHTS, :89 validation, :100 score_unified) |
-| `evaluation/` | 4 | 7b | Head-to-head comparison, tables, figures, verdict | `comparison.py` (run_full_comparison), `tables.py`, `figures.py` |
-| `pockets/` | 0 | -- | Placeholder for future pocket analysis | (empty) |
+| `ml/` | 15 | ML | 3 neural nets + shared training + integration adapters (requires `[ml]` extras) | `vae.py`, `mpnn.py`, `admet.py`, `trainer.py`, `affinity_predictor.py`, `admet_predictor.py` |
+| `generation/` | 9 | 6 | State-conditioned candidate generation + filtering | `generator.py`, `filtering.py`, `conditioning.py`, `diversity.py`, `vae_integration.py`, `admet_filter.py` |
+| `ranking/` | 4 | 7a | Unified scoring for BOTH pipelines (heart of fair comparison) | `scoring.py` (:86 `DEFAULT_WEIGHTS`, :173 `_validate_weights`, :184 `score_unified`) |
+| `evaluation/` | 7 | 7b | Head-to-head comparison, statistics, tables, figures, verdict | `comparison.py`, `tables.py`, `figures.py`, `statistics.py`, `sensitivity.py`, `plotting.py` |
 
 ---
 
 ## 4. Dependency Graph
 
 ```
-data/ + utils/ -> processing/ -> baselines/, structure/, context/, dynamics/
-                                      |            |
-                                      v            v
-                                   ml/ (torch, torch_geometric, rdkit)
-                                  / | \
-                                 v  v  v
-                          generation/  |
-                              |        |
-                           ranking/ <--+
-                              |
-                          evaluation/
+data/ + utils/ + chemistry/ -> processing/ -> baselines/, structure/, context/, dynamics/
+                                                  |            |
+                                                  v            v
+                                               ml/ (torch, torch_geometric, rdkit)
+                                              / | \
+                                             v  v  v
+                                      generation/  |
+                                          |        |
+                                       ranking/ <--+
+                                          |
+                                      evaluation/
 ```
 
 | Upstream | Downstream | Why |
 |----------|------------|-----|
+| chemistry | baselines, ranking | Morgan fingerprints, descriptors, docking proxy |
 | processing | structure, context | Read processed PDB/mutation datasets |
 | baselines | generation | Reuses candidate filtering and scoring functions |
 | baselines | ranking | `ranking/scoring.py` imports `_score_*` from `baselines/scoring.py` |
@@ -210,24 +211,24 @@ any cross-module import.
 
 ## 5. Scoring Function Deep Dive
 
-Both pipelines are scored by `ranking/scoring.py:score_unified()` (line 100). The
+Both pipelines are scored by `ranking/scoring.py:score_unified()` (line 184). The
 function delegates to component scorers defined in `baselines/scoring.py`.
 
 ### Component Table
 
 | Component | Weight | Implementation | File:Line | Status |
 |-----------|--------|---------------|-----------|--------|
-| reference_similarity | 0.35 | Max SMILES 3-gram Tanimoto vs 3 reference binders | `baselines/scoring.py:69` | Crude proxy; should use Morgan/ECFP4 |
-| druglikeness | 0.30 | Linear scoring on MW [300-500], HBA [3-7], HBD [1-3], rings [2-5] | `baselines/scoring.py:83` | Approximate; should use RDKit descriptors |
-| docking_proxy | 0.20 | **STUB: returns constant 0.5 for all inputs** | `baselines/scoring.py:135` | Non-functional; wastes 20% of score weight |
-| state_specificity | 0.15 | Geometric decay: 1.0/0.5/0.25/0.0 by number of states candidate appears in | `ranking/scoring.py:55` | Functional; always 0 for static baseline |
+| reference_similarity | 0.35 | Morgan/ECFP4 fingerprint Tanimoto vs 3 reference binders (falls back to SMILES 3-gram) | `baselines/scoring.py:78` (`_score_reference_similarity`) | Complete (WS02: Morgan fingerprints) |
+| druglikeness | 0.30 | RDKit QED + Lipinski Ro5 (falls back to linear approximation) | `baselines/scoring.py:101` (`_score_druglikeness`) | Complete (WS02: RDKit descriptors) |
+| docking_proxy | 0.20 | 3-tier cascade: MPNN -> DockingProxy MLP -> constant 0.5 stub | `baselines/scoring.py:202` (`_score_docking_stub`) | Integration code complete; models need training |
+| state_specificity | 0.15 | Geometric decay: 1.0/0.5/0.25/0.0 by number of states candidate appears in | `ranking/scoring.py:139` (`_compute_state_specificity`) | Functional; always 0 for static baseline |
 
 ### Weight Definition & Validation
 
-- **Weights defined:** `ranking/scoring.py:40-45` (`DEFAULT_WEIGHTS` dict)
-- **Weights validated:** `ranking/scoring.py:89-97` (`_validate_weights()`) -- checks
+- **Weights defined:** `ranking/scoring.py:86-91` (`DEFAULT_WEIGHTS` dict)
+- **Weights validated:** `ranking/scoring.py:173-181` (`_validate_weights()`) -- checks
   all 4 keys present and sum == 1.0 (tolerance 1e-4)
-- **Method string:** `ranking/scoring.py:47-52` (`SCORING_METHOD`) -- human-readable
+- **Method string:** `ranking/scoring.py:93-97` (`SCORING_METHOD`) -- human-readable
   description embedded in every RankedPool artifact
 
 ### Reference Binders
@@ -245,22 +246,22 @@ The docking_proxy component has a planned 3-tier fallback (see
 ```
 Priority 1: MPNN prediction (AffinityMPNN predicts pIC50, normalize via sigmoid)
     - Requires: trained model at artifacts/models/mpnn/best_model.pt + torch
-    - Implemented in: ml/mpnn.py (model) + ml/affinity_predictor.py (integration, to be created)
+    - Implemented in: ml/mpnn.py (model) + ml/affinity_predictor.py (integration adapter)
 
-Priority 2: DockingProxy MLP (Workstream 04, lightweight numpy-based)
+Priority 2: DockingProxy MLP (WS04, lightweight numpy-based)
     - Requires: trained proxy from chemistry/docking_proxy.py
     - Interface: DockingProxy.predict(smiles) -> float in [0.0, 1.0]
 
 Priority 3: Constant 0.5 stub (current default)
-    - File: baselines/scoring.py:135-149
+    - File: baselines/scoring.py:202-216 (_score_docking_stub)
     - Always available, zero discriminative power
 ```
 
 ### Baseline vs Unified Scoring Difference
 
-The baseline has its OWN scorer at `baselines/scoring.py:155` (`score_candidates()`)
+The baseline has its OWN scorer at `baselines/scoring.py:248` (`score_candidates()`)
 with slightly different weights (0.4/0.3/0.3, no state_specificity). The UNIFIED scorer
-at `ranking/scoring.py:100` (`score_unified()`) uses 0.35/0.30/0.20/0.15. The unified
+at `ranking/scoring.py:184` (`score_unified()`) uses 0.35/0.30/0.20/0.15. The unified
 scorer is what matters for the head-to-head comparison. The baseline scorer exists only
 for Phase 2 standalone runs.
 
@@ -333,17 +334,15 @@ python scripts/train_mpnn.py           # Binding affinity MPNN
 python scripts/train_admet.py          # Multi-task ADMET predictor
 ```
 
-### Integration Plan
+### Integration (complete, pending model training)
 
-- **VAE -> generation:** `ml/vae_integration.py` (to be created) produces
-  `StateConditionedCandidate` objects with `source=ML_GENERATED`, `strategy=VAE_GENERATED`.
-  See `workstreams/INTERFACES.md` Contract 5.
-- **MPNN -> ranking:** `ml/affinity_predictor.py` (to be created) provides
-  `predict_affinity(smiles) -> float` in [0, 1]. Normalizes pIC50 via
-  `sigmoid((pIC50 - 5) / 2)`. Falls back to 0.5 stub. See Contract 4.
-- **ADMET -> evaluation:** `ml/admet_predictor.py` (to be created) provides
-  `predict_admet(smiles) -> dict[str, float]` and `check_admet_pass(smiles) -> (bool, dict)`.
-  See Contract 6.
+- **VAE -> generation:** `generation/vae_integration.py` loads pre-generated VAE candidates
+  via `load_vae_candidates(path)` and groups them by state via `build_vae_libraries(candidates)`.
+  VAE generation runs via `scripts/generate_vae_candidates.py` for GPU isolation.
+- **MPNN -> ranking:** `ml/affinity_predictor.py` provides `predict_affinity(smiles) -> float`
+  in [0, 1]. Normalizes pIC50 via `sigmoid((pIC50 - 5) / 2)`. Falls back to 0.5 stub.
+- **ADMET -> evaluation:** `ml/admet_predictor.py` provides `predict_admet(smiles) -> dict`
+  and `check_admet_pass(predictions, thresholds) -> (bool, list[str])`.
 
 ---
 
@@ -408,8 +407,8 @@ Logs: `artifacts/logs/{name}/`.
 BioForge/
 |-- CLAUDE.md                    This file
 |-- pyproject.toml               Package definition, deps, tool config
-|-- src/statebind/               72 .py files across 12 subpackages (see Section 3)
-|-- tests/                       14 test files, 359 tests (test_{module}.py pattern)
+|-- src/statebind/               84 .py files across 12 subpackages (see Section 3)
+|-- tests/                       19 test files, 548 tests (test_{module}.py pattern)
 |-- configs/                     6 YAML files: default, structure, context, vae, mpnn, admet
 |-- scripts/                     37 pipeline scripts (see Section 8 for execution order)
 |-- data/raw/                    Curated input data (mutations, structures, ligands)
@@ -481,7 +480,7 @@ def test_vae_training():
 
 ### Test Count Verification
 
-If you add tests, the total count must be >= 359. Never delete or skip existing
+If you add tests, the total count must be >= 548. Never delete or skip existing
 tests without explicit justification.
 
 ---
@@ -641,7 +640,7 @@ except ImportError:
 |---|---------|----------|
 | 1 | `ModuleNotFoundError: No module named 'statebind'` | Run `pip install -e ".[dev]"` from project root. |
 | 2 | `ImportError: cannot import name 'AffinityMPNN'` | Install ML deps: `pip install -e ".[ml]"`. The class requires torch. |
-| 3 | `ValueError: Scoring weights must sum to 1.0` | Check `DEFAULT_WEIGHTS` in `ranking/scoring.py:40`. Your custom weights dict must have all 4 keys summing to 1.0. |
+| 3 | `ValueError: Scoring weights must sum to 1.0` | Check `DEFAULT_WEIGHTS` in `ranking/scoring.py:86`. Your custom weights dict must have all 4 keys summing to 1.0. |
 | 4 | `FileNotFoundError` on any data path | Use `DataPaths()` for resolution. Check `data/raw/` exists. Run `scripts/validate_data_layout.py`. |
 | 5 | Tests fail with `assert statebind.__version__ == "0.1.0"` | Version is pinned in both `pyproject.toml:7` and `src/statebind/__init__.py`. Keep them in sync. |
 | 6 | `pydantic.ValidationError` on model construction | Check field types match Pydantic v2 expectations. Common: `float` vs `int`, missing required fields. |
@@ -727,7 +726,7 @@ Two canonical labels defined in `ranking/models.py`:
   pipeline must run with only: numpy, pandas, pyyaml, pydantic, typer, rich.
 
 - **Do not change `DEFAULT_WEIGHTS` without updating `SCORING_METHOD`.** They are
-  defined 7 lines apart in `ranking/scoring.py:40-52` and must stay in sync. The
+  defined near each other in `ranking/scoring.py:86-97` and must stay in sync. The
   `SCORING_METHOD` string is embedded in every artifact for reproducibility.
 
 - **Do not modify `_REFERENCE_BINDERS` without re-running the full pipeline.** All

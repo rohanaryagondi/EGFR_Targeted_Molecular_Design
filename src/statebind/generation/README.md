@@ -34,6 +34,11 @@ Phase 6 of StateBind: generates candidate molecules conditioned on each EGFR con
 | `compare_with_static_baseline()` | `(filtered: MultiStateFilterResult, static_smiles: set[str]) -> BaselineComparison` | Compare state-conditioned candidates against static baseline. |
 | `evaluation_to_dict()` | `(evl: GenerationEvaluation) -> dict` | Serialize evaluation to dict. |
 | `save_evaluation()` | `(evl: GenerationEvaluation, path: Path) -> None` | Save evaluation to JSON. |
+| `load_vae_candidates` | `(path: Path \| str) -> list[StateConditionedCandidate]` | Load VAE candidates from JSON artifact, filter invalid, wrap as pipeline-compatible models. |
+| `build_vae_libraries` | `(candidates: list[StateConditionedCandidate]) -> list[StateConditionedLibrary]` | Group VAE candidates by target_state into StateConditionedLibrary objects. |
+| `ADMETFilterResult` | `BaseModel(candidate_id, smiles, predictions, passed, failed_tasks)` | ADMET filter outcome for a single candidate. |
+| `ADMETFilterSummary` | `BaseModel(n_input, n_passed, n_failed, n_skipped, pass_rate, failure_counts, results)` | Aggregate ADMET filtering statistics. |
+| `filter_candidates_admet` | `(candidates, thresholds=None, remove_failures=False) -> tuple[list[StateConditionedCandidate], ADMETFilterSummary]` | Apply ADMET safety filtering; passes all candidates when model is unavailable. |
 
 ## Internal Files
 
@@ -46,6 +51,8 @@ Phase 6 of StateBind: generates candidate molecules conditioned on each EGFR con
 | `filtering.py` | State-aware chemistry filtering: `_type1_filters()` (MW<=600) for DFGin states, `_type2_filters()` (MW<=800) for DFGout states, `filter_state_library()`, `filter_all_states()`. |
 | `diversity.py` | Intra-state and cross-state diversity analysis: `compute_diversity()` using SMILES n-gram Tanimoto with pair sampling, `analyze_cross_state_diversity()` for overlap matrices and state-unique counts. |
 | `evaluation.py` | Generation quality evaluation: per-state metrics (validity, uniqueness, diversity, MW), baseline comparison, serialization to JSON. |
+| `vae_integration.py` | VAE candidate loading and grouping: `load_vae_candidates(path) -> list[StateConditionedCandidate]` reads JSON artifact from VAE generation, filters invalid candidates, wraps as `StateConditionedCandidate` with `source=ML_GENERATED` and `strategy=VAE_GENERATED`. `build_vae_libraries(candidates) -> list[StateConditionedLibrary]` groups by target state. No torch dependency. |
+| `admet_filter.py` | ADMET safety filtering: `ADMETFilterResult` (per-candidate outcome), `ADMETFilterSummary` (aggregate statistics), `filter_candidates_admet(candidates, thresholds, remove_failures) -> (list, summary)`. When the ADMET model is unavailable, all candidates pass through with `n_skipped == n_input`. |
 
 ## Dependencies
 
@@ -97,16 +104,13 @@ Phase 6 of StateBind: generates candidate molecules conditioned on each EGFR con
 - Strategy-specific transformations are simple (e.g., appending functional groups, swapping atoms) and may produce chemically invalid or synthetically infeasible molecules.
 - The `_gatekeeper_avoiding` strategy uses naive string matching (`"OC"`, `"Cl"` in SMILES) which can match unintended substructures.
 
-## Planned Improvements
-
-- **Workstream 02** will upgrade diversity computation in `diversity.py` to use Morgan fingerprints instead of SMILES n-gram Tanimoto.
-
 ## Current Status
 
-Complete for rule-based generation (7 strategies). VAE integration is pending (WS07). ADMET filtering is pending (WS09).
+Complete. Rule-based generation (7 strategies), VAE integration (WS07), and ADMET safety filtering (WS09) are all implemented and merged. Diversity computation uses Morgan fingerprints when RDKit is available (WS02), with SMILES n-gram Tanimoto fallback.
 
-## Remaining Work for AI Agents
+## Completed Workstreams
 
-- **WS07** creates VAE integration to load ML-generated candidates as `StateConditionedCandidate` objects with `source=ML_GENERATED`, `strategy=VAE_GENERATED`. Read `workstreams/07-conditional-vae.md`.
-- **WS09** creates `generation/admet_filter.py` for ADMET safety filtering. Read `workstreams/09-admet-predictor.md`.
+- **WS02** (Scoring Integration): Upgraded diversity computation in `diversity.py` to use Morgan fingerprints when RDKit is available.
+- **WS07** (Conditional VAE): Created `vae_integration.py` -- loads VAE-generated candidates from JSON artifacts as `StateConditionedCandidate` objects with `source=ML_GENERATED`, `strategy=VAE_GENERATED`, and groups them into `StateConditionedLibrary` objects by state.
+- **WS09** (ADMET Predictor): Created `admet_filter.py` -- ADMET safety filtering with `filter_candidates_admet()` that runs the trained `MultiTaskADMET` model on candidates, flags or removes those failing safety thresholds, and produces `ADMETFilterSummary` statistics. Gracefully passes all candidates when the ADMET model is unavailable.
 - See `generation/CRITICAL.md` for non-obvious facts.

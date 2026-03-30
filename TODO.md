@@ -28,9 +28,9 @@ For workstream briefs and interface contracts, see `workstreams/README.md`.
 
 ### Data Preparation (no dependencies -- can start immediately)
 
-- [ ] **`scripts/prepare_vae_data.py`** -- Query ChEMBL for EGFR actives (target CHEMBL203). Canonicalize SMILES via RDKit, filter MW 150-800, deduplicate, split 80/10/10. Output: `data/processed/egfr_smiles_{train,val,test}.json`. Target: 3,000-5,000 compounds.
-- [ ] **`scripts/prepare_mpnn_data.py`** -- Extract IC50/Ki assays from ChEMBL EGFR, convert to pIC50, filter quality. Output: `data/processed/egfr_affinity.json` with SMILES + pIC50 + split labels.
-- [ ] **`scripts/prepare_admet_data.py`** -- Download six TDC benchmarks (hERG, CYP3A4, Caco-2, solubility, clearance, lipophilicity). Merge into unified multi-task format. Output: `data/processed/admet_combined.json`.
+- [x] **`scripts/prepare_vae_data.py`** -- Query ChEMBL for EGFR actives (target CHEMBL203). Canonicalize SMILES via RDKit, filter MW 150-800, deduplicate, split 80/10/10. Output: `data/processed/egfr_smiles_{train,val,test}.json`. Target: 3,000-5,000 compounds.
+- [x] **`scripts/prepare_mpnn_data.py`** -- Extract IC50/Ki assays from ChEMBL EGFR, convert to pIC50, filter quality. Output: `data/processed/egfr_affinity.json` with SMILES + pIC50 + split labels (1,678 compounds).
+- [x] **`scripts/prepare_admet_data.py`** -- Download six TDC benchmarks (hERG, CYP3A4, Caco-2, solubility, clearance, lipophilicity). Merge into unified multi-task format. Output: `data/processed/admet_combined.json`.
 
 ### Model Training (after data preparation)
 
@@ -200,9 +200,9 @@ ML training (Section 2) runs in parallel with all workstreams and feeds into Int
 
 | Area | Status | Next Action |
 |------|--------|-------------|
-| Pipeline (Phases 0-7) | Complete (13 modules, 540 tests) | Maintain |
+| Pipeline (Phases 0-7) | Complete (13 modules, 548 tests) | Maintain |
 | ML code | Written, untrained (all integration adapters complete) | Train on GPU (VAE, MPNN, ADMET) |
 | Scoring function | Cascading fallback: MPNN -> DockingProxy MLP -> stub | Train MPNN model on GPU |
 | Statistical testing | Complete (Mann-Whitney U, bootstrap CI, sensitivity) | Re-run with real scores post-training |
 | Null hypothesis | Not rejected | Pending trained models + re-run comparison |
-| Workstreams | 9 of 9 complete (540 tests passing) | Run Vision System, plan next round |
+| Workstreams | 9 of 9 complete (548 tests passing) | Run Vision System, plan next round |

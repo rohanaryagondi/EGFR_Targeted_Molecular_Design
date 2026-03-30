@@ -110,7 +110,7 @@ cd EGFR_Targeted_Molecular_Design
 
 pip install -e ".[dev]"
 
-pytest                    # 359 tests, all passing
+pytest                    # 548 tests, all passing
 statebind --help          # CLI entry point
 ```
 
@@ -229,9 +229,9 @@ Workstreams 01, 03, and 06 can start in parallel. See [`workstreams/INTERFACES.m
 ## Project Structure
 
 ```
-src/statebind/           # Main package (10 submodules, 67 Python files)
-scripts/                 # 33 runnable pipeline scripts
-tests/                   # 13 test modules, 359 tests
+src/statebind/           # Main package (12 submodules, 84 Python files)
+scripts/                 # 37 runnable pipeline scripts
+tests/                   # 19 test files, 548 tests
 docs/                    # 20 documentation files
 reports/                 # 7 phase reports + final report
 configs/                 # YAML configuration files
@@ -261,7 +261,7 @@ artifacts/               # Pipeline outputs (generated, gitignored)
 ## Test Coverage
 
 ```
-359 tests across 13 modules — all passing
+548 tests across 19 modules — all passing
 ├── test_imports.py          16 tests   Module import verification
 ├── test_baselines.py        32 tests   Static baseline pipeline
 ├── test_structure.py        31 tests   Structural state atlas

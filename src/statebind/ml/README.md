@@ -21,6 +21,8 @@ ML infrastructure for StateBind: provides three neural network architectures for
 | `vae_dataset.py` | VAE training data: `SMILESDatasetConfig` (Pydantic), `SMILESDataset` (tokenized SMILES + one-hot state labels), `collate_smiles()` (dynamic padding), `load_smiles_dataset()` (JSON/CSV loader). |
 | `affinity_dataset.py` | MPNN training data: `AffinityDatasetConfig` (Pydantic, split ratios + validation), `AffinityDataset` (PyG Data with pIC50 labels), `load_affinity_dataset()` (JSON loader), `split_dataset()` (seeded train/val/test split). |
 | `admet_dataset.py` | ADMET training data: `ADMETDatasetConfig` (Pydantic), `ADMETDataset` (PyG Data with multi-task NaN-masked labels + `task_mask`), `load_admet_dataset()` (JSON loader with min_tasks filtering), `split_admet_dataset()` (seeded split). |
+| `affinity_predictor.py` | MPNN integration adapter: singleton inference wrapper for the trained `AffinityMPNN`. Provides `predict_affinity(smiles) -> float` and `predict_affinity_batch(smiles_list) -> list[float]` with SMILES-in, normalized-score-out interface. Normalizes raw pIC50 via `sigmoid((pIC50 - 5) / 2)` to [0, 1]. Falls back to 0.5 on any failure. No torch at import time. |
+| `admet_predictor.py` | ADMET integration adapter: singleton inference wrapper for the trained `MultiTaskADMET`. Provides `predict_admet(smiles) -> dict[str, float]`, `predict_admet_batch(smiles_list) -> list[dict[str, float]]`, and `check_admet_pass(predictions, thresholds) -> (bool, list[str])` for threshold-based safety filtering. Falls back to empty dict / permissive pass on any failure. No torch at import time. |
 
 ## Model Architectures
 
@@ -113,6 +115,14 @@ Install ML dependencies with: `pip install -e ".[ml]"`
 | `smiles_to_graph_batch` | `graphs.py` | Batch conversion, skipping invalid SMILES. |
 | `ATOM_FEATURE_DIM` | `graphs.py` | Constant: 35 (atom feature vector length). |
 | `BOND_FEATURE_DIM` | `graphs.py` | Constant: 11 (bond feature vector length). |
+| `predict_affinity` | `affinity_predictor.py` | `(smiles, checkpoint_path=None) -> float` -- Predict normalized binding affinity for a SMILES string (0-1, higher = stronger binder). Returns 0.5 on failure. |
+| `predict_affinity_batch` | `affinity_predictor.py` | `(smiles_list, checkpoint_path=None) -> list[float]` -- Batch affinity prediction with chunked PyG inference. |
+| `_normalize_pic50` | `affinity_predictor.py` | `(pic50: float) -> float` -- Sigmoid normalization of raw pIC50 to [0, 1]. |
+| `reset_singleton` | `affinity_predictor.py` | `() -> None` -- Reset model singleton (testing only). |
+| `predict_admet` | `admet_predictor.py` | `(smiles, checkpoint_path=None) -> dict[str, float]` -- Predict 6 ADMET endpoints for one SMILES. Returns `{}` on failure. |
+| `predict_admet_batch` | `admet_predictor.py` | `(smiles_list, checkpoint_path=None) -> list[dict[str, float]]` -- Batch ADMET prediction with chunked PyG inference. |
+| `check_admet_pass` | `admet_predictor.py` | `(predictions, thresholds=None) -> tuple[bool, list[str]]` -- Threshold-based safety check. No torch needed. |
+| `DEFAULT_ADMET_THRESHOLDS` | `admet_predictor.py` | Per-task safety thresholds: hERG > 0.5, CYP3A4 > 0.7, caco2 < -6.0, clearance > 50.0, lipophilicity > 5.0, solubility < -5.0. |
 
 ## Dependencies
 
@@ -161,7 +171,7 @@ Install ML dependencies with: `pip install -e ".[ml]"`
 - Teacher forcing ratio in the VAE decoder is a fixed hyperparameter (default 0.5), not annealed during training.
 - The ADMET model's default endpoints are generic drug-safety properties, not EGFR-specific.
 - No hyperparameter search infrastructure is provided; configs must be manually tuned.
-- Training data files (`data/processed/*.json`) must be prepared by upstream pipeline scripts before ML training can run.
+- Training data files exist in `data/processed/` (see below) but models have not yet been trained on GPU.
 
 ## Patterns to Follow
 
@@ -174,28 +184,26 @@ Install ML dependencies with: `pip install -e ".[ml]"`
 
 ## Current Status
 
-Architecture COMPLETE but models NOT YET TRAINED. All 13 source files, 3 training scripts, and 3 YAML configs are written and ready. Training requires GPU and prepared training data (which does not yet exist).
+Architecture and integration adapters COMPLETE. All 15 source files (13 core + `affinity_predictor.py` + `admet_predictor.py`), 3 training scripts, and 3 YAML configs are written and ready. Training data is prepared and available in `data/processed/`. Models require GPU training before inference adapters produce real predictions (they gracefully fall back to neutral defaults without trained checkpoints).
 
-## Remaining Work for AI Agents
+### Training Data (prepared)
 
-This is the most active module. Multiple workstreams touch it:
+| File | Contents | Source |
+|------|----------|--------|
+| `data/processed/egfr_affinity.json` | 1,678 ChEMBL EGFR compounds with pIC50 values | ChEMBL EGFR bioactivity data |
+| `data/processed/admet_combined.json` | Multi-task ADMET benchmark data (6 endpoints) | Therapeutics Data Commons (TDC) |
+| `data/processed/egfr_smiles_train.json` | SMILES + state labels for VAE training | Curated EGFR ligand set |
 
-1. **Data preparation** (immediate priority, no dependencies):
-   - Create `scripts/prepare_vae_data.py` — query ChEMBL EGFR → `data/processed/egfr_smiles_{train,val}.json`
-   - Create `scripts/prepare_mpnn_data.py` — ChEMBL IC50 → pIC50 → `data/processed/egfr_affinity.json`
-   - Create `scripts/prepare_admet_data.py` — TDC benchmarks → `data/processed/admet_combined.json`
+### Completed Workstreams
 
-2. **Model training** (requires GPU + prepared data):
-   - `python scripts/train_vae.py --config configs/vae.yaml`
-   - `python scripts/train_mpnn.py --config configs/mpnn.yaml`
-   - `python scripts/train_admet.py --config configs/admet.yaml`
+- **WS07** (Conditional VAE): VAE integration adapter created at `generation/vae_integration.py` (loads VAE candidates as `StateConditionedCandidate` objects).
+- **WS08** (MPNN Affinity): Created `ml/affinity_predictor.py` -- singleton MPNN wrapper with `predict_affinity(smiles) -> float` and batch prediction. Integrated into the ranking pipeline's 3-tier docking cascade as Priority 1.
+- **WS09** (ADMET Predictor): Created `ml/admet_predictor.py` -- singleton ADMET wrapper with `predict_admet(smiles) -> dict`, batch prediction, and `check_admet_pass()` threshold-based safety filtering. Integrated into `generation/admet_filter.py`.
 
-3. **Integration adapters** (after training):
-   - WS08: Create `ml/affinity_predictor.py` — `predict_affinity(smiles) -> float`. See `workstreams/08-mpnn-affinity.md`.
-   - WS09: Create `ml/admet_predictor.py` — `predict_admet(smiles) -> dict`. See `workstreams/09-admet-predictor.md`.
-   - WS07: Create integration in `generation/` — VAE candidates as `StateConditionedCandidate`. See `workstreams/07-conditional-vae.md`.
+### Remaining Work
 
-4. **Do NOT modify these existing files** (they are stable):
-   - `vae.py`, `mpnn.py`, `admet.py`, `trainer.py`, `tokenizer.py`, `vocabulary.py`, `graphs.py`, `utils.py`, all `*_dataset.py` files
+- **Model training** (requires GPU): Run the 3 training scripts to produce checkpoints at `artifacts/models/{vae,mpnn,admet}/best_model.pt`. Until trained, the integration adapters fall back to neutral defaults (affinity: 0.5, ADMET: empty dict / permissive pass).
+- **Do NOT modify these existing files** (they are stable):
+  - `vae.py`, `mpnn.py`, `admet.py`, `trainer.py`, `tokenizer.py`, `vocabulary.py`, `graphs.py`, `utils.py`, all `*_dataset.py` files, `affinity_predictor.py`, `admet_predictor.py`
 
 See `ml/CRITICAL.md` for non-obvious facts.

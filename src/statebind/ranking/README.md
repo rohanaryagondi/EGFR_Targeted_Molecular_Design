@@ -78,27 +78,27 @@ Phase 7 of StateBind: provides a unified scoring and ranking framework that appl
 
 ## Known Limitations
 
-- The `docking_proxy` component is a **stub** that always returns 0.5. It does not perform any actual docking computation.
 - State specificity is a simple count-based heuristic, not a binding-affinity-based metric.
-- `_score_reference_similarity` uses SMILES 3-gram Tanimoto (from baselines), not Morgan fingerprint similarity.
 - Deduplication by SMILES does not account for different stereochemistry or tautomers that produce different SMILES strings for the same molecule.
-- The `SCORING_METHOD` string is hardcoded; changing weights requires updating it manually.
+- The `SCORING_METHOD` string is dynamically constructed at runtime based on available backends; changing weights still requires updating `DEFAULT_WEIGHTS` and `SCORING_METHOD` in sync.
+- The 3-tier docking cascade falls back to the constant 0.5 stub when neither a trained MPNN checkpoint nor a trained DockingProxy MLP is available.
 
-## Planned Improvements
+## Scoring Backends (post-workstream state)
 
-- **Workstream 02** will update scoring method strings and may adjust the diversity/similarity computation used in reference_similarity.
-- **Workstream 04** will replace the `docking_proxy` stub (constant 0.5) with an actual docking score using Vina or GNINA, following the MLP pattern from `statebind.dynamics.world_model`.
+All three scoring workstreams (WS02, WS04, WS08) are complete and merged:
+
+- **reference_similarity**: Uses Morgan/ECFP4 fingerprints (radius=2, 2048 bits) when RDKit is available; falls back to SMILES 3-gram Tanimoto without RDKit.
+- **druglikeness**: Uses QED + Lipinski + SA score when RDKit is available; falls back to heuristic property estimation without RDKit.
+- **docking_proxy**: 3-tier cascading fallback:
+  1. **MPNN affinity predictor** (WS08) -- `ml/affinity_predictor.py:predict_affinity()` produces pIC50, normalized via sigmoid to [0, 1]. Requires trained checkpoint + torch.
+  2. **DockingProxy MLP** (WS04) -- `chemistry/docking_proxy.py` lightweight MLP on Morgan fingerprints + descriptors. Requires trained proxy + RDKit.
+  3. **Constant 0.5 stub** -- always available, zero discriminative power.
 
 ## Current Status
 
-Complete but docking component is a stub (constant 0.5), wasting 20% of score weight. Three workstreams will modify `scoring.py` sequentially.
+Complete. All three sequential scoring workstreams (WS02 -> WS04 -> WS08) have been merged. The scoring function now uses Morgan fingerprints for similarity, RDKit descriptors for druglikeness, and a 3-tier cascade for docking. The docking cascade activates the highest-priority available backend at runtime.
 
-## Remaining Work for AI Agents
-
-**CONFLICT ZONE**: Three workstreams modify `scoring.py`. They MUST execute in this order:
-1. **WS02** (first): Updates scoring method strings, wires in RDKit chemistry. Read `workstreams/02-scoring-integration.md`.
-2. **WS04** (second): Adds DockingProxy MLP as fallback. Read `workstreams/04-docking-proxy.md`.
-3. **WS08** (third): Adds MPNN as primary docking scorer with cascading fallback. Read `workstreams/08-mpnn-affinity.md`.
+## Maintenance Notes
 
 Do NOT change `DEFAULT_WEIGHTS` values or `_validate_weights()` signature.
 See `ranking/CRITICAL.md` for non-obvious facts.

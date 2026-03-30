@@ -16,10 +16,10 @@
 
 ## Status
 
-- **Last session:** 2026-03-28
+- **Last session:** 2026-03-30
 - **Branch:** ML (always)
-- **Last updated:** 2026-03-28T23:59:00+00:00
-- **Head AI generation:** 1 (first Head AI; this is the handoff document for generation 2)
+- **Last updated:** 2026-03-30T12:00:00+00:00
+- **Head AI generation:** 2
 
 ---
 
@@ -66,6 +66,30 @@ then review ideas here.
 
 ---
 
+## Admin AI Triage Log
+
+<!-- Record every triage of Admin AI suggestions. -->
+
+| Date | Suggestions | Implemented | Accepted | Wont-fix | Notes |
+|------|------------|-------------|----------|----------|-------|
+| 2026-03-30 | S001-S012 (12 total) | 10 | 1 (S010) | 1 (S012) | First Admin AI audit. Fixed all P0s and P1s. Deferred S010 (ruff). |
+
+**Detail:**
+- S001 (P0): Implemented. Added chemistry/ to CLAUDE.md Sections 3, 4, 9. Removed nonexistent pockets/.
+- S002 (P0): Implemented. Fixed 18 stale file:line refs in CLAUDE.md and CRITICAL.md. Added function name anchors.
+- S003 (P0): Implemented. Updated GOALS.md Success Criteria Table (18 rows, 10 marked Complete).
+- S004 (P1): Implemented. Updated "359 tests" → "548 tests", "72 .py files" → "84" across CLAUDE.md.
+- S005 (P1): Implemented. Fixed module file counts: eval 4→7, gen 7→9, ml 13→15.
+- S006 (P1): Implemented. Admin AI counted 538, pytest reports 548. Updated all "540" refs to 548.
+- S007 (P1): Implemented. Updated 4 module READMEs (evaluation, ml, ranking, generation).
+- S008 (P1): Implemented. Fixed INTERFACES.md Contracts 5 (VAE) and 6 (ADMET) to match code.
+- S009 (P1): Implemented. Checked 3 data prep items in TODO.md.
+- S010 (P2): Accepted, deferred. ~40 ruff violations need dedicated cleanup session.
+- S011 (P2): Implemented. Updated GOALS.md Section 3 to mark WS01/WS03 as complete.
+- S012 (P3): Wont-fix. __init__.py exports work as-is; adding them is maintenance burden.
+
+---
+
 ## Task Assignments
 
 <!-- Record workstream creation from Visionary ideas. -->
@@ -91,15 +115,17 @@ then review ideas here.
 | 2026-03-28 | Created Vision System (3 roles: Assistant, Visionary, Head AI) | Single "improvement suggestions" file | Three-role separation ensures: (1) Visionary thinks at strategic level without code access, (2) Assistant curates context honestly, (3) Head AI triages with implementation knowledge. |
 | 2026-03-28 | Created Admin AI role for infrastructure monitoring | Rely on Head AI to spot stale docs | Dedicated role ensures systematic audits rather than ad-hoc discovery. Admin AI writes suggestions; Head AI implements. Parallels the Visionary -> Head AI pattern. |
 | 2026-03-28 | All AI roles must maintain running documentation (Rule 10) | Only modular agents document | Context compaction is universal. Every role needs a recovery mechanism. Running logs serve as handoff documents when any AI is replaced. |
+| 2026-03-30 | Triaged all 12 Admin AI suggestions: 10 implemented, 1 accepted/deferred (S010 ruff), 1 wont-fix (S012 __init__.py) | Implement all, or defer more | P0s are actively misleading (wrong line refs, missing module). Fixing them immediately prevents agents from wasting time on wrong code. S010 deferred because ruff fixes touch ~40 files and need careful review. S012 wont-fix because the code works as-is. |
+| 2026-03-30 | Authoritative test count is 548 (from `pytest --co -q`), not 538 (Admin AI's `def test_` grep) or 540 (documented) | Use Admin AI's count | pytest collection is authoritative — it counts parametrized tests and dynamically generated tests that grep misses. |
 
 ---
 
 ## Current State
 
 **What is done:**
-- All 9 workstreams complete and merged to ML (540 tests passing)
+- All 9 workstreams complete and merged to ML (548 tests passing)
 - All integration adapters written: MPNN (`ml/affinity_predictor.py`), ADMET
-  (`ml/admet_predictor.py`), VAE (`ml/vae_integration.py`), Docking Proxy
+  (`ml/admet_predictor.py`), VAE (`generation/vae_integration.py`), Docking Proxy
   (`chemistry/docking_proxy.py`)
 - Cascading docking fallback: MPNN -> DockingProxy MLP -> constant 0.5 stub
 - Statistical testing framework complete (Mann-Whitney U, bootstrap CI, sensitivity)
@@ -107,20 +133,19 @@ then review ideas here.
 - CI/CD pipeline configured (GitHub Actions: test, lint, test-with-chemistry)
 - Chemistry foundation integrated (RDKit fingerprints, descriptors, validation)
 - Vision System scaffolded: `vision/` directory with README, instructions, templates, logs
-- Admin AI scaffolded: `admin/` directory with README, instructions, suggestion template, log
+- Admin AI run (Session 1, 2026-03-30): 12 suggestions, all triaged
 - Documentation system established: all 9 workstream reports exist, TEMPLATE.md, this log
 - AI Employee Directory added to HUMANONLY.md Section 10
+- Admin AI suggestions triaged: 10 implemented, 1 accepted/deferred, 1 wont-fix
+- Documentation drift fixed: CLAUDE.md, GOALS.md, CRITICAL.md, TODO.md, 4 module READMEs,
+  INTERFACES.md all updated to reflect post-workstream state
 
 **What is NOT done:**
 - ML model training (requires GPU): VAE, MPNN, ADMET are code-complete but untrained
 - Vision System has never been run (no briefings written, no ideas proposed)
-- Admin AI has never been run (no audit performed, no suggestions written)
 - Full pipeline re-run with trained models
 - Statistical hypothesis testing with real (non-stub) scores
-- ~40 pre-existing ruff violations in `src/` (documented in CRITICAL.md)
-- Stale test count references: some places in CLAUDE.md still say "359 tests"
-  (updated in CRITICAL.md, TODO.md, and workstreams/README.md but not exhaustively
-  searched in CLAUDE.md)
+- ~40 pre-existing ruff violations in `src/` (S010 accepted, deferred)
 
 **Known artifacts on disk:**
 - `data/processed/egfr_affinity.json` -- 1,678 ChEMBL EGFR compounds (pIC50)
@@ -130,14 +155,13 @@ then review ideas here.
 
 ---
 
-## Next Steps (for incoming Head AI)
+## Next Steps
 
-1. **Run Admin AI** -- audit documentation accuracy, catch stale references (e.g.,
-   "359 tests" in CLAUDE.md). Read `admin/INSTRUCTIONS.md` for its playbook. Process
-   its suggestions by reading `admin/suggestions.md`.
-
-2. **Run Vision System** -- refresh briefings (Assistant AI), generate ideas (Visionary AI),
+1. **Run Vision System** -- refresh briefings (Assistant AI), generate ideas (Visionary AI),
    then review ideas. See HUMANONLY.md Sections 8.3-8.5 for prompts.
+
+2. **Fix ruff violations (S010)** -- ~40 pre-existing violations block CI. Run
+   `ruff check --fix src/` to auto-fix, then manually resolve remaining.
 
 3. **Plan ML training** -- three models need GPU training:
    - VAE: `python scripts/train_vae.py --config configs/vae.yaml`
@@ -149,9 +173,6 @@ then review ideas here.
    update reports with real results. This is the path to rejecting the null hypothesis.
 
 5. **Create new workstreams** from accepted Visionary ideas.
-
-6. **Fix ruff violations** -- ~40 pre-existing violations block CI. Run
-   `ruff check --fix src/` to auto-fix, then manually resolve remaining.
 
 ---
 
@@ -168,7 +189,7 @@ If your context compacts:
 
 ---
 
-## Handoff Notes for Generation 2 Head AI
+## Handoff Notes
 
 **Critical things to know:**
 
@@ -191,5 +212,11 @@ If your context compacts:
    Modular Agents, Assistant AI, Visionary AI, Admin AI. You consume output from
    Visionary (ideas) and Admin (suggestions).
 
-7. **Rule 10 applies to you.** Update this log after every major action. This is your
+7. **Admin AI has been run.** 12 suggestions triaged. 10 implemented, 1 deferred (S010
+   ruff violations), 1 wont-fix (S012 __init__.py). See `admin/suggestions.md`.
+
+8. **Documentation is now current.** All stale refs fixed (2026-03-30). But line numbers
+   drift with every code change — consider function name anchors as primary references.
+
+9. **Rule 10 applies to you.** Update this log after every major action. This is your
    context recovery and handoff mechanism.
