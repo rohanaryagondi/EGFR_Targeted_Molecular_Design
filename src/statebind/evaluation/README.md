@@ -45,6 +45,42 @@ Head-to-head comparative analysis of the static baseline pipeline versus the sta
 | `overlap_venn_ascii` | `(result: ComparativeResult) -> str` | Text-based Venn diagram of SMILES overlap |
 | `generate_all_figures` | `(result: ComparativeResult, merged: MergedRanking, output_dir: Path \| None = None) -> dict[str, str]` | Generate all ASCII figures; optionally write to files |
 
+### statistics.py
+
+| Symbol | Signature | Description |
+|--------|-----------|-------------|
+| `StatisticalTest` | `@dataclass` with fields `name`, `statistic`, `p_value`, `effect_size`, `ci_lower`, `ci_upper`, `interpretation` | Result of a statistical hypothesis test |
+| `BootstrapCI` | `@dataclass` with fields `metric_name`, `point_estimate`, `ci_lower`, `ci_upper`, `alpha`, `n_bootstrap` | Bootstrap confidence interval for a metric |
+| `cohens_d` | `(scores_a: list[float], scores_b: list[float]) -> float` | Cohen's d effect size using pooled standard deviation |
+| `cliff_delta` | `(scores_a: list[float], scores_b: list[float]) -> float` | Cliff's delta non-parametric effect size ([-1, 1]) |
+| `bootstrap_confidence_interval` | `(values, statistic_fn, alpha=0.05, n_bootstrap=1000, seed=42) -> BootstrapCI` | Percentile bootstrap CI for any scalar statistic (numpy-only) |
+| `permutation_test` | `(scores_a, scores_b, n_permutations=10000, seed=42) -> StatisticalTest` | Permutation-based hypothesis test for difference in means |
+| `mann_whitney_u` | `(scores_a: list[float], scores_b: list[float]) -> StatisticalTest` | Two-sided Mann-Whitney U test; falls back to permutation test if scipy is unavailable |
+
+### sensitivity.py
+
+| Symbol | Signature | Description |
+|--------|-----------|-------------|
+| `SensitivityResult` | `@dataclass` with fields `weight_config`, `static_mean`, `state_aware_mean`, `winner`, `delta` | Result of scoring under one weight configuration |
+| `SensitivitySummary` | `@dataclass` with fields `n_configs`, `state_aware_wins`, `static_wins`, `ties`, `state_aware_win_fraction`, `results` | Aggregated sensitivity analysis |
+| `run_weight_sensitivity` | `(merged: MergedRanking, n_samples=100, seed=42) -> SensitivitySummary` | Sample random weight vectors (Dirichlet) and re-score all candidates |
+| `run_ablation_analysis` | `(merged: MergedRanking) -> list[SensitivityResult]` | Set each weight component to 0 in turn, renormalize, re-score |
+| `run_weight_sweep` | `(merged: MergedRanking, component: str, values: list[float]) -> list[SensitivityResult]` | Sweep one component's weight across a range, renormalize others |
+
+### plotting.py
+
+| Symbol | Signature | Description |
+|--------|-----------|-------------|
+| `HAS_MATPLOTLIB` | `bool` | Whether matplotlib is available (from `[science]` extras) |
+| `plot_score_distributions` | `(result: ComparativeResult, output_path=None) -> Figure \| None` | Grouped bar chart of mean composite scores with std error bars and statistical annotation |
+| `plot_score_components_heatmap` | `(merged: MergedRanking, top_n=20, output_path=None) -> Figure \| None` | Heatmap of score components for top-N globally ranked candidates |
+| `plot_diversity_radar` | `(result: ComparativeResult, output_path=None) -> Figure \| None` | Radar chart comparing diversity metrics between pipelines |
+| `plot_sensitivity_heatmap` | `(summary: SensitivitySummary \| None, output_path=None) -> Figure \| None` | Diverging bar chart of weight-sensitivity deltas |
+| `plot_rank_shift_waterfall` | `(merged: MergedRanking, n=20, output_path=None) -> Figure \| None` | Horizontal bar chart of the biggest rank shifts |
+| `plot_strategy_contribution` | `(result: ComparativeResult, output_path=None) -> Figure \| None` | Bar charts of novel candidates by strategy and by state |
+| `plot_sa_score_distribution` | `(merged: MergedRanking, output_path=None) -> Figure \| None` | Histogram of synthetic accessibility scores split by pipeline (requires RDKit) |
+| `generate_all_plots` | `(result, merged, output_dir, sensitivity=None) -> dict[str, Path]` | Generate all available plots, save to output_dir; returns dict of figure name to file path |
+
 ## Internal Files
 
 | File | Responsibility |
@@ -52,6 +88,9 @@ Head-to-head comparative analysis of the static baseline pipeline versus the sta
 | `comparison.py` | Dataclasses for every comparison metric; pure-function computation of overlap, diversity, scores, top-K, and novelty |
 | `tables.py` | Formats `ComparativeResult` and `MergedRanking` into lists-of-dicts suitable for markdown, CSV, or JSON serialization |
 | `figures.py` | Renders ASCII (text-based) figures for embedding in reports without any graphics dependency |
+| `statistics.py` | Statistical hypothesis testing: Mann-Whitney U (with scipy fallback), bootstrap CI, Cohen's d, Cliff's delta, permutation tests |
+| `sensitivity.py` | Weight sensitivity and ablation analysis: Dirichlet random sweeps, single-component ablation, weight sweeps |
+| `plotting.py` | Publication-quality matplotlib figures (optional `[science]` dependency): score distributions, component heatmaps, diversity radar, sensitivity heatmap, rank shift waterfall, strategy contribution, SA score distribution |
 | `__init__.py` | Module docstring only; no re-exports |
 
 ## Dependencies
@@ -86,22 +125,18 @@ Head-to-head comparative analysis of the static baseline pipeline versus the sta
 
 ## Known Limitations
 
-- Figures are text-only; no matplotlib PNG output is generated yet.
-- No statistical significance testing (p-values, confidence intervals) is performed on any comparison metric.
 - The `novelty_breakdown_ascii` function only breaks down by strategy, not by target state (the state breakdown is only available as a table).
 - Tables use `object` typing for values, so downstream consumers must handle mixed int/float/str types.
-
-## Planned Improvements
-
-- **Workstream 03:** A `statistics` sub-module will be added here to provide p-values and confidence intervals for score and diversity deltas.
-- **Workstream 05:** Matplotlib-based PNG plotting will be added alongside the existing ASCII figures via `generate_all_figures`.
+- `statistics.py` falls back to permutation tests when scipy is not installed; results are valid but slower.
+- `plotting.py` requires matplotlib (from `[science]` extras); all plot functions return `None` when matplotlib is unavailable.
+- `plot_sa_score_distribution` additionally requires RDKit for SA score computation.
 
 ## Current Status
 
-Complete for basic comparison (tables, ASCII figures). No statistical testing. No matplotlib visualizations.
+Complete. Statistical testing (WS03), sensitivity analysis (WS03), and matplotlib visualization (WS05) are all implemented and merged. The module now provides tables, ASCII figures, statistical hypothesis tests, weight sensitivity analysis, and publication-quality PNG plots.
 
-## Remaining Work for AI Agents
+## Completed Workstreams
 
-- **WS03** adds `evaluation/statistics.py` (Mann-Whitney U, bootstrap CI) and `evaluation/sensitivity.py` (weight sensitivity analysis). May add optional `run_statistics` param to `run_full_comparison()`. Read `workstreams/03-statistical-testing.md`.
-- **WS05** adds `evaluation/plotting.py` with matplotlib figures. Must run AFTER WS03. Read `workstreams/05-visualization.md`.
+- **WS03** (Statistical Testing): Added `statistics.py` (Mann-Whitney U, bootstrap CI, Cohen's d, Cliff's delta, permutation tests) and `sensitivity.py` (Dirichlet weight sampling, ablation, weight sweeps).
+- **WS05** (Visualization): Added `plotting.py` with 7 matplotlib figure types and `generate_all_plots()` orchestrator.
 - See `evaluation/CRITICAL.md` for non-obvious facts.

@@ -245,25 +245,51 @@ def predict_affinity_batch(smiles_list: list[str]) -> list[float]:
 **Producer:** Workstream 07 (Conditional VAE)
 **Consumers:** generation pipeline — produces StateConditionedCandidate objects
 
-### `statebind.ml.vae_integration` (to be created during integration)
+### `statebind.generation.vae_integration`
+
+> **Design note:** VAE generation runs via `scripts/generate_vae_candidates.py` as a
+> separate GPU-bound process, producing a JSON artifact at
+> `artifacts/generation/vae_candidates.json`. The integration module then loads from
+> that artifact rather than generating on the fly. This keeps the integration layer
+> free of any torch dependency and allows GPU-intensive generation to run in isolation
+> (e.g., on an HPC cluster).
 
 ```python
-from statebind.generation.models import StateConditionedCandidate
+from pathlib import Path
+from statebind.generation.models import (
+    StateConditionedCandidate,
+    StateConditionedLibrary,
+)
 
-def generate_vae_candidates(
-    state: str,
-    n_samples: int = 100,
-    temperature: float = 0.8,
-    checkpoint_path: str = "artifacts/models/vae/best_model.pt",
+def load_vae_candidates(
+    path: Path | str,
 ) -> list[StateConditionedCandidate]:
-    """Generate novel molecules for a specific conformational state.
+    """Load VAE candidates from a JSON artifact and wrap as StateConditionedCandidate.
 
-    Each candidate has:
+    Reads the JSON artifact at *path*, which must have a "candidates" key
+    containing a list of objects with "smiles" and "state" fields (plus
+    optional "is_valid", "is_novel", "source").
+
+    Candidates with is_valid == False are filtered out.  Invalid state
+    labels raise ValueError.
+
+    Each candidate gets:
         source = CandidateSource.ML_GENERATED
         strategy = GenerationStrategy.VAE_GENERATED
-        target_state = state
+        candidate_id = "vae_{state}_{index:04d}"
 
-    Returns empty list if model not available or torch not installed.
+    Raises FileNotFoundError if path does not exist.
+    Raises ValueError if JSON is missing the "candidates" key or contains
+    invalid state labels.
+    """
+
+def build_vae_libraries(
+    candidates: list[StateConditionedCandidate],
+) -> list[StateConditionedLibrary]:
+    """Group VAE candidates by target_state into StateConditionedLibrary objects.
+
+    Returns one library per unique target_state, sorted by state name.
+    Returns empty list if candidates is empty.
     """
 ```
 
@@ -274,30 +300,80 @@ def generate_vae_candidates(
 **Producer:** Workstream 09 (ADMET)
 **Consumers:** generation/filtering pipeline, evaluation reports
 
-### `statebind.ml.admet_predictor` (to be created during integration)
+### `statebind.ml.admet_predictor`
 
 ```python
-def predict_admet(smiles: str) -> dict[str, float]:
+from pathlib import Path
+
+DEFAULT_ADMET_THRESHOLDS: dict[str, tuple[str, float]]
+# Each entry: task_name -> (operator, threshold)
+# ">" means FAIL if prediction exceeds threshold
+# "<" means FAIL if prediction is below threshold
+# Default: {"herg": (">", 0.5), "cyp3a4": (">", 0.7), "caco2": ("<", -6.0),
+#           "clearance": (">", 50.0), "lipophilicity": (">", 5.0), "solubility": ("<", -5.0)}
+
+def predict_admet(
+    smiles: str,
+    checkpoint_path: Path | str | None = None,
+) -> dict[str, float]:
     """Predict ADMET properties for a single molecule.
 
-    Returns dict mapping task name to predicted value:
-        Regression tasks: raw predicted value
-        Classification tasks: probability in [0.0, 1.0]
+    Uses a module-level singleton: the model is loaded once on the first
+    call and reused for all subsequent calls.
 
-    Returns empty dict if model not available.
+    Returns dict mapping task name to predicted value (rounded to 4 dp):
+        Regression tasks: raw predicted value
+        Classification tasks: probability in [0.0, 1.0] (sigmoid applied)
+
+    Returns empty dict if model not available or SMILES invalid.
     """
+
+def predict_admet_batch(
+    smiles_list: list[str],
+    checkpoint_path: Path | str | None = None,
+) -> list[dict[str, float]]:
+    """Batch prediction. Same semantics as predict_admet().
+    Output list is always the same length as the input list.
+    Failed SMILES produce empty dicts."""
 
 def check_admet_pass(
-    smiles: str,
-    thresholds: dict[str, float] | None = None,
-) -> tuple[bool, dict[str, float]]:
-    """Check if molecule passes ADMET safety criteria.
+    predictions: dict[str, float],
+    thresholds: dict[str, tuple[str, float]] | None = None,
+) -> tuple[bool, list[str]]:
+    """Check whether ADMET predictions pass safety thresholds.
 
-    Returns (pass_bool, predictions_dict).
-    Default thresholds flag hERG > 0.5 and CYP3A4 > 0.5 as failures.
-    Returns (True, {}) if model not available (permissive fallback).
+    Pure Python -- no torch dependency.
+
+    Args:
+        predictions: Dictionary mapping task name to predicted value.
+            Typically the output of predict_admet().
+        thresholds: Per-task thresholds.  Each value is a (operator,
+            limit) tuple where operator is ">" (fail if prediction
+            exceeds limit) or "<" (fail if prediction is below limit).
+            Defaults to DEFAULT_ADMET_THRESHOLDS.
+
+    Returns (passed, failures):
+        passed: True when all checked endpoints are within safe limits.
+        failures: List of task names that violated their threshold.
+
+    Returns (True, []) if predictions is empty (permissive fallback
+    when no model is available).
     """
+
+def reset_singleton() -> None:
+    """Reset the module-level singleton state (testing only)."""
 ```
+
+> **Design notes:** `check_admet_pass` takes a pre-computed predictions dict rather
+> than a raw SMILES string. This separates prediction (which requires torch) from
+> threshold checking (pure Python), allowing callers to predict once and check
+> against multiple threshold configurations without re-running inference. The
+> thresholds use `(operator, limit)` tuples instead of bare floats so that each
+> endpoint can specify its own direction -- some endpoints fail when too high (e.g.,
+> hERG toxicity) while others fail when too low (e.g., solubility). The return type
+> is `list[str]` (failed task names) rather than `dict[str, float]` (predictions)
+> because the caller already has the predictions and only needs to know which
+> endpoints failed.
 
 ---
 

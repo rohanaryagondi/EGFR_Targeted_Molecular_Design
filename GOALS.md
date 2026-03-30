@@ -87,23 +87,24 @@ Each model has concrete performance targets.
 - Regression endpoints: Spearman correlation > 0.5 on at least 4 of 6 tasks.
 - Multi-task learning must outperform or match single-task baselines on average.
 
-### Priority 3: Core Workstreams (WS01, WS03)
+### Priority 3: Core Workstreams (WS01, WS03) -- COMPLETE
 
-These two workstreams can start immediately and unblock downstream work.
+Both workstreams are complete and merged to ML.
 
-**WS01 -- Chemistry Foundation:** Replace all SMILES string heuristics with RDKit-backed operations. Morgan/ECFP4 fingerprints for similarity. Synthetic accessibility scoring. Proper molecular validation. This unblocks WS02 (scoring integration), WS04 (docking proxy), WS08 (MPNN affinity), and WS09 (ADMET predictor).
+**WS01 -- Chemistry Foundation:** RDKit-backed molecular operations (Morgan/ECFP4 fingerprints, canonical SMILES, SA scores, molecular validation) are integrated in the `chemistry/` subpackage. All downstream workstreams (WS02, WS04, WS08, WS09) have been unblocked and completed.
 
-**WS03 -- Statistical Testing:** Add scipy-based statistical tests (Mann-Whitney U, bootstrap confidence intervals, effect sizes). This is required to formally reject or fail to reject the null hypothesis. Without it, all comparisons are descriptive only.
+**WS03 -- Statistical Testing:** scipy-based statistical tests (Mann-Whitney U, bootstrap confidence intervals, Cohen's d effect sizes) are implemented in `evaluation/statistics.py` and `evaluation/sensitivity.py`. Formal hypothesis testing is ready but awaits trained model scores.
 
 ---
 
 ## 4. Medium-Term Goals
 
-These goals assume the short-term priorities are complete.
+All nine workstreams are complete. The remaining medium-term goals are ML model training
+and pipeline re-run with real scores.
 
-### All Nine Workstreams Finished
+### All Nine Workstreams Finished -- COMPLETE
 
-The full workstream suite transforms the pipeline from a proof-of-concept into a credible computational study:
+The full workstream suite has transformed the pipeline from a proof-of-concept into a credible computational study:
 
 - WS01 (Chemistry Foundation) + WS02 (Scoring Integration): RDKit throughout, Morgan fingerprints in the scoring function, SA scores filtering unrealizable candidates.
 - WS03 (Statistical Testing) + WS05 (Visualization): Formal significance tests with matplotlib figures suitable for publication or README.
@@ -181,24 +182,24 @@ Replace the weighted linear scoring function with Pareto frontier optimization. 
 
 | Metric | Current | Target | Status |
 |--------|---------|--------|--------|
-| Passing tests | 359 | 450+ | In progress |
-| Docking scoring | Stub (constant 0.5) | Trained MPNN (RMSE < 1.0) | Not started |
-| Similarity method | SMILES 3-gram Tanimoto | Morgan/ECFP4 Tanimoto | Not started |
-| Statistical testing | None (descriptive only) | p < 0.05 Mann-Whitney U | Not started |
-| Novel candidates | 49 (string-modified) | 100+ (VAE-generated) | Not started |
-| VAE validity | N/A (model not trained) | >= 50% valid SMILES | Not started |
-| VAE reconstruction | N/A | > 80% accuracy | Not started |
-| MPNN RMSE | N/A (model not trained) | < 1.0 pIC50 | Not started |
-| MPNN R-squared | N/A | > 0.5 | Not started |
-| hERG AUROC | N/A (model not trained) | > 0.75 | Not started |
-| ADMET endpoints passing | N/A | >= 4 of 6 with Spearman > 0.5 | Not started |
-| CI/CD | None (local only) | GitHub Actions on push/PR | Not started |
-| Druglikeness method | Heuristic MW/HBA/HBD | RDKit QED + Lipinski | Not started |
-| Synthetic accessibility | None | RDKit SA score filtering | Not started |
-| Null hypothesis | Not rejected | Rejected or formally retained | Pending |
-| Workstreams complete | 0 of 9 | 9 of 9 | Not started |
-| Training data prepared | None | ChEMBL EGFR + TDC ADMET | Not started |
-| State-conditioned generation | SMILES string mods | Conditional VAE sampling | Not started |
+| Passing tests | 548 | 450+ | Complete |
+| Docking scoring | Integration code complete (3-tier cascade) | Trained MPNN (RMSE < 1.0) | Pending training |
+| Similarity method | Morgan/ECFP4 Tanimoto (WS02) | Morgan/ECFP4 Tanimoto | Complete |
+| Statistical testing | Mann-Whitney U, bootstrap CI, Cohen's d (WS03) | p < 0.05 Mann-Whitney U | Complete (awaiting real scores) |
+| Novel candidates | 49 (string-modified) | 100+ (VAE-generated) | Pending training |
+| VAE validity | N/A (model not trained) | >= 50% valid SMILES | Pending training |
+| VAE reconstruction | N/A | > 80% accuracy | Pending training |
+| MPNN RMSE | N/A (model not trained) | < 1.0 pIC50 | Pending training |
+| MPNN R-squared | N/A | > 0.5 | Pending training |
+| hERG AUROC | N/A (model not trained) | > 0.75 | Pending training |
+| ADMET endpoints passing | N/A | >= 4 of 6 with Spearman > 0.5 | Pending training |
+| CI/CD | GitHub Actions (WS06) | GitHub Actions on push/PR | Complete |
+| Druglikeness method | RDKit QED + Lipinski (WS02) | RDKit QED + Lipinski | Complete |
+| Synthetic accessibility | RDKit SA score (WS01) | RDKit SA score filtering | Complete |
+| Null hypothesis | Not rejected | Rejected or formally retained | Pending (needs trained scores) |
+| Workstreams complete | 9 of 9 | 9 of 9 | Complete |
+| Training data prepared | ChEMBL EGFR + TDC ADMET | ChEMBL EGFR + TDC ADMET | Complete |
+| State-conditioned generation | Integration code + data prep complete | Conditional VAE sampling | Pending training |
 
 ---
 

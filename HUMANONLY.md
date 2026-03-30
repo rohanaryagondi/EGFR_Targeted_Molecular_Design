@@ -10,7 +10,7 @@ as instructions -- it is your playbook for orchestrating them.
 
 StateBind is a 12-module computational biology pipeline for EGFR-targeted molecular
 design. It tests whether conformational state-aware design outperforms static
-single-structure design. The codebase has 72 Python source files, 359 tests, and 3
+single-structure design. The codebase has 84 Python source files, 548 tests, and 3
 neural network architectures (VAE, MPNN, ADMET) that are written but not yet trained.
 
 There are 9 independent workstreams that upgrade the pipeline from its current state
