@@ -16,10 +16,10 @@
 
 ## Status
 
-- **Last session:** 2026-03-30
+- **Last session:** 2026-04-05
 - **Branch:** ML (always)
-- **Last updated:** 2026-03-30T12:00:00+00:00
-- **Head AI generation:** 2
+- **Last updated:** 2026-04-05T18:30:00+00:00
+- **Head AI generation:** 3
 
 ---
 
@@ -73,6 +73,7 @@ then review ideas here.
 | Date | Suggestions | Implemented | Accepted | Wont-fix | Notes |
 |------|------------|-------------|----------|----------|-------|
 | 2026-03-30 | S001-S012 (12 total) | 10 | 1 (S010) | 1 (S012) | First Admin AI audit. Fixed all P0s and P1s. Deferred S010 (ruff). |
+| 2026-04-05 | S013-S024 (12 total) | 2 (S013, S014) | 5 (S015-S018, S021, S024) | 4 (S019, S020, S022, S023) | Second Admin AI audit. P0s fixed immediately. CLAUDE.md already restructured by human (makes S020, S023 moot). |
 
 **Detail:**
 - S001 (P0): Implemented. Added chemistry/ to CLAUDE.md Sections 3, 4, 9. Removed nonexistent pockets/.
@@ -117,6 +118,9 @@ then review ideas here.
 | 2026-03-28 | All AI roles must maintain running documentation (Rule 10) | Only modular agents document | Context compaction is universal. Every role needs a recovery mechanism. Running logs serve as handoff documents when any AI is replaced. |
 | 2026-03-30 | Triaged all 12 Admin AI suggestions: 10 implemented, 1 accepted/deferred (S010 ruff), 1 wont-fix (S012 __init__.py) | Implement all, or defer more | P0s are actively misleading (wrong line refs, missing module). Fixing them immediately prevents agents from wasting time on wrong code. S010 deferred because ruff fixes touch ~40 files and need careful review. S012 wont-fix because the code works as-is. |
 | 2026-03-30 | Authoritative test count is 548 (from `pytest --co -q`), not 538 (Admin AI's `def test_` grep) or 540 (documented) | Use Admin AI's count | pytest collection is authoritative — it counts parametrized tests and dynamically generated tests that grep misses. |
+| 2026-04-05 | WS10: Fix training data scarcity by adding pagination and installing PyTDC | Leave small datasets, add data augmentation | Root causes were purely technical (missing pagination, missing dependency). Fixing them gives 29x-503x more data with no scientific compromise. |
+| 2026-04-05 | Clear stale VAE checkpoint and retrain on expanded data | Keep old model, fine-tune | Old model trained on 276 samples is not meaningful. Clean retrain on 8,109 samples. |
+| 2026-04-05 | Increase SLURM time limits: MPNN 1h→4h, ADMET 1h→6h, ADMET mem 16G→32G | Keep original limits | Datasets are 6-500x larger; original 1h limits would cause timeout failures. |
 
 ---
 
@@ -124,55 +128,53 @@ then review ideas here.
 
 **What is done:**
 - All 9 workstreams complete and merged to ML (548 tests passing)
-- All integration adapters written: MPNN (`ml/affinity_predictor.py`), ADMET
-  (`ml/admet_predictor.py`), VAE (`generation/vae_integration.py`), Docking Proxy
-  (`chemistry/docking_proxy.py`)
-- Cascading docking fallback: MPNN -> DockingProxy MLP -> constant 0.5 stub
-- Statistical testing framework complete (Mann-Whitney U, bootstrap CI, sensitivity)
-- Visualization module complete (score distributions, radar plots, comparison figures)
-- CI/CD pipeline configured (GitHub Actions: test, lint, test-with-chemistry)
-- Chemistry foundation integrated (RDKit fingerprints, descriptors, validation)
-- Vision System scaffolded: `vision/` directory with README, instructions, templates, logs
-- Admin AI run (Session 1, 2026-03-30): 12 suggestions, all triaged
-- Documentation system established: all 9 workstream reports exist, TEMPLATE.md, this log
-- AI Employee Directory added to HumanOnly/AI-Operations-Manual.md Section 10
-- Admin AI suggestions triaged: 10 implemented, 1 accepted/deferred, 1 wont-fix
-- Documentation drift fixed: CLAUDE.md, GOALS.md, CRITICAL.md, TODO.md, 4 module READMEs,
-  INTERFACES.md all updated to reflect post-workstream state
+- WS10: Training data scarcity fixed (ADMET 55→27,698, VAE 276→8,109, MPNN 1,678→10,466)
+- VAE trained on expanded data (8,109 SMILES, best val loss 2.3246, checkpoint saved)
+- MPNN and ADMET training jobs submitted (SLURM 7285710, 7285711, pending GPU allocation)
+- All integration adapters written: MPNN, ADMET, VAE, Docking Proxy
+- Admin AI session 2 triaged: S013-S014 (P0) implemented, S015-S024 triaged
+- CI workflow now triggers on ML branch (was only `main`)
+- ranking/CRITICAL.md line references all corrected with function name anchors
+- CLAUDE.md restructured by human (concise version with `docs/ai-guide/` references)
+- Vision System scaffolded + 12 ideas proposed (all status: proposed, awaiting review)
 
 **What is NOT done:**
-- ML model training (requires GPU): VAE, MPNN, ADMET are code-complete but untrained
-- Vision System has never been run (no briefings written, no ideas proposed)
+- MPNN and ADMET model training (jobs submitted, pending GPU queue)
+- Wire MPNN into scoring cascade (after training completes)
+- Generate VAE candidates with trained model
 - Full pipeline re-run with trained models
 - Statistical hypothesis testing with real (non-stub) scores
+- Vision idea review (12 ideas proposed, none accepted/deferred yet)
 - ~40 pre-existing ruff violations in `src/` (S010 accepted, deferred)
+- Accepted admin suggestions S015-S018, S021, S024 (module CRITICAL.md refs, stale content)
 
 **Known artifacts on disk:**
-- `data/processed/egfr_affinity.json` -- 1,678 ChEMBL EGFR compounds (pIC50)
-- `data/processed/admet_combined.json` -- TDC ADMET benchmark data
-- `data/processed/egfr_smiles_train.json` -- VAE training data
-- No model checkpoints yet (training required)
+- `data/processed/egfr_affinity.json` -- 10,466 ChEMBL EGFR compounds (pIC50)
+- `data/processed/admet_combined.json` -- 27,698 TDC ADMET molecules (6 endpoints)
+- `data/processed/egfr_smiles_train.json` -- 8,109 VAE training SMILES
+- `artifacts/models/vae/best_model.pt` -- 30MB, trained on 8,109 SMILES, epoch 9
 
 ---
 
 ## Next Steps
 
-1. **Run Vision System** -- refresh briefings (Assistant AI), generate ideas (Visionary AI),
-   then review ideas. See HumanOnly/AI-Operations-Manual.md Sections 8.3-8.5 for prompts.
+1. **Monitor MPNN/ADMET training** -- jobs 7285710/7285711 in GPU queue. Check
+   `squeue -u rag88` and `tail logs/train_mpnn_7285710.out` when running.
 
-2. **Fix ruff violations (S010)** -- ~40 pre-existing violations block CI. Run
-   `ruff check --fix src/` to auto-fix, then manually resolve remaining.
+2. **After training completes** -- wire models into pipeline:
+   - MPNN: verify `ml/affinity_predictor.py` loads checkpoint, test scoring cascade
+   - ADMET: verify `ml/admet_predictor.py` loads checkpoint, test filtering
+   - VAE: run `scripts/generate_vae_candidates.py` (S024: script needs to be created)
+   - Re-run full comparison: `scripts/compare_baseline_vs_state_aware.py`
+   - Apply statistical tests (Mann-Whitney U), report p-values
 
-3. **Plan ML training** -- three models need GPU training:
-   - VAE: `python scripts/train_vae.py --config configs/vae.yaml`
-   - MPNN: `python scripts/train_mpnn.py --config configs/mpnn.yaml`
-   - ADMET: `python scripts/train_admet.py --config configs/admet.yaml`
-   See HumanOnly/AI-Operations-Manual.md Section 4 for HPC instructions.
+3. **Review 12 Vision ideas** -- all in `vision/ideas/` with status "proposed". Accept
+   or defer each. Create workstream briefs for accepted ideas.
 
-4. **After training** -- re-run full comparison pipeline, apply statistical tests,
-   update reports with real results. This is the path to rejecting the null hypothesis.
+4. **Fix accepted admin items** -- S015-S018, S021, S024 (module CRITICAL.md refs, stale
+   content, missing VAE generation script).
 
-5. **Create new workstreams** from accepted Visionary ideas.
+5. **Fix ruff violations (S010)** -- ~40 violations block CI.
 
 ---
 
