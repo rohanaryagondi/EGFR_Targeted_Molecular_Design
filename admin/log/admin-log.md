@@ -2,15 +2,117 @@
 
 ## Status
 
-- **Last session:** 2026-03-30
-- **Suggestions written:** 12 (S001-S012)
-- **Last updated:** 2026-03-30
+- **Last session:** 2026-04-05
+- **Suggestions written:** 24 (S001-S012 session 1, S013-S024 session 2)
+- **Last updated:** 2026-04-05
 
 ---
 
 ## Sessions
 
 <!-- Newest entries first. Each session gets its own heading. -->
+
+### Session 2 -- 2026-04-05
+
+#### Context
+
+Follow-up audit after Head AI implemented 10 of 12 Session 1 suggestions. Session 1 fixed root-level CRITICAL.md and CLAUDE.md line references, but module-level CRITICAL.md files were not updated. This session focuses on the module-level documentation drift that survived the first triage.
+
+#### Files Audited
+
+**Core Documentation (5 files):**
+1. `CLAUDE.md` -- re-read in full; verified source file counts and script counts
+2. `CRITICAL.md` -- re-read in full; verified import list accuracy for ranking/scoring.py
+3. `GOALS.md` -- re-read in full; found stale "Method (current)" column in Section 4
+4. `TODO.md` -- re-read in full; no new issues beyond Session 1 findings
+5. `pyproject.toml` -- re-read; version 0.1.0 matches __init__.py
+
+**Module CRITICAL.md Files (12 files, deep line-reference verification):**
+6. `ranking/CRITICAL.md` -- 10+ stale line refs (worst file in project)
+7. `baselines/CRITICAL.md` -- 4 stale line refs + internal contradiction
+8. `evaluation/CRITICAL.md` -- 5+ stale line refs (off by 3-18 lines)
+9. `generation/CRITICAL.md` -- 2 stale cross-module refs to ranking/scoring.py
+10. `ml/CRITICAL.md` -- claims MPNN data prep script doesn't exist (it does)
+11. `data/CRITICAL.md` -- references verified, all correct
+12. `chemistry/CRITICAL.md` -- not deeply verified (small file, newer)
+13. `structure/CRITICAL.md` -- not deeply verified
+14. `context/CRITICAL.md` -- not deeply verified
+15. `dynamics/CRITICAL.md` -- not deeply verified
+16. `utils/CRITICAL.md` -- not deeply verified
+17. `processing/CRITICAL.md` -- not deeply verified
+
+**Module __init__.py Files (13 files):**
+18. All 12 subpackage `__init__.py` + root `__init__.py` -- checked for version and export consistency
+
+**Module README Files (12 files):**
+19. `evaluation/README.md` -- verified current and accurate
+20. `ml/README.md` -- verified current
+21. `ranking/README.md` -- verified current and detailed
+
+**Config Files (8 files):**
+22. All 6 YAML configs -- clean, no issues
+23. `.github/workflows/ci.yml` -- CRITICAL: triggers on `main` not `ML`
+24. `.gitignore` -- missing coverage for ML training data
+
+**Test Infrastructure:**
+25. All 19 test files listed; 538 `def test_` + parametrize variants = 548 total (matches docs)
+
+**Reports and Logs:**
+26. `reports/head-ai-log.md` -- current as of 2026-03-30
+27. `workstreams/README.md` -- accurate, all 9 complete
+28. `workstreams/INTERFACES.md` -- found missing script reference
+29. `admin/suggestions.md` -- read prior suggestions
+30. `admin/log/admin-log.md` -- read prior session
+
+**Source Code (spot checks for line reference verification):**
+31. `ranking/scoring.py` -- verified ALL function locations against all CRITICAL.md refs
+32. `baselines/scoring.py` -- verified key function locations
+33. `evaluation/comparison.py` -- verified key function locations
+34. `evaluation/statistics.py` -- verified HAS_SCIPY location
+35. `evaluation/sensitivity.py` -- verified _COMPONENT_NAMES and _rescore_merged locations
+36. `generation/models.py` -- verified model class locations
+37. `baselines/models.py` -- verified CandidateSource and FilteredLibrary locations
+
+#### Suggestions Written
+
+- **S013 (P0):** CI triggers on `main` branch but default branch is `ML` -- CI never runs
+- **S014 (P0):** ranking/CRITICAL.md has 10+ wrong line references (worst offender)
+- **S015 (P1):** baselines/CRITICAL.md has 4 wrong line refs + self-contradictory docking stub refs
+- **S016 (P1):** evaluation/CRITICAL.md has 5+ stale line references (off by 3-18 lines)
+- **S017 (P1):** generation/CRITICAL.md cross-references ranking/scoring.py at wrong lines
+- **S018 (P1):** ml/CRITICAL.md says MPNN data prep script doesn't exist (it does)
+- **S019 (P1):** GOALS.md Section 4 scoring table shows pre-WS02 "current" methods
+- **S020 (P1):** CLAUDE.md says "84 source files" and "37 scripts" -- actual is 86 and 40
+- **S021 (P1):** Root CRITICAL.md import list for ranking/scoring.py missing 2 imports
+- **S022 (P2):** .gitignore doesn't cover ML training data files in data/processed/
+- **S023 (P2):** CLAUDE.md Section 9 file tree says "BioForge/" instead of "statebind"
+- **S024 (P2):** scripts/generate_vae_candidates.py referenced but does not exist
+
+#### Key Findings
+
+1. **Module-level CRITICAL.md files are the primary remaining documentation problem.** Session 1 fixed root-level CRITICAL.md and CLAUDE.md, but the module-level CRITICAL.md files (especially ranking/, baselines/, evaluation/, generation/) were not touched. These files contain the most line-reference-dense documentation in the project and nearly every reference is wrong.
+
+2. **ranking/CRITICAL.md is the worst file.** Every single line reference to scoring.py is wrong, most by 50-100 lines. This is because WS02, WS04, and WS08 all added code to scoring.py, pushing existing code downward. An agent reading this file would look at the wrong code for every critical fact.
+
+3. **The CI workflow has TWO independent blockers.** S010 (ruff violations, from session 1) AND S013 (wrong branch trigger, new this session). Even if ruff violations are fixed, CI still won't run because it watches `main` instead of `ML`.
+
+4. **Source file and script counts drifted.** CLAUDE.md was updated in session 1 to say "84 source files" and "37 scripts" but the actual counts are 86 and 40 (data prep scripts were added during workstreams). These are small discrepancies but the kind of thing that erodes trust in the documentation.
+
+5. **The .gitignore has a structural gap.** ML training data files (JSON, potentially large) sit directly in `data/processed/` and are not covered by the existing gitignore rules, which only cover subdirectories of `data/processed/`.
+
+6. **Overall documentation quality has improved significantly since session 1.** The P0 issues from session 1 (missing chemistry module, wrong test counts, massively stale GOALS.md) are all fixed. The remaining issues are module-level line references and incremental count drift.
+
+#### Changes Since Last Session
+
+- Head AI implemented 10 of 12 Session 1 suggestions
+- S010 (ruff violations) accepted but deferred
+- S012 (init.py exports) marked wont-fix
+- Root CRITICAL.md and CLAUDE.md line references are now accurate
+- GOALS.md, TODO.md updated for post-workstream state
+- 4 module READMEs updated
+- INTERFACES.md contracts 5 and 6 updated
+
+---
 
 ### Session 1 -- 2026-03-30
 
@@ -107,20 +209,25 @@ First session — no prior sessions to compare against.
 ## Current State
 
 **What is done:**
-- Full audit of all files listed in `admin/INSTRUCTIONS.md`
-- 12 suggestions written to `admin/suggestions.md` (3 P0, 6 P1, 2 P2, 1 P3)
-- All audit checklist categories covered: Documentation Accuracy, Scaffolding Completeness,
-  Config Consistency, Cross-Reference Integrity, Stale Content
+- Two full audits completed (Session 1: 2026-03-30, Session 2: 2026-04-05)
+- 24 total suggestions written (S001-S024)
+- Session 1: 12 suggestions, 10 implemented, 1 accepted/deferred (S010), 1 wont-fix (S012)
+- Session 2: 12 new suggestions (2 P0, 7 P1, 3 P2) focused on module-level CRITICAL.md files
+- Root-level documentation (CLAUDE.md, CRITICAL.md, GOALS.md) is now mostly accurate
+- Module-level CRITICAL.md files identified as the main remaining documentation gap
 
 **What is NOT done:**
-- Head AI triage of suggestions (not my responsibility)
-- Implementation of fixes (not my responsibility)
-- Second-pass audit after fixes are applied
+- Head AI triage of Session 2 suggestions (S013-S024)
+- Implementation of Session 2 fixes (not my responsibility)
+- Deep line-reference audit of chemistry/, structure/, context/, dynamics/, utils/, processing/ CRITICAL.md files (smaller files, less likely to have drift, but not fully verified)
+- S010 (ruff violations) still deferred from Session 1
 
 **Next steps:**
-1. Head AI reads `admin/suggestions.md` and triages all 12 suggestions
-2. P0 items (S001-S003) should be fixed immediately — they would mislead new agents
-3. After fixes, a follow-up Admin AI session should verify the fixes and re-check line references
+1. Head AI reads `admin/suggestions.md` and triages S013-S024
+2. P0 items first: S013 (CI branch) and S014 (ranking/CRITICAL.md) are the most critical
+3. P1 items: S015-S021 address module CRITICAL.md drift and stale content
+4. P2 items: S022-S024 are improvements (gitignore, naming, missing script)
+5. After fixes, a third session should do a final verification pass and audit the remaining 6 module CRITICAL.md files not deeply checked in this session
 
 ---
 

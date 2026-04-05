@@ -14,6 +14,18 @@ Only the Head AI changes status fields.
 | ID | Priority | Category | Status | Summary |
 |----|----------|----------|--------|---------|
 | S010 | P2 | Config | accepted | CI workflow guaranteed to fail — ~40 ruff violations block `ruff check src/` |
+| S013 | P0 | Config | suggested | CI workflow triggers on `main` branch but default branch is `ML` — CI never runs |
+| S014 | P0 | Cross-Reference | suggested | ranking/CRITICAL.md has 10+ wrong line references — most are off by 50-100 lines |
+| S015 | P1 | Cross-Reference | suggested | baselines/CRITICAL.md has 4 wrong line references for scoring.py |
+| S016 | P1 | Cross-Reference | suggested | evaluation/CRITICAL.md has 5+ stale line references (off by 3-18 lines) |
+| S017 | P1 | Cross-Reference | suggested | generation/CRITICAL.md references ranking/scoring.py at wrong lines (192, 202-209) |
+| S018 | P1 | Stale Content | suggested | ml/CRITICAL.md says "MPNN data prep script does not exist yet" but it exists |
+| S019 | P1 | Stale Content | suggested | GOALS.md Section 4 scoring table shows pre-WS02 "current" methods |
+| S020 | P1 | Stale Content | suggested | CLAUDE.md says "84 Python source files" and "37 pipeline scripts" — actual is 86 and 40 |
+| S021 | P1 | Cross-Reference | suggested | Root CRITICAL.md import list for ranking/scoring.py is incomplete (missing 2 imports) |
+| S022 | P2 | Config | suggested | .gitignore does not cover ML training data files in data/processed/ |
+| S023 | P2 | Stale Content | suggested | CLAUDE.md Section 9 file tree header says "BioForge/" — project is "statebind" |
+| S024 | P2 | Cross-Reference | suggested | scripts/generate_vae_candidates.py referenced in INTERFACES.md and CLAUDE.md but does not exist |
 
 ---
 
@@ -34,6 +46,230 @@ Only the Head AI changes status fields.
 **Suggested Fix:** Run `ruff check --fix src/` to auto-fix all fixable violations (I001, F401, most E501). Manually resolve remaining violations. Verify with `ruff check src/` before committing.
 
 **Head AI Notes:** Accepted. Deferred to a dedicated cleanup session — fixing ~40 ruff violations across the codebase requires careful review to avoid breaking imports. Will be addressed as a standalone task, not bundled with the documentation triage.
+
+---
+
+### S013: CI workflow triggers on `main` branch but default branch is `ML`
+
+- **Priority:** P0
+- **Category:** Config
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `.github/workflows/ci.yml` lines 4-7
+
+**Problem:** The CI workflow triggers on `push: branches: [main]` and `pull_request: branches: [main]`. However, the head-ai-log.md records that the default branch was changed from `main` to `ML` (Decision dated 2026-03-25). CRITICAL.md confirms: "The default branch on GitHub was changed from `main` to `ML`. All work happens on `ML`." This means CI never triggers on any push or PR to the active development branch. The entire CI/CD setup (WS06) is non-functional not just because of ruff violations (S010) but because it watches the wrong branch.
+
+**Suggested Fix:** Change `.github/workflows/ci.yml` lines 5 and 7 from `branches: [main]` to `branches: [ML]` (or `branches: [main, ML]` if main is kept as a stable reference).
+
+---
+
+### S014: ranking/CRITICAL.md has 10+ wrong line references
+
+- **Priority:** P0
+- **Category:** Cross-Reference
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `src/statebind/ranking/CRITICAL.md`
+
+**Problem:** Session 1 (S002) fixed line references in the ROOT `CRITICAL.md` and `CLAUDE.md`, but the module-level `ranking/CRITICAL.md` was not updated. Nearly every line reference is wrong because workstreams (WS02, WS04, WS08) added code to `scoring.py` that shifted line numbers. Specific errors:
+
+| What | CRITICAL.md says | Actual location |
+|------|-----------------|-----------------|
+| `_validate_weights()` | `scoring.py:89-97` | `scoring.py:173-181` |
+| Required weight keys | `scoring.py:91` | `scoring.py:175` |
+| `DEFAULT_WEIGHTS` | `scoring.py:40-45` | `scoring.py:86-91` |
+| `SCORING_METHOD` | `scoring.py:47-52` | `scoring.py:93-97` |
+| `merge_rankings()` | `scoring.py:242-275` | `scoring.py:339-372` |
+| `rank_state_aware()` | `scoring.py:191-239` | `scoring.py:288-336` |
+| `_compute_state_specificity()` | `scoring.py:55-86` | `scoring.py:139-170` |
+| Static baseline specificity | `scoring.py:160,166` | Needs re-verification |
+| Rank assignment | `scoring.py:178-179, 229-230` | `scoring.py:268-269, 326-327` |
+| SCORING_METHOD constant | `scoring.py:49-54` | `scoring.py:93-97` |
+| `_get_scoring_method()` | `scoring.py:57-69` | `scoring.py:100+` |
+| `_get_scoring_method()` (WS08 ref) | `scoring.py:99` | `scoring.py:100` |
+
+A new agent reading `ranking/CRITICAL.md` would look at wrong code for every single critical fact. This is the most actively misleading file in the project.
+
+**Suggested Fix:** Update all line references in `ranking/CRITICAL.md` to match current code. Add function name anchors alongside line numbers (following the pattern established in S002 for root CRITICAL.md).
+
+---
+
+### S015: baselines/CRITICAL.md has 4 wrong line references for scoring.py
+
+- **Priority:** P1
+- **Category:** Cross-Reference
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `src/statebind/baselines/CRITICAL.md`
+
+**Problem:** The baselines/CRITICAL.md has stale line references for `baselines/scoring.py` and `ranking/scoring.py`:
+
+| What | CRITICAL.md says | Actual location |
+|------|-----------------|-----------------|
+| Docking stub | `scoring.py:135-149` | `scoring.py:202-216` |
+| `_score_druglikeness` | `scoring.py:83-129` | `scoring.py:101-148` (heuristic) |
+| Baseline weights | `scoring.py:176-180` | `scoring.py:269-273` |
+| Unified weights (ranking) | `ranking/scoring.py:40-45` | `ranking/scoring.py:86-91` |
+
+Note: The file does mention that "Docking stub line numbers shifted after WS04 additions. The stub is now around line 202" -- but the initial reference on line 3 still says 135-149. This is contradictory within the same file.
+
+**Suggested Fix:** Update all stale line references. Remove the contradictory "now around line 202" note since the primary reference should just be correct.
+
+---
+
+### S016: evaluation/CRITICAL.md has 5+ stale line references
+
+- **Priority:** P1
+- **Category:** Cross-Reference
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `src/statebind/evaluation/CRITICAL.md`
+
+**Problem:** Several line references in evaluation/CRITICAL.md are off by 3-18 lines:
+
+| What | CRITICAL.md says | Actual location |
+|------|-----------------|-----------------|
+| `compute_novelty()` | `comparison.py:152-173` | `comparison.py:155` |
+| HAS_SCIPY | `statistics.py:14-18` | `statistics.py:18-20` |
+| `_COMPONENT_NAMES` | `sensitivity.py:20` | `sensitivity.py:17` |
+| `_rescore_merged()` | `sensitivity.py:52-66` | `sensitivity.py:43` |
+| `run_full_comparison` run_statistics | `comparison.py:200` | `comparison.py:182` |
+
+These are smaller offsets (3-18 lines) compared to ranking/CRITICAL.md, but still misleading.
+
+**Suggested Fix:** Update all line references. Consider function name anchors for durability.
+
+---
+
+### S017: generation/CRITICAL.md references ranking/scoring.py at wrong lines
+
+- **Priority:** P1
+- **Category:** Cross-Reference
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `src/statebind/generation/CRITICAL.md`
+
+**Problem:** The generation/CRITICAL.md cross-references ranking module at stale locations:
+- Says `ranking/scoring.py:rank_state_aware() at line 192` -- actual is line 288.
+- Says `ranking/scoring.py:202-209` for deduplication -- actual deduplication is at lines 304-306.
+
+**Suggested Fix:** Update the two cross-module references to ranking/scoring.py.
+
+---
+
+### S018: ml/CRITICAL.md says MPNN data prep script does not exist
+
+- **Priority:** P1
+- **Category:** Stale Content
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `src/statebind/ml/CRITICAL.md` line 1
+
+**Problem:** The very first bullet in ml/CRITICAL.md says: "All three models (VAE, MPNN, ADMET) are code-complete but UNTRAINED. VAE training data prep script exists (`scripts/prepare_vae_data.py`); ADMET data prep script exists (`scripts/prepare_admet_data.py`); **MPNN data prep script does not exist yet**."
+
+But `scripts/prepare_mpnn_data.py` exists (created during WS08). The file was created and the CRITICAL.md was not updated. This is misleading because an agent reading this would think they need to create the script.
+
+**Suggested Fix:** Update the first bullet to list all three data prep scripts as existing. This was already noted in session 1 (S009 addressed the TODO.md version of this issue), but the ml/CRITICAL.md was not included in the fix.
+
+---
+
+### S019: GOALS.md Section 4 scoring table shows pre-WS02 "current" methods
+
+- **Priority:** P1
+- **Category:** Stale Content
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `GOALS.md` lines 120-125
+
+**Problem:** The "Full Cascade Scoring" table in GOALS.md Section 4 has a "Method (current)" column that still shows pre-workstream values:
+- reference_similarity: "SMILES 3-gram Tanimoto" (actual current: Morgan/ECFP4 when RDKit available)
+- druglikeness: "Heuristic MW/HBA/HBD" (actual current: RDKit QED + Lipinski when RDKit available)
+
+WS02 is complete and these methods are now the Morgan/ECFP4 and QED-based versions. The "current" column should reflect the post-WS02 state.
+
+**Suggested Fix:** Either update the "Method (current)" column to show post-WS02 reality, or restructure the table to reflect that the pre-ML-training state uses WS02 chemistry and the only remaining "target" upgrade is the MPNN replacing the docking stub (the reference_similarity and druglikeness targets are already achieved).
+
+---
+
+### S020: CLAUDE.md says "84 Python source files" and "37 pipeline scripts"
+
+- **Priority:** P1
+- **Category:** Stale Content
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `CLAUDE.md` Section 1 ("Key numbers") and Section 9
+
+**Problem:** CLAUDE.md Section 1 states "84 Python source files across 12 subpackages" and "37 pipeline scripts in `scripts/`". Actual counts:
+- 86 Python source files (84 in subpackages + cli.py + root __init__.py)
+- 40 pipeline scripts in scripts/
+
+The 84 count was correct for the 12 subpackages (5+3+7+8+8+6+6+6+15+9+4+7=84) but omits `cli.py` and the root `__init__.py`. The 37 script count is 3 short -- the data prep scripts (`prepare_vae_data.py`, `prepare_mpnn_data.py`, `prepare_admet_data.py`) were added during workstreams but the count was not updated.
+
+**Suggested Fix:** Update to "86 Python source files across 12 subpackages" (or "84 in subpackages + 2 root files") and "40 pipeline scripts in `scripts/`".
+
+---
+
+### S021: Root CRITICAL.md import list for ranking/scoring.py is incomplete
+
+- **Priority:** P1
+- **Category:** Cross-Reference
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `CRITICAL.md` line 40
+
+**Problem:** CRITICAL.md states: "`ranking/scoring.py` imports scoring functions FROM `baselines/scoring.py` (`_score_druglikeness`, `_score_reference_similarity`, `_score_docking_stub`, `_tanimoto_ngram`) at lines 19-24."
+
+Actual imports at lines 19-26 are: `_has_rdkit`, `_score_druglikeness`, `_score_druglikeness_enhanced`, `_score_reference_similarity`, `_score_docking_stub`, `_tanimoto_ngram`. Two imports are missing from the documentation: `_has_rdkit` and `_score_druglikeness_enhanced` (both added by WS02). The line range is also slightly off (19-26, not 19-24).
+
+**Suggested Fix:** Update the import list to include all 6 imported names and fix the line range to 19-26.
+
+---
+
+### S022: .gitignore does not cover ML training data files in data/processed/
+
+- **Priority:** P2
+- **Category:** Config
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `.gitignore`
+
+**Problem:** The `.gitignore` covers `data/processed/context/*`, `data/processed/structures/*`, `data/processed/ligands/*`, and `data/processed/benchmark/*` but does NOT cover the ML training data files that sit directly in `data/processed/`:
+- `egfr_affinity.json` (MPNN training data)
+- `admet_combined.json` (ADMET training data)
+- `egfr_smiles_train.json`, `egfr_smiles_val.json` (VAE training data)
+- `admet_metadata.json`, `egfr_affinity_metadata.json`, `egfr_smiles_metadata.json`
+
+These are generated by data prep scripts and are potentially large files that should not be committed to git. If someone runs `git add .` they would be included.
+
+**Suggested Fix:** Add `data/processed/*.json` to `.gitignore` (with appropriate `!` exceptions for any small JSON files that should be tracked), or add specific entries for each ML training data file.
+
+---
+
+### S023: CLAUDE.md Section 9 file tree header says "BioForge/"
+
+- **Priority:** P2
+- **Category:** Stale Content
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `CLAUDE.md` Section 9
+
+**Problem:** The file tree in CLAUDE.md Section 9 starts with `BioForge/` as the root directory name. The project is called "statebind" and the repository directory is `repo` under `statebind/`. "BioForge" appears to be an old project name or working title. A new agent might be confused about which project they are working on.
+
+**Suggested Fix:** Change `BioForge/` to `statebind/` (or `.` or the actual directory name) in the file tree header.
+
+---
+
+### S024: scripts/generate_vae_candidates.py referenced but does not exist
+
+- **Priority:** P2
+- **Category:** Cross-Reference
+- **Status:** suggested
+- **Date:** 2026-04-05
+- **File(s):** `workstreams/INTERFACES.md` Contract 5 (line ~251), `CLAUDE.md` Section 6 ("ML -> generation" integration)
+
+**Problem:** INTERFACES.md Contract 5 states: "VAE generation runs via `scripts/generate_vae_candidates.py` as a separate GPU-bound process." CLAUDE.md Section 6 says: "VAE generation runs via `scripts/generate_vae_candidates.py` for GPU isolation." However, this script does not exist in `scripts/`. It was referenced as part of the design for WS07 but was apparently never created (WS07 focused on data prep and integration, with training deferred to HPC).
+
+**Suggested Fix:** Either create the script (it should load a trained VAE, sample from it, and write `artifacts/generation/vae_candidates.json`) or update the documentation to note that this script is planned but not yet created, pending model training.
 
 ---
 

@@ -1,12 +1,12 @@
 {
   "source": "chembl_api",
-  "n_compounds": 1678,
+  "n_compounds": 10466,
   "pIC50_min": 4.0,
   "pIC50_max": 11.0,
-  "pIC50_mean": 6.4991,
-  "pIC50_median": 6.42,
-  "pIC50_stdev": 1.3188,
-  "generated_at": "2026-03-28T23:01:00.960376+00:00",
+  "pIC50_mean": 6.925,
+  "pIC50_median": 7.01,
+  "pIC50_stdev": 1.3067,
+  "generated_at": "2026-04-05T20:01:22.357847+00:00",
   "seed": 42,
   "notes": "EGFR binding affinity data for MPNN training. pIC50 = -log10(IC50 in molar). Higher = more potent."
 }
