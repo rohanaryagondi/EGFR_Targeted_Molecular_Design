@@ -664,6 +664,7 @@ def _print_summary(records: list[dict], source: str) -> None:
 def prepare_admet_data(
     seed: int = 42,
     output_dir: Path | None = None,
+    skip_graph_validation: bool = False,
 ) -> list[dict]:
     """Prepare merged multi-task ADMET training data.
 
@@ -676,6 +677,10 @@ def prepare_admet_data(
     output_dir:
         Directory to write ``admet_combined.json``. Defaults to
         ``data/processed/``.
+    skip_graph_validation:
+        If True, skip the PyG graph conversion validation step.
+        Useful when running on memory-constrained nodes or when
+        graph validation will be handled during training.
 
     Returns
     -------
@@ -713,8 +718,11 @@ def prepare_admet_data(
     records = _merge_by_smiles(per_task)
     logger.info("Merged into %d unique molecules", len(records))
 
-    # Validate graph conversion (skip if deps unavailable)
-    records = _validate_graph_conversion(records)
+    # Validate graph conversion (skip if deps unavailable or flag set)
+    if skip_graph_validation:
+        logger.info("Skipping graph validation (--skip-graph-validation)")
+    else:
+        records = _validate_graph_conversion(records)
 
     # Print summary
     _print_summary(records, source)
@@ -769,6 +777,12 @@ def main() -> None:
         default=None,
         help="Output directory (default: data/processed/)",
     )
+    parser.add_argument(
+        "--skip-graph-validation",
+        action="store_true",
+        default=False,
+        help="Skip PyG graph conversion validation (saves memory)",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -777,7 +791,11 @@ def main() -> None:
     )
 
     output_dir = Path(args.output_dir) if args.output_dir else None
-    prepare_admet_data(seed=args.seed, output_dir=output_dir)
+    prepare_admet_data(
+        seed=args.seed,
+        output_dir=output_dir,
+        skip_graph_validation=args.skip_graph_validation,
+    )
 
 
 if __name__ == "__main__":

@@ -442,7 +442,8 @@ def _fetch_chembl_api() -> list[dict[str, str]] | None:
     """Fetch EGFR actives from ChEMBL REST API (stdlib only).
 
     Queries CHEMBL203 (EGFR) for compounds with pchembl_value >= 5
-    (IC50 < 10 μM). Uses urllib (no external dependencies).
+    (IC50 < 10 μM). Paginates up to 40 pages (20,000 records max).
+    Uses urllib (no external dependencies).
 
     Returns None on any failure (network, timeout, parse error).
     """
@@ -454,23 +455,43 @@ def _fetch_chembl_api() -> list[dict[str, str]] | None:
         "&format=json"
     )
 
-    try:
-        req = urllib.request.Request(base_url, headers={"Accept": "application/json"})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError) as exc:
-        logger.info("ChEMBL API fetch failed (%s), using fallback", exc)
-        return None
+    all_activities: list[dict] = []
 
-    activities = data.get("activities", [])
-    if not activities:
+    for page in range(40):
+        url = f"{base_url}&offset={page * 500}"
+        try:
+            req = urllib.request.Request(
+                url, headers={"Accept": "application/json"}
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+        except (
+            urllib.error.URLError,
+            TimeoutError,
+            json.JSONDecodeError,
+            OSError,
+        ) as exc:
+            logger.info("ChEMBL API page %d failed (%s)", page, exc)
+            break
+
+        activities = data.get("activities", [])
+        if not activities:
+            break
+        all_activities.extend(activities)
+
+        # Stop if no more pages
+        if data.get("page_meta", {}).get("next") is None:
+            break
+
+    if not all_activities:
+        logger.info("ChEMBL API returned no activities, using fallback")
         return None
 
     seen: set[str] = set()
     records: list[dict[str, str]] = []
     rng = random.Random(42)
 
-    for act in activities:
+    for act in all_activities:
         smiles = act.get("canonical_smiles", "")
         if not smiles or smiles in seen or not _validate_smiles_basic(smiles):
             continue

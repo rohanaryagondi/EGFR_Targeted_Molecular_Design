@@ -53,6 +53,12 @@ data/processed/benchmark/*
 # Manifests ARE tracked (small JSON files with provenance)
 # data/manifests/*.json — committed to git
 
+# TDC cache files (downloaded by PyTDC, reproducible)
+data/*.tab
+
+# SLURM logs (regenerable)
+logs/
+
 # Jupyter
 .ipynb_checkpoints/
 

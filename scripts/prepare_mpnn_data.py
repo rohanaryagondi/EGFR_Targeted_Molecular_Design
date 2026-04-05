@@ -385,7 +385,7 @@ def _fetch_chembl_api() -> list[dict[str, float | str]] | None:
 
     all_activities: list[dict] = []
 
-    for page in range(5):
+    for page in range(40):
         url = f"{base_url}&offset={page * 500}"
         try:
             req = urllib.request.Request(
