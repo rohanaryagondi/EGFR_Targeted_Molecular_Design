@@ -14,18 +14,18 @@ Only the Head AI changes status fields.
 | ID | Priority | Category | Status | Summary |
 |----|----------|----------|--------|---------|
 | S010 | P2 | Config | accepted | CI workflow guaranteed to fail — ~40 ruff violations block `ruff check src/` |
-| S013 | P0 | Config | suggested | CI workflow triggers on `main` branch but default branch is `ML` — CI never runs |
-| S014 | P0 | Cross-Reference | suggested | ranking/CRITICAL.md has 10+ wrong line references — most are off by 50-100 lines |
-| S015 | P1 | Cross-Reference | suggested | baselines/CRITICAL.md has 4 wrong line references for scoring.py |
-| S016 | P1 | Cross-Reference | suggested | evaluation/CRITICAL.md has 5+ stale line references (off by 3-18 lines) |
-| S017 | P1 | Cross-Reference | suggested | generation/CRITICAL.md references ranking/scoring.py at wrong lines (192, 202-209) |
-| S018 | P1 | Stale Content | suggested | ml/CRITICAL.md says "MPNN data prep script does not exist yet" but it exists |
-| S019 | P1 | Stale Content | suggested | GOALS.md Section 4 scoring table shows pre-WS02 "current" methods |
-| S020 | P1 | Stale Content | suggested | CLAUDE.md says "84 Python source files" and "37 pipeline scripts" — actual is 86 and 40 |
-| S021 | P1 | Cross-Reference | suggested | Root CRITICAL.md import list for ranking/scoring.py is incomplete (missing 2 imports) |
-| S022 | P2 | Config | suggested | .gitignore does not cover ML training data files in data/processed/ |
-| S023 | P2 | Stale Content | suggested | CLAUDE.md Section 9 file tree header says "BioForge/" — project is "statebind" |
-| S024 | P2 | Cross-Reference | suggested | scripts/generate_vae_candidates.py referenced in INTERFACES.md and CLAUDE.md but does not exist |
+| S013 | P0 | Config | implemented | CI workflow triggers on `main` branch but default branch is `ML` — CI never runs |
+| S014 | P0 | Cross-Reference | implemented | ranking/CRITICAL.md has 10+ wrong line references — most are off by 50-100 lines |
+| S015 | P1 | Cross-Reference | accepted | baselines/CRITICAL.md has 4 wrong line references for scoring.py |
+| S016 | P1 | Cross-Reference | accepted | evaluation/CRITICAL.md has 5+ stale line references (off by 3-18 lines) |
+| S017 | P1 | Cross-Reference | accepted | generation/CRITICAL.md references ranking/scoring.py at wrong lines (192, 202-209) |
+| S018 | P1 | Stale Content | accepted | ml/CRITICAL.md says "MPNN data prep script does not exist yet" but it exists |
+| S019 | P1 | Stale Content | wont-fix | GOALS.md Section 4 scoring table shows pre-WS02 "current" methods |
+| S020 | P1 | Stale Content | wont-fix | CLAUDE.md says "84 Python source files" and "37 pipeline scripts" — actual is 86 and 40 |
+| S021 | P1 | Cross-Reference | accepted | Root CRITICAL.md import list for ranking/scoring.py is incomplete (missing 2 imports) |
+| S022 | P2 | Config | wont-fix | .gitignore does not cover ML training data files in data/processed/ |
+| S023 | P2 | Stale Content | wont-fix | CLAUDE.md Section 9 file tree header says "BioForge/" — project is "statebind" |
+| S024 | P2 | Cross-Reference | accepted | scripts/generate_vae_candidates.py referenced in INTERFACES.md and CLAUDE.md but does not exist |
 
 ---
 
