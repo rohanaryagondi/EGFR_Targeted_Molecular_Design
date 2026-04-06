@@ -35,10 +35,9 @@ For workstream briefs and interface contracts, see `workstreams/README.md`.
 ### Model Training (after data preparation)
 
 - [x] **Conditional SMILES VAE** -- `python scripts/train_vae.py --config configs/vae.yaml`
-  - **Original training:** 2.6M params, early-stopped epoch 29, val_loss 2.3246. Generated 0% valid SMILES (teacher forcing issue).
-  - **Retrained (2026-04-06):** Fixed TF annealing (1.0→0.0), early-stop on recon_loss, hidden_dim 512, KL warmup 50 epochs. 9.5M params, best epoch 293/300, val_recon 1.9165, ~29 min on scavenge_gpu.
-  - Checkpoint: `artifacts/models/vae/best_model.pt` (114MB)
-  - **Generation quality NOT YET TESTED.** This is the key next step.
+  - **v1 (original):** 2.6M params, 0% valid SMILES (teacher forcing from epoch 0).
+  - **v2 (retrained 2026-04-06):** TF annealing, hidden_dim 512, 9.5M params, val_recon=1.92. **Still 0% valid at all temperatures (0.3, 0.8, 1.0).** Root cause: prior-posterior mismatch (kl_weight=0.001) + character-level SMILES fragility.
+  - **v3 (SELFIES, retraining 2026-04-06):** Switched to SELFIES representation (100% validity by construction). Increased kl_weight to 0.01. `--selfies` flag added to train_vae.py. SLURM job submitted, waiting for GPU resources.
 
 - [x] **Affinity MPNN** -- `python scripts/train_mpnn.py --config configs/mpnn.yaml`
   - All targets exceeded: RMSE=0.7182 (<1.0 ✓), R²=0.6863 (>0.5 ✓), Pearson=0.8323 (>0.7 ✓)
@@ -93,7 +92,7 @@ These tasks connect trained models into the running pipeline and re-execute the 
 
 - [x] **Wire MPNN into scoring** -- MPNN loads automatically via cascading fallback in `ranking/scoring.py`. Verified: osimertinib scores 0.75, ethanol 0.34, fallback 0.50 for invalid SMILES. Scoring method string reports `MPNN_affinity(pIC50)`.
 
-- [ ] **Wire VAE into generation** -- VAE retrained (SLURM job 7397885 COMPLETED: 9.5M params, best epoch 293, val_recon=1.92). Training fixes applied: TF annealing 1.0→0.0, early-stop on recon_loss, hidden_dim 512, KL warmup 50 epochs. **Generation quality NOT YET TESTED.** Next: run `scripts/generate_vae_candidates.py`, check validity rate. If valid, re-run comparison with VAE candidates.
+- [ ] **Wire VAE into generation** -- VAE v2 (SMILES) tested: 0% valid at all temperatures (0.3, 0.8, 1.0). Diagnosis: prior-posterior mismatch (kl_weight=0.001) + char-level SMILES fragility. Fix: VAE v3 uses SELFIES representation (100% validity guarantee) + kl_weight=0.01. `--selfies` flag added to `train_vae.py`, SELFIES→SMILES conversion in `generate_vae_candidates.py`. **SLURM job submitted for SELFIES VAE retraining.** Next: after training completes, run `scripts/generate_vae_candidates.py`, check validity rate. If valid, re-run comparison.
 
 - [x] **Wire ADMET into filtering** -- ADMET predictions work (hERG AUROC=0.77, CYP3A4=0.73). Hard pass/fail filtering too aggressive for kinase inhibitors (100% hERG failure — kinase inhibitors are inherently hERG-liable). ADMET best used as informational annotation, not pre-ranking gate. Documented as limitation.
 
