@@ -12,7 +12,6 @@ compounds and trivial analogs.
 from __future__ import annotations
 
 import hashlib
-import re
 from datetime import datetime, timezone
 
 from statebind.baselines.models import (

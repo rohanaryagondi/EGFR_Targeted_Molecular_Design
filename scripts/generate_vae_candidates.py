@@ -98,6 +98,15 @@ def main() -> None:
     device = get_device("auto")
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
 
+    # Detect SELFIES mode from checkpoint config
+    ckpt_config = checkpoint.get("config", {})
+    use_selfies = ckpt_config.get("representation", "smiles") == "selfies"
+    selfies_tokenizer = None
+    if use_selfies:
+        from statebind.ml.tokenizer import SELFIESTokenizer
+        selfies_tokenizer = SELFIESTokenizer()
+        logger.info("SELFIES mode detected — will convert generated tokens to SMILES")
+
     # Reconstruct VAEConfig from checkpoint
     if "vae_config" in checkpoint and checkpoint["vae_config"]:
         vae_config = VAEConfig(**checkpoint["vae_config"])
@@ -168,10 +177,28 @@ def main() -> None:
 
         for seq_indices in token_sequences:
             tokens = vocab.decode(seq_indices, strip_special=True)
-            smiles = "".join(tokens)
+            raw_str = "".join(tokens)
 
-            if not smiles:
+            if not raw_str:
                 continue
+
+            # Convert SELFIES to SMILES if in SELFIES mode
+            if use_selfies and selfies_tokenizer is not None:
+                smiles = selfies_tokenizer.selfies_to_smiles(raw_str)
+                if smiles is None:
+                    smiles = raw_str  # Keep raw for debugging
+                    is_valid = False
+                    is_novel = False
+                    all_candidates.append({
+                        "smiles": smiles,
+                        "state": state_name,
+                        "is_valid": False,
+                        "is_novel": False,
+                        "source": "conditional_smiles_vae",
+                    })
+                    continue
+            else:
+                smiles = raw_str
 
             is_valid = True
             is_novel = smiles not in seen_smiles

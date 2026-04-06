@@ -1,11 +1,15 @@
 # Conditional SMILES VAE Training Configuration
 #
 # This config drives the state-conditioned molecular generator.
-# The VAE learns to generate novel SMILES conditioned on EGFR
+# The VAE learns to generate novel molecules conditioned on EGFR
 # conformational states (DFGin_aCin, DFGin_aCout, DFGout_aCin, DFGout_aCout).
 #
+# SELFIES mode: pass --selfies to train_vae.py to use SELFIES representation.
+# SELFIES guarantees every generated string decodes to a valid molecule,
+# eliminating the 0% validity problem with character-level SMILES generation.
+#
 # Data: ChEMBL EGFR bioactivity (IC50 < 10uM) + known binders
-# Expected training time: ~5-15 minutes on single GPU
+# Expected training time: ~15-30 minutes on single GPU
 
 model:
   vocab_size: 150        # Adjusted during training based on data
@@ -15,7 +19,7 @@ model:
   n_layers: 2
   dropout: 0.2           # Increased from 0.1 to reduce overfitting
   n_states: 4
-  kl_weight: 0.001       # Reduced from 0.01 to avoid posterior collapse
+  kl_weight: 0.01        # Increased from 0.001 to reduce prior-posterior mismatch
   pad_idx: 0
 
 training:

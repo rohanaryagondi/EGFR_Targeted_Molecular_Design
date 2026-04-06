@@ -1,9 +1,13 @@
-"""Regex-based SMILES tokenizer.
+"""Regex-based SMILES and SELFIES tokenizers.
 
 Correctly splits SMILES strings into chemically meaningful tokens,
 handling multi-character atoms (Cl, Br, Si, Se), bracketed atoms
 ([nH], [C@@H], [O-], [N+]), ring closures (single and double-digit),
 bonds, branches, and aromatic atoms.
+
+Also provides a :class:`SELFIESTokenizer` that uses the ``selfies``
+library for bracket-delimited tokenization.  SELFIES guarantees that
+every generated string decodes to a valid molecule.
 """
 
 from __future__ import annotations
@@ -93,3 +97,68 @@ class SMILESTokenizer:
         """
         tokens = self.tokenize(smiles)
         return self.detokenize(tokens) == smiles
+
+
+class SELFIESTokenizer:
+    """Tokenizer for SELFIES molecular representations.
+
+    SELFIES (SELF-referencing Embedded Strings) use bracket-delimited
+    tokens (e.g. ``[C]``, ``[=N]``, ``[Branch1]``).  Every SELFIES
+    string decodes to a valid molecule, eliminating the need for
+    post-hoc validity filtering during generation.
+
+    Requires the ``selfies`` package: ``pip install selfies``.
+
+    Examples
+    --------
+    >>> tok = SELFIESTokenizer()
+    >>> tok.tokenize("[C][=C][C][=O]")
+    ['[C]', '[=C]', '[C]', '[=O]']
+    >>> tok.smiles_to_selfies("CCO")
+    '[C][C][O]'
+    """
+
+    def __init__(self) -> None:
+        try:
+            import selfies as sf
+
+            self._sf = sf
+        except ImportError as exc:
+            raise ImportError(
+                "SELFIESTokenizer requires the 'selfies' package. "
+                "Install with: pip install selfies"
+            ) from exc
+        self._bracket_re: re.Pattern[str] = re.compile(r"\[[^\]]*\]")
+
+    def tokenize(self, selfies_str: str) -> list[str]:
+        """Split a SELFIES string into bracket-delimited tokens."""
+        return self._bracket_re.findall(selfies_str)
+
+    def detokenize(self, tokens: list[str]) -> str:
+        """Join tokens back into a SELFIES string."""
+        return "".join(tokens)
+
+    def smiles_to_selfies(self, smiles: str) -> str | None:
+        """Convert a SMILES string to its SELFIES representation.
+
+        Returns ``None`` if the conversion fails.
+        """
+        try:
+            return self._sf.encoder(smiles)
+        except Exception:
+            return None
+
+    def selfies_to_smiles(self, selfies_str: str) -> str | None:
+        """Convert a SELFIES string back to SMILES.
+
+        Returns ``None`` if the conversion fails.
+        """
+        try:
+            return self._sf.decoder(selfies_str)
+        except Exception:
+            return None
+
+    def is_valid_tokenization(self, selfies_str: str) -> bool:
+        """Check whether tokenization is lossless."""
+        tokens = self.tokenize(selfies_str)
+        return self.detokenize(tokens) == selfies_str

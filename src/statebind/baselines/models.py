@@ -6,10 +6,8 @@ Every intermediate and output artifact has a typed schema.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Literal
 
 from pydantic import BaseModel, Field
-
 
 # ── Pocket ──────────────────────────────────────────────────────────────
 

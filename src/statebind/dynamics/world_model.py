@@ -22,7 +22,6 @@ from pathlib import Path
 
 from statebind.dynamics.embeddings import EmbeddingSpace, learn_embeddings
 from statebind.dynamics.sequences import (
-    StateSequence,
     StateTransition,
     TransitionDataset,
     build_transition_dataset,
@@ -106,7 +105,7 @@ class LearnedWorldModel:
         self,
         transitions: list[StateTransition],
         embeddings: EmbeddingSpace,
-    ) -> "LearnedWorldModel":
+    ) -> LearnedWorldModel:
         """Train MLP on transition data using state embeddings as input."""
         rng = random.Random(self.config.random_seed)
         hidden = self.config.mlp_hidden
@@ -235,7 +234,7 @@ def build_world_model(config: WorldModelConfig | None = None) -> WorldModelOutpu
     )
 
     # Also estimate from train only (for evaluation)
-    train_matrix = estimate_transition_matrix(
+    estimate_transition_matrix(
         train_trans, dataset.states, smoothing=config.smoothing
     )
 
@@ -383,7 +382,10 @@ def save_world_model(output: WorldModelOutput, artifact_dir: Path) -> list[Path]
             "train_log_likelihood": round(output.train_log_likelihood, 4),
             "test_log_likelihood": round(output.test_log_likelihood, 4),
             "n_train_transitions": int(0.7 * output.transition_dataset.n_transitions),
-            "n_test_transitions": output.transition_dataset.n_transitions - int(0.7 * output.transition_dataset.n_transitions),
+            "n_test_transitions": (
+                output.transition_dataset.n_transitions
+                - int(0.7 * output.transition_dataset.n_transitions)
+            ),
             "n_sequences": output.transition_dataset.n_sequences,
             "n_states": len(output.transition_matrix.states),
         }, f, indent=2)

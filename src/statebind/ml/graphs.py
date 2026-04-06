@@ -23,8 +23,6 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-import numpy as np
-
 try:
     import torch
     HAS_TORCH = True
@@ -33,7 +31,7 @@ except ImportError:
 
 try:
     from rdkit import Chem
-    from rdkit.Chem import rdchem
+    from rdkit.Chem import rdchem  # noqa: F401 (accessed via Chem.rdchem)
     HAS_RDKIT = True
 except ImportError:
     HAS_RDKIT = False
@@ -95,7 +93,10 @@ _BOND_TYPES = [
 # Precomputed feature dimensions
 # Element: 11 (10 + other) | Degree: 7 | Charge: 5 | Hybridization: 5 |
 # Aromatic: 1 | In ring: 1 | Num Hs: 5 => 35
-ATOM_FEATURE_DIM: int = len(_ELEMENTS) + 1 + (_MAX_DEGREE + 1) + len(_CHARGES) + len(_HYBRIDIZATIONS) + 1 + 1 + (_MAX_HS + 1)
+ATOM_FEATURE_DIM: int = (
+    len(_ELEMENTS) + 1 + (_MAX_DEGREE + 1) + len(_CHARGES)
+    + len(_HYBRIDIZATIONS) + 1 + 1 + (_MAX_HS + 1)
+)
 
 # Bond type: 4 | Conjugated: 1 | In ring: 1 | Stereo: 5 => 11
 BOND_FEATURE_DIM: int = len(_BOND_TYPES) + 1 + 1 + len(_BOND_STEREO)
@@ -127,7 +128,7 @@ def _one_hot_with_other(value: object, choices: list) -> list[float]:
 # Feature extraction
 # ---------------------------------------------------------------------------
 
-def atom_features(atom: "Atom") -> list[float]:
+def atom_features(atom: Atom) -> list[float]:
     """Compute the feature vector for a single atom.
 
     Args:
@@ -162,7 +163,7 @@ def atom_features(atom: "Atom") -> list[float]:
     return features
 
 
-def bond_features(bond: "Bond") -> list[float]:
+def bond_features(bond: Bond) -> list[float]:
     """Compute the feature vector for a single bond.
 
     Args:
@@ -192,7 +193,7 @@ def bond_features(bond: "Bond") -> list[float]:
 # SMILES -> PyG Data
 # ---------------------------------------------------------------------------
 
-def smiles_to_graph(smiles: str) -> "Data | None":
+def smiles_to_graph(smiles: str) -> Data | None:
     """Convert a single SMILES string to a PyTorch Geometric Data object.
 
     The returned :class:`~torch_geometric.data.Data` object contains:
@@ -261,7 +262,7 @@ def smiles_to_graph(smiles: str) -> "Data | None":
     return data
 
 
-def smiles_to_graph_batch(smiles_list: list[str]) -> list["Data"]:
+def smiles_to_graph_batch(smiles_list: list[str]) -> list[Data]:
     """Convert a list of SMILES strings to a list of PyG Data objects.
 
     Invalid SMILES (or those that fail conversion) are silently skipped.

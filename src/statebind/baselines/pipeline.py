@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
 
 from statebind.baselines.candidates import build_candidate_library
@@ -96,7 +95,7 @@ def run_static_baseline(
 
     # 6. Evaluation
     evaluation = evaluate_baseline(ranked, top_k=top_k)
-    print(f"[6/6] Evaluation complete")
+    print("[6/6] Evaluation complete")
 
     result = BaselineResult(
         structure_metadata=structure_meta,

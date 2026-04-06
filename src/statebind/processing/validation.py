@@ -8,7 +8,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from statebind.processing.models import (
-    BenchmarkSummary,
     ContextDataset,
     LigandDataset,
     MappingTables,
@@ -147,7 +146,7 @@ def _validate_context(ctx: ContextDataset, report: DatasetValidationReport) -> N
                     f"Missing key mutations: {missing_key}")
 
     # Split integrity
-    splits = {m.split for m in ctx.mutations}
+    {m.split for m in ctx.mutations}
     assigned = [m for m in ctx.mutations if m.split != "unassigned"]
     if assigned:
         split_counts = {}

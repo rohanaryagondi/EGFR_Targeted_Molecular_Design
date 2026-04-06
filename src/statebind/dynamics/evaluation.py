@@ -21,7 +21,6 @@ from statebind.dynamics.transitions import (
     TransitionPrediction,
     UniformBaseline,
 )
-from statebind.dynamics.world_model import LearnedWorldModel, WorldModelOutput
 
 
 @dataclass

@@ -25,4 +25,4 @@ echo "================"
 # Clear old training log to avoid confusion with previous runs
 rm -f artifacts/logs/vae/training_log.csv
 
-python scripts/train_vae.py --config configs/vae.yaml
+python scripts/train_vae.py --config configs/vae.yaml --selfies

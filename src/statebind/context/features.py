@@ -19,7 +19,6 @@ from statebind.processing.models import (
     ResistanceGeneration,
 )
 
-
 # ── Amino acid property tables ───────────────────────────────────────────
 
 # Kyte-Doolittle hydrophobicity scale (normalized to [0, 1])

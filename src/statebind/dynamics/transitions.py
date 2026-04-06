@@ -159,7 +159,7 @@ class MarkovTransitionModel:
         self.trans_matrix: TransitionMatrix | None = None
         self.fitted = False
 
-    def fit(self, transitions: list[StateTransition]) -> "MarkovTransitionModel":
+    def fit(self, transitions: list[StateTransition]) -> MarkovTransitionModel:
         """Estimate transition matrix from data."""
         self.trans_matrix = estimate_transition_matrix(
             transitions, self.states, smoothing=self.smoothing

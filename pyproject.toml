@@ -77,6 +77,10 @@ src = ["src"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["N803", "N806", "N815"]  # Allow X for feature matrices, pIC50, volume_A3 etc.
+
+[tool.ruff.lint.per-file-ignores]
+"src/statebind/ranking/scoring.py" = ["E402"]  # Lazy imports for optional deps
 
 [tool.mypy]
 python_version = "3.10"

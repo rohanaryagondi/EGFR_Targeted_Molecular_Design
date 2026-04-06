@@ -9,8 +9,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 
-from statebind.processing.models import ConformationalState
-from statebind.structure.models import AtlasEntry, PocketDescriptor
+from statebind.structure.models import AtlasEntry
 
 
 def compare_pockets_by_state(

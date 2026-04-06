@@ -11,7 +11,6 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-
 # ── Enums ───────────────────────────────────────────────────────────────
 
 
@@ -134,7 +133,9 @@ class StructureRecord(BaseModel):
     chain: str = Field(default="A")
     state: ConformationalState = Field(default=ConformationalState.UNCLASSIFIED)
     dfg_distance: float | None = Field(default=None, description="DFG Asp-Phe Ca distance (A)")
-    ac_helix_metric: float | None = Field(default=None, description="aC-helix classification metric")
+    ac_helix_metric: float | None = Field(
+        default=None, description="aC-helix classification metric",
+    )
     mutations_present: list[str] = Field(
         default_factory=list,
         description="Mutations in this structure relative to WT",

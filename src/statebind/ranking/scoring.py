@@ -18,11 +18,10 @@ from datetime import datetime, timezone
 
 from statebind.baselines.scoring import (
     _has_rdkit,
+    _score_docking_stub,
     _score_druglikeness,
     _score_druglikeness_enhanced,
     _score_reference_similarity,
-    _score_docking_stub,
-    _tanimoto_ngram,
 )
 
 
@@ -71,7 +70,6 @@ def _score_docking(smiles: str, pdb_id: str) -> tuple[float, bool, str]:
 from statebind.baselines.filtering import compute_properties
 from statebind.baselines.models import FilteredLibrary
 from statebind.generation.models import (
-    FilteredStateLibrary,
     MultiStateFilterResult,
 )
 from statebind.ranking.models import (
@@ -81,7 +79,6 @@ from statebind.ranking.models import (
     UnifiedScoreComponent,
     UnifiedScoredCandidate,
 )
-
 
 DEFAULT_WEIGHTS = {
     "reference_similarity": 0.35,
@@ -317,7 +314,11 @@ def rank_state_aware(
                 smiles=candidate.smiles,
                 pipeline=PipelineLabel.STATE_AWARE,
                 target_state=candidate.target_state,
-                strategy=candidate.strategy.value if hasattr(candidate.strategy, "value") else str(candidate.strategy),
+                strategy=(
+                    candidate.strategy.value
+                    if hasattr(candidate.strategy, "value")
+                    else str(candidate.strategy)
+                ),
                 scores=components,
                 composite_score=composite,
             ))
@@ -348,11 +349,13 @@ def merge_rankings(
     best_by_smiles: dict[str, UnifiedScoredCandidate] = {}
 
     for c in static_pool.candidates:
-        if c.smiles not in best_by_smiles or c.composite_score > best_by_smiles[c.smiles].composite_score:
+        existing = best_by_smiles.get(c.smiles)
+        if existing is None or c.composite_score > existing.composite_score:
             best_by_smiles[c.smiles] = c.model_copy()
 
     for c in state_aware_pool.candidates:
-        if c.smiles not in best_by_smiles or c.composite_score > best_by_smiles[c.smiles].composite_score:
+        existing = best_by_smiles.get(c.smiles)
+        if existing is None or c.composite_score > existing.composite_score:
             best_by_smiles[c.smiles] = c.model_copy()
 
     merged = sorted(best_by_smiles.values(), key=lambda x: x.composite_score, reverse=True)

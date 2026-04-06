@@ -12,7 +12,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from statebind.evaluation.comparison import ComparativeResult
-from statebind.ranking.models import MergedRanking, PipelineLabel
+from statebind.ranking.models import MergedRanking
 
 
 def _bar(value: float, max_value: float, width: int = 40) -> str:
@@ -39,14 +39,20 @@ def score_distribution_ascii(result: ComparativeResult) -> str:
     lines.append(f"  Static baseline  mean={static_stats.get('mean', 0):.4f}  "
                  f"std={static_stats.get('std', 0):.4f}  "
                  f"[{static_stats.get('min', 0):.3f}, {static_stats.get('max', 0):.3f}]")
-    lines.append(f"    Mean  {_bar(static_stats.get('mean', 0), max_score, 40)} {static_stats.get('mean', 0):.4f}")
-    lines.append(f"    Max   {_bar(static_stats.get('max', 0), max_score, 40)} {static_stats.get('max', 0):.4f}")
+    st_mean = static_stats.get('mean', 0)
+    st_max = static_stats.get('max', 0)
+    sa_mean = state_stats.get('mean', 0)
+    sa_max = state_stats.get('max', 0)
+    lines.append(f"    Mean  {_bar(st_mean, max_score, 40)} {st_mean:.4f}")
+    lines.append(f"    Max   {_bar(st_max, max_score, 40)} {st_max:.4f}")
     lines.append("")
-    lines.append(f"  State-aware      mean={state_stats.get('mean', 0):.4f}  "
-                 f"std={state_stats.get('std', 0):.4f}  "
-                 f"[{state_stats.get('min', 0):.3f}, {state_stats.get('max', 0):.3f}]")
-    lines.append(f"    Mean  {_bar(state_stats.get('mean', 0), max_score, 40)} {state_stats.get('mean', 0):.4f}")
-    lines.append(f"    Max   {_bar(state_stats.get('max', 0), max_score, 40)} {state_stats.get('max', 0):.4f}")
+    lines.append(
+        f"  State-aware      mean={sa_mean:.4f}  "
+        f"std={state_stats.get('std', 0):.4f}  "
+        f"[{state_stats.get('min', 0):.3f}, {sa_max:.3f}]"
+    )
+    lines.append(f"    Mean  {_bar(sa_mean, max_score, 40)} {sa_mean:.4f}")
+    lines.append(f"    Max   {_bar(sa_max, max_score, 40)} {sa_max:.4f}")
     lines.append("")
     lines.append(f"  Delta mean: {result.scores.delta_mean:+.4f}")
 

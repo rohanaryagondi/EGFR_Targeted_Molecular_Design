@@ -12,13 +12,11 @@ from __future__ import annotations
 import re
 
 from statebind.baselines.models import (
-    Candidate,
     CandidateLibrary,
     FilteredLibrary,
     FilterResult,
     PropertyFilter,
 )
-
 
 # ── Default Lipinski-like filters ───────────────────────────────────────
 

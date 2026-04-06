@@ -14,7 +14,6 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass, field
-from typing import Any
 
 
 @dataclass
@@ -79,7 +78,7 @@ class MutationOnlyBaseline:
 
     def fit(
         self, X: list[list[float]], y: list[str]
-    ) -> "MutationOnlyBaseline":
+    ) -> MutationOnlyBaseline:
         """Compute class centroids from training data."""
         # Group by label
         groups: dict[str, list[list[float]]] = {}
@@ -156,12 +155,12 @@ class CombinedLogistic:
 
     def fit(
         self, X: list[list[float]], y: list[str]
-    ) -> "CombinedLogistic":
+    ) -> CombinedLogistic:
         """Train logistic regression with gradient descent."""
         rng = random.Random(self.config.random_seed)
 
         self.class_labels = sorted(set(y))
-        n_classes = len(self.class_labels)
+        len(self.class_labels)
         n_features = len(X[0]) if X else 0
         n_samples = len(X)
 
@@ -176,7 +175,7 @@ class CombinedLogistic:
             self.biases[label] = 0.0
 
         # Label to index
-        label_idx = {label: i for i, label in enumerate(self.class_labels)}
+        {label: i for i, label in enumerate(self.class_labels)}
 
         lr = self.config.learning_rate
         l2 = self.config.l2_reg
@@ -279,7 +278,7 @@ class EmbeddingMLP:
 
     def fit(
         self, X: list[list[float]], y: list[str]
-    ) -> "EmbeddingMLP":
+    ) -> EmbeddingMLP:
         """Train MLP with SGD."""
         rng = random.Random(self.config.random_seed)
 

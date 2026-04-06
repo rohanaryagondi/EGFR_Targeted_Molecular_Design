@@ -106,11 +106,26 @@ EGFR_BINDERS: list[TrainingCompound] = [
 # ── Decoys (label=0) ─────────────────────────────────────────────────────
 
 DECOYS: list[TrainingCompound] = [
-    TrainingCompound("CN(C)C(=N)NC(=N)N", 0, "Metformin", "DrugBank DB00331", "Antidiabetic biguanide"),
-    TrainingCompound("CC(=O)Oc1ccccc1C(=O)O", 0, "Aspirin", "DrugBank DB00945", "NSAID"),
-    TrainingCompound("CC(C)Cc1ccc(C(C)C(=O)O)cc1", 0, "Ibuprofen", "DrugBank DB01050", "NSAID"),
-    TrainingCompound("CC(=O)Nc1ccc(O)cc1", 0, "Acetaminophen", "DrugBank DB00316", "Analgesic"),
-    TrainingCompound("Cn1c(=O)c2c(ncn2C)n(C)c1=O", 0, "Caffeine", "DrugBank DB00201", "CNS stimulant"),
+    TrainingCompound(
+        "CN(C)C(=N)NC(=N)N", 0, "Metformin",
+        "DrugBank DB00331", "Antidiabetic biguanide",
+    ),
+    TrainingCompound(
+        "CC(=O)Oc1ccccc1C(=O)O", 0, "Aspirin",
+        "DrugBank DB00945", "NSAID",
+    ),
+    TrainingCompound(
+        "CC(C)Cc1ccc(C(C)C(=O)O)cc1", 0, "Ibuprofen",
+        "DrugBank DB01050", "NSAID",
+    ),
+    TrainingCompound(
+        "CC(=O)Nc1ccc(O)cc1", 0, "Acetaminophen",
+        "DrugBank DB00316", "Analgesic",
+    ),
+    TrainingCompound(
+        "Cn1c(=O)c2c(ncn2C)n(C)c1=O", 0, "Caffeine",
+        "DrugBank DB00201", "CNS stimulant",
+    ),
     TrainingCompound(
         "CC(C)NCC(O)c1ccc(O)c(O)c1",
         0,

@@ -20,7 +20,6 @@ from datetime import datetime, timezone
 
 from statebind.processing.models import ConformationalState
 
-
 # Short aliases for readability
 _ACT = ConformationalState.DFGIN_ACIN       # Active
 _SRC = ConformationalState.DFGIN_ACOUT      # Src-like inactive

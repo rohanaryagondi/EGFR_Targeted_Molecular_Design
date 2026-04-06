@@ -14,7 +14,6 @@ limitation that makes this a baseline.
 
 from __future__ import annotations
 
-import re
 from datetime import datetime, timezone
 
 from statebind.baselines.models import (
@@ -23,7 +22,6 @@ from statebind.baselines.models import (
     ScoreComponent,
     ScoredCandidate,
 )
-
 
 # ── SMILES fingerprint (simple character n-gram approach) ───────────────
 

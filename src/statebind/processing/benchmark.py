@@ -213,7 +213,8 @@ def _write_mappings_csv(mappings, output_dir: Path) -> None:
     import csv
 
     with open(output_dir / "mapping_mutation_structure.csv", "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["mutation_id", "pdb_id", "chain", "state", "ligand_id"])
+        fields = ["mutation_id", "pdb_id", "chain", "state", "ligand_id"]
+        writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
         for m in mappings.mutation_structure:
             writer.writerow({

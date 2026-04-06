@@ -14,6 +14,7 @@ without catching ImportError themselves.
 from __future__ import annotations
 
 from statebind.chemistry.descriptors import compute_exact_properties
+from statebind.chemistry.docking_proxy import DockingProxy, get_default_proxy
 from statebind.chemistry.fingerprints import (
     HAS_RDKIT,
     compute_max_reference_similarity,
@@ -22,7 +23,6 @@ from statebind.chemistry.fingerprints import (
 )
 from statebind.chemistry.sa_score import compute_sa_score
 from statebind.chemistry.validation import canonicalize_smiles, validate_smiles
-from statebind.chemistry.docking_proxy import DockingProxy, get_default_proxy
 
 __all__ = [
     "compute_morgan_fingerprint",

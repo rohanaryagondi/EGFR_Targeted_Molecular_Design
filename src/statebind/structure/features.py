@@ -16,12 +16,9 @@ coordinates using BioPython or MDAnalysis.
 
 from __future__ import annotations
 
-from statebind.processing.models import ConformationalState
 from statebind.structure.models import (
-    AtlasEntry,
     PocketDescriptor,
     StructuralFeatures,
-    Provenance,
 )
 
 

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from statebind.generation.diversity import compute_diversity, DiversityMetrics
+from statebind.generation.diversity import DiversityMetrics, compute_diversity
 from statebind.ranking.aggregation import (
     mean_rank_by_pipeline,
     pipeline_representation_in_top_k,

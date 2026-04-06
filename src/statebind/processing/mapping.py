@@ -44,7 +44,7 @@ def build_mapping_tables(
     struct_by_pdb = {s.pdb_id: s for s in structures.structures}
 
     # Build ligand lookup by ligand_id
-    lig_ids = {lig.ligand_id for lig in ligands.ligands}
+    {lig.ligand_id for lig in ligands.ligands}
 
     # 1. Mutation → Structure mappings
     for mutation in context.mutations:

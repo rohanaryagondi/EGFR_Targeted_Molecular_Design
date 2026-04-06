@@ -6,7 +6,10 @@ from statebind import __version__
 
 app = typer.Typer(
     name="statebind",
-    help="StateBind: Context-aware conformational state modeling for EGFR-targeted molecular design.",
+    help=(
+        "StateBind: Context-aware conformational state modeling"
+        " for EGFR-targeted molecular design."
+    ),
     add_completion=False,
 )
 

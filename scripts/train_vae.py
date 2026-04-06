@@ -646,6 +646,12 @@ def main() -> None:
         default=None,
         help="Override data directory (uses filenames from config)",
     )
+    parser.add_argument(
+        "--selfies",
+        action="store_true",
+        default=False,
+        help="Use SELFIES representation instead of SMILES (guarantees valid molecules)",
+    )
     args = parser.parse_args()
 
     # ------------------------------------------------------------------
@@ -661,6 +667,7 @@ def main() -> None:
     # Load config
     # ------------------------------------------------------------------
     config = load_config(args.config)
+    config["representation"] = "selfies" if args.selfies else "smiles"
     model_cfg = config.get("model", {})
     train_cfg = config.get("training", {})
     data_cfg = config.get("data", {})
@@ -702,6 +709,13 @@ def main() -> None:
     )
     from statebind.ml.vocabulary import build_vocabulary
 
+    use_selfies = args.selfies
+    selfies_tokenizer = None
+    if use_selfies:
+        from statebind.ml.tokenizer import SELFIESTokenizer
+        selfies_tokenizer = SELFIESTokenizer()
+        logger.info("SELFIES mode enabled — converting SMILES to SELFIES")
+
     # ------------------------------------------------------------------
     # Seed and device
     # ------------------------------------------------------------------
@@ -739,7 +753,41 @@ def main() -> None:
     train_smiles = [r["smiles"] for r in train_records]
     val_smiles = [r["smiles"] for r in val_records]
 
-    tokenizer = SMILESTokenizer()
+    # Convert to SELFIES if requested
+    if use_selfies:
+        assert selfies_tokenizer is not None
+        logger.info("Converting training data to SELFIES...")
+        train_selfies = []
+        train_records_filtered = []
+        for smi, rec in zip(train_smiles, train_records):
+            sel = selfies_tokenizer.smiles_to_selfies(smi)
+            if sel is not None:
+                train_selfies.append(sel)
+                rec_copy = dict(rec)
+                rec_copy["smiles"] = sel  # Replace SMILES with SELFIES
+                train_records_filtered.append(rec_copy)
+        val_selfies = []
+        val_records_filtered = []
+        for smi, rec in zip(val_smiles, val_records):
+            sel = selfies_tokenizer.smiles_to_selfies(smi)
+            if sel is not None:
+                val_selfies.append(sel)
+                rec_copy = dict(rec)
+                rec_copy["smiles"] = sel
+                val_records_filtered.append(rec_copy)
+        logger.info(
+            "SELFIES conversion: train %d/%d, val %d/%d",
+            len(train_selfies), len(train_smiles),
+            len(val_selfies), len(val_smiles),
+        )
+        train_smiles = train_selfies
+        val_smiles = val_selfies
+        train_records = train_records_filtered
+        val_records = val_records_filtered
+        tokenizer = selfies_tokenizer  # type: ignore[assignment]
+    else:
+        tokenizer = SMILESTokenizer()  # type: ignore[assignment]
+
     all_smiles = train_smiles + val_smiles
     vocab = build_vocabulary(all_smiles, tokenizer)
 
@@ -775,8 +823,23 @@ def main() -> None:
         state_mapping=state_mapping,
     )
 
-    train_dataset = load_smiles_dataset(train_path, tokenizer, vocab, ds_config)
-    val_dataset = load_smiles_dataset(val_path, tokenizer, vocab, ds_config)
+    # For SELFIES mode, write converted data to temp files so
+    # load_smiles_dataset can read them
+    if use_selfies:
+        import tempfile
+        selfies_dir = Path(tempfile.mkdtemp(prefix="selfies_"))
+        selfies_train_path = selfies_dir / "train.json"
+        selfies_val_path = selfies_dir / "val.json"
+        with open(selfies_train_path, "w") as f:
+            json.dump(train_records, f)
+        with open(selfies_val_path, "w") as f:
+            json.dump(val_records, f)
+        logger.info("SELFIES data written to %s", selfies_dir)
+        train_dataset = load_smiles_dataset(selfies_train_path, tokenizer, vocab, ds_config)
+        val_dataset = load_smiles_dataset(selfies_val_path, tokenizer, vocab, ds_config)
+    else:
+        train_dataset = load_smiles_dataset(train_path, tokenizer, vocab, ds_config)
+        val_dataset = load_smiles_dataset(val_path, tokenizer, vocab, ds_config)
 
     batch_size = train_cfg.get("batch_size", 128)
     num_workers = train_cfg.get("num_workers", 4)

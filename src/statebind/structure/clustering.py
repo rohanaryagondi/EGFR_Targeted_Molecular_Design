@@ -10,7 +10,6 @@ The clustering serves two purposes:
 
 from __future__ import annotations
 
-import math
 from collections import Counter
 
 import numpy as np
@@ -188,7 +187,7 @@ def compute_cluster_quality(
     X_scaled = scaler.fit_transform(X)
 
     labels = np.array([e.cluster_id for e in entries])
-    state_labels = [e.state_label.value for e in entries]
+    [e.state_label.value for e in entries]
 
     # Label agreement: check if dominant state in each cluster matches entries
     clusters_by_id: dict[int, list] = {}

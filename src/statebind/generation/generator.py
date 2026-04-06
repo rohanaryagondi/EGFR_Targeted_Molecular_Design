@@ -25,6 +25,7 @@ from statebind.baselines.candidates import (
     _enumerate_simple_analogs,
     build_reference_candidates,
 )
+from statebind.baselines.models import CandidateSource
 from statebind.generation.conditioning import PocketCondition, get_pocket_conditions
 from statebind.generation.models import (
     GenerationStrategy,
@@ -32,7 +33,6 @@ from statebind.generation.models import (
     StateConditionedCandidate,
     StateConditionedLibrary,
 )
-from statebind.baselines.models import CandidateSource
 
 
 def _gen_id(smiles: str, state: str, strategy: str) -> str:
@@ -81,7 +81,9 @@ def _hinge_optimized(smiles: str, parent_id: str, state: str) -> list[StateCondi
     return results
 
 
-def _back_pocket_extension(smiles: str, parent_id: str, state: str) -> list[StateConditionedCandidate]:
+def _back_pocket_extension(
+    smiles: str, parent_id: str, state: str,
+) -> list[StateConditionedCandidate]:
     """Extend molecule into DFG-out back pocket.
 
     Type-II inhibitor design: add hydrophobic tails that reach
@@ -128,7 +130,9 @@ def _back_pocket_extension(smiles: str, parent_id: str, state: str) -> list[Stat
     return results
 
 
-def _gatekeeper_avoiding(smiles: str, parent_id: str, state: str) -> list[StateConditionedCandidate]:
+def _gatekeeper_avoiding(
+    smiles: str, parent_id: str, state: str,
+) -> list[StateConditionedCandidate]:
     """Shrink substituents near the gatekeeper position.
 
     For tight gatekeeper clearance (< 4 Å), remove bulky groups

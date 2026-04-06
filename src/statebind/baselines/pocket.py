@@ -17,7 +17,6 @@ from __future__ import annotations
 
 from statebind.baselines.models import PocketDefinition, PocketResidue
 
-
 # EGFR kinase domain ATP-binding site residues (canonical numbering)
 # Based on 1M17 (WT EGFR + erlotinib) crystal structure analysis
 _EGFR_ATP_POCKET_RESIDUES = [
