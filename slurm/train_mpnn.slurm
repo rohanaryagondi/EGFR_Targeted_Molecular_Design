@@ -2,9 +2,9 @@
 #SBATCH --job-name=train_mpnn
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
-#SBATCH -p gpu
+#SBATCH -p gpu_devel
 #SBATCH -A pi_mg269
-#SBATCH --gpus=rtx_5000_ada:1
+#SBATCH --gpus=h200:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
 #SBATCH -t 04:00:00

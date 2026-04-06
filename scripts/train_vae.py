@@ -203,6 +203,44 @@ def compute_kl_weight(
 # ---------------------------------------------------------------------------
 
 
+def compute_teacher_forcing_ratio(
+    epoch: int,
+    total_epochs: int,
+    start_ratio: float = 1.0,
+    end_ratio: float = 0.0,
+    warmup_epochs: int = 10,
+) -> float:
+    """Compute scheduled sampling teacher forcing ratio.
+
+    Holds at *start_ratio* for *warmup_epochs*, then linearly decays to
+    *end_ratio* over the remaining epochs.
+
+    Parameters
+    ----------
+    epoch:
+        Current epoch (0-indexed).
+    total_epochs:
+        Total number of training epochs.
+    start_ratio:
+        Teacher forcing ratio during warmup.
+    end_ratio:
+        Minimum teacher forcing ratio.
+    warmup_epochs:
+        Number of epochs to hold at *start_ratio* before annealing.
+
+    Returns
+    -------
+    float:
+        Teacher forcing ratio for this epoch, rounded to 4 decimal places.
+    """
+    if epoch < warmup_epochs:
+        return start_ratio
+    decay_epochs = max(total_epochs - warmup_epochs, 1)
+    progress = (epoch - warmup_epochs) / decay_epochs
+    ratio = start_ratio - (start_ratio - end_ratio) * min(progress, 1.0)
+    return round(max(ratio, end_ratio), 4)
+
+
 def train_one_epoch(
     model: Any,
     loader: Any,
@@ -210,6 +248,7 @@ def train_one_epoch(
     kl_weight: float,
     device: Any,
     gradient_clip: float,
+    teacher_forcing_ratio: float = 0.5,
     scaler: Any | None = None,
 ) -> dict[str, float]:
     """Run one training epoch and return aggregated losses.
@@ -228,6 +267,8 @@ def train_one_epoch(
         Torch device to use.
     gradient_clip:
         Maximum gradient norm for clipping.
+    teacher_forcing_ratio:
+        Probability of teacher forcing for this epoch (scheduled sampling).
     scaler:
         Optional GradScaler for mixed precision.
 
@@ -257,7 +298,8 @@ def train_one_epoch(
         if use_amp:
             with torch.amp.autocast("cuda"):
                 recon_logits, mu, logvar = model(
-                    tokens, lengths, state_onehots, teacher_forcing_ratio=0.5,
+                    tokens, lengths, state_onehots,
+                    teacher_forcing_ratio=teacher_forcing_ratio,
                 )
                 total, recon, kl = vae_loss(
                     recon_logits, tokens, mu, logvar,
@@ -270,7 +312,8 @@ def train_one_epoch(
             scaler.update()
         else:
             recon_logits, mu, logvar = model(
-                tokens, lengths, state_onehots, teacher_forcing_ratio=0.5,
+                tokens, lengths, state_onehots,
+                teacher_forcing_ratio=teacher_forcing_ratio,
             )
             total, recon, kl = vae_loss(
                 recon_logits, tokens, mu, logvar,
@@ -826,6 +869,15 @@ def main() -> None:
     kl_warmup_epochs = kl_cfg.get("warmup_epochs", 20)
     kl_strategy = kl_cfg.get("strategy", "linear")
 
+    # Teacher forcing annealing parameters
+    tf_cfg = config.get("teacher_forcing", {})
+    tf_start = tf_cfg.get("start_ratio", 1.0)
+    tf_end = tf_cfg.get("end_ratio", 0.0)
+    tf_warmup = tf_cfg.get("warmup_epochs", 10)
+
+    # Early stopping target: use recon_loss to avoid KL annealing artifacts
+    early_stop_metric = config.get("early_stop_metric", "val_recon_loss")
+
     # ------------------------------------------------------------------
     # Resume from checkpoint
     # ------------------------------------------------------------------
@@ -869,6 +921,8 @@ def main() -> None:
     # ------------------------------------------------------------------
     print(f"\n[4/5] Training for up to {epochs} epochs (patience={patience})...")
     print(f"  KL annealing: {kl_strategy}, warmup={kl_warmup_epochs} epochs")
+    print(f"  TF annealing: {tf_start} -> {tf_end}, warmup={tf_warmup} epochs")
+    print(f"  Early stop on: {early_stop_metric}")
     print(f"  LR scheduler: {scheduler_name}")
     print()
 
@@ -899,10 +953,15 @@ def main() -> None:
                 epoch, kl_target_weight, kl_warmup_epochs, kl_strategy,
             )
 
+            # Compute teacher forcing ratio for this epoch
+            tf_ratio = compute_teacher_forcing_ratio(
+                epoch, epochs, tf_start, tf_end, tf_warmup,
+            )
+
             # Train
             train_metrics = train_one_epoch(
                 model, train_loader, optimizer, kl_weight, device,
-                gradient_clip, scaler,
+                gradient_clip, tf_ratio, scaler,
             )
 
             # Validate
@@ -929,10 +988,15 @@ def main() -> None:
                 train_metrics, val_metrics, current_lr, elapsed,
             )
 
-            # Check for best model
+            # Check for best model (track recon_loss to avoid KL annealing artifacts)
             is_best = False
-            if val_metrics["total_loss"] < best_val_loss:
-                best_val_loss = val_metrics["total_loss"]
+            track_loss = (
+                val_metrics["recon_loss"]
+                if early_stop_metric == "val_recon_loss"
+                else val_metrics["total_loss"]
+            )
+            if track_loss < best_val_loss:
+                best_val_loss = track_loss
                 best_epoch = epoch
                 is_best = True
 
@@ -965,7 +1029,8 @@ def main() -> None:
                 f"{train_detail}  |  "
                 f"val: {val_metrics['total_loss']:.4f} "
                 f"{val_detail}  |  "
-                f"kl_w={kl_weight:.4f}  lr={current_lr:.6f}  "
+                f"kl_w={kl_weight:.4f}  tf={tf_ratio:.2f}  "
+                f"lr={current_lr:.6f}  "
                 f"({epoch_time:.1f}s){best_marker}"
             )
 
@@ -975,8 +1040,8 @@ def main() -> None:
             else:
                 print(line)
 
-            # Early stopping
-            if stopper.step(val_metrics["total_loss"], epoch):
+            # Early stopping on same metric as best model tracking
+            if stopper.step(track_loss, epoch):
                 print(f"\n  Early stopping at epoch {epoch} (no improvement for {patience} epochs)")
                 break
 

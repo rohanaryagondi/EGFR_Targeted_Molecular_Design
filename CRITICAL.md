@@ -6,7 +6,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 - Unified scoring weights must sum to 1.0 -- enforced by `_validate_weights()` at `ranking/scoring.py:173-181`. Violating this raises `ValueError`.
 - The 4 required weight keys are: `reference_similarity`, `druglikeness`, `docking_proxy`, `state_specificity` -- validated at `ranking/scoring.py:173`.
-- Docking uses 3-tier cascade: MPNN -> DockingProxy MLP -> constant 0.5 stub -- `baselines/scoring.py:202-216` (`_score_docking_stub`). Integration code complete, models pending training.
+- Docking uses 3-tier cascade: MPNN -> DockingProxy MLP -> constant 0.5 stub -- `baselines/scoring.py:202-216` (`_score_docking_stub`). MPNN trained (RMSE=0.72, R²=0.69, Pearson=0.83; checkpoint `artifacts/models/mpnn/best_model.pt`). ADMET trained (hERG AUROC=0.77, CYP3A4=0.73; checkpoint `artifacts/models/admet/best_model.pt`). VAE retraining with improved config (TF annealing, larger hidden dim).
 - Baseline scoring uses DIFFERENT weights (0.4/0.3/0.3) than unified scoring (0.35/0.30/0.20/0.15) -- `baselines/scoring.py:269-273` vs `ranking/scoring.py:86-91`.
 - `state_specificity` gives state-aware pipeline a structural 0.15 weight advantage over static baseline -- this is by design (`ranking/scoring.py:139-170`).
 - Similarity scoring uses Morgan/ECFP4 fingerprints (WS02) with fallback to SMILES 3-gram Tanimoto -- `baselines/scoring.py:78` (`_score_reference_similarity`).
@@ -26,7 +26,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 ## ML Infrastructure
 
-- ML models (VAE, MPNN, ADMET) are code-complete but UNTRAINED. Training data prep scripts exist (`scripts/prepare_vae_data.py`, `scripts/prepare_mpnn_data.py`, `scripts/prepare_admet_data.py`) and integration adapters are complete (`ml/affinity_predictor.py`, `ml/admet_predictor.py`, `ml/vae_integration.py`). Training requires GPU.
+- ML models: MPNN TRAINED (RMSE=0.72, R²=0.69, Pearson=0.83, 12.7M params, best epoch 83, checkpoint `artifacts/models/mpnn/best_model.pt`). ADMET TRAINED (hERG AUROC=0.77, CYP3A4 AUROC=0.73, 187K params, best epoch 40, checkpoint `artifacts/models/admet/best_model.pt`). VAE RETRAINED (9.5M params, best epoch 293, val_recon=1.92, checkpoint `artifacts/models/vae/best_model.pt` 114MB; original had 0% valid SMILES — fixed with TF annealing 1.0→0.0, early-stop on recon_loss, hidden_dim 512, KL warmup 50 epochs; **generation quality NOT YET TESTED**). ADMET hard filtering rejects ALL kinase inhibitors on hERG — use as informational, not as pre-ranking gate.
 - Optional dependency pattern used everywhere: `try: import torch; HAS_TORCH = True except ImportError: HAS_TORCH = False` -- see `ml/__init__.py:25-30`.
 - Pydantic configs (`VAEConfig`, `MPNNConfig`, `ADMETConfig`) are ALWAYS importable without torch -- by design for config validation without ML deps.
 - `ATOM_FEATURE_DIM=35` and `BOND_FEATURE_DIM=11` are computed at `ml/graphs.py:98-101` -- MPNN and ADMET models must match these dimensions.
@@ -37,7 +37,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 - Import flow is strictly downward: `processing -> structure -> generation -> ranking -> evaluation`. No cycles allowed.
 - `data/` and `utils/` are leaf modules with zero statebind imports -- they can be imported by anything.
-- `ranking/scoring.py` imports scoring functions FROM `baselines/scoring.py` (`_score_druglikeness`, `_score_reference_similarity`, `_score_docking_stub`, `_tanimoto_ngram`) at lines 19-24.
+- `ranking/scoring.py` imports scoring functions FROM `baselines/scoring.py` (`_has_rdkit`, `_score_druglikeness`, `_score_druglikeness_enhanced`, `_score_reference_similarity`, `_score_docking_stub`, `_tanimoto_ngram`) at lines 19-26.
 - `generation/models.py` imports `CandidateSource` enum from `baselines/models.py:53-57` -- changing that enum breaks generation.
 
 ## Path Resolution
@@ -47,7 +47,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 ## CI/CD
 
-- `.github/workflows/ci.yml` has 3 jobs: `test` (matrix 3.10/3.11/3.12), `lint` (3.12 only), `test-with-chemistry` (3.12 + `[dev,science,chemistry]`).
+- `.github/workflows/ci.yml` has 3 jobs: `test` (matrix 3.10/3.11/3.12), `lint` (3.12 only), `test-with-chemistry` (3.12 + `[dev,science,chemistry]`). Triggers on push/PR to both `main` and `ML` branches.
 - The `full` extras group in `pyproject.toml` bundles `[dev,science,structure,chemistry]` but excludes `ml` -- torch-geometric requires CUDA-matched installs incompatible with generic CI runners.
 - CI badge URL: `https://github.com/rohanaryagondi/EGFR_Targeted_Molecular_Design/actions/workflows/ci.yml/badge.svg`.
 - **~40 pre-existing ruff violations exist in `src/`** -- the `test` and `lint` jobs will fail until they are fixed. Affected files: `baselines/candidates.py` (F401 `re`), `baselines/filtering.py` (F401, I001), `baselines/models.py` (F401 `Literal`, I001, N815 `volume_A3`), `baselines/pipeline.py` (F401 `datetime/timezone`, F541 f-string), `baselines/pocket.py` (I001), `baselines/scoring.py` (F401 `re`, I001), `cli.py` (E501 line 9), `generation/filtering.py` (F401 unused imports, I001), `generation/generator.py` (I001, E501 lines 84/131), `ml/graphs.py` (F401 `numpy`, F401 `rdchem`, E501 line 98), plus I001/F401 violations in `context/`, `dynamics/`, `processing/`, `ranking/`, `structure/`. Run `ruff check --fix src/` to auto-fix all fixable violations, then manually resolve any remaining.

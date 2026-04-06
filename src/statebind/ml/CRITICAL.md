@@ -1,10 +1,10 @@
 # Critical Information -- ML
 
-- All three models (VAE, MPNN, ADMET) are code-complete but UNTRAINED. VAE training data prep script exists (`scripts/prepare_vae_data.py`); ADMET data prep script exists (`scripts/prepare_admet_data.py`); MPNN data prep script does not exist yet.
+- VAE is TRAINED (8,109 SMILES, early-stopped epoch 29, best epoch 9, val loss 2.3246, checkpoint `artifacts/models/vae/best_model.pt`). MPNN and ADMET are code-complete, training submitted (SLURM jobs 7285710/7285711, as of 2026-04-05). All three data prep scripts exist: `scripts/prepare_vae_data.py`, `scripts/prepare_mpnn_data.py`, `scripts/prepare_admet_data.py`.
 - Pydantic configs (`VAEConfig` in `vae.py`, `MPNNConfig` in `mpnn.py`, `ADMETConfig` in `admet.py`) are ALWAYS importable without torch -- by design.
 - Optional dependency detection at `__init__.py:25-40`: `HAS_TORCH` and `HAS_TORCH_GEOMETRIC` flags. All neural network code is guarded behind these flags.
 - Training scripts live in `scripts/` (`train_vae.py`, `train_mpnn.py`, `train_admet.py`), NOT inside the `ml/` package.
-- Checkpoint convention: `artifacts/models/{vae,mpnn,admet}/best_model.pt`. Vocabulary saved as `vocab.json` alongside checkpoint.
+- Checkpoint convention: `artifacts/models/{vae,mpnn,admet}/best_model.pt`. Vocabulary saved as `vocabulary.json` alongside checkpoint.
 - `ATOM_FEATURE_DIM=35` computed at `graphs.py:98`: 11 element + 7 degree + 5 charge + 5 hybridization + 1 aromatic + 1 ring + 5 num_Hs.
 - `BOND_FEATURE_DIM=11` computed at `graphs.py:101`: 4 bond type + 1 conjugated + 1 ring + 5 stereo.
 - MPNN at `mpnn.py:34` imports `ATOM_FEATURE_DIM` and `BOND_FEATURE_DIM` from `graphs.py`. If you change feature encoding, you MUST update both.

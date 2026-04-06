@@ -4,26 +4,27 @@
 # The VAE learns to generate novel SMILES conditioned on EGFR
 # conformational states (DFGin_aCin, DFGin_aCout, DFGout_aCin, DFGout_aCout).
 #
-# Data: ChEMBL EGFR bioactivity (IC50 < 10μM) + known binders
-# Expected training time: ~2-4 hours on single GPU
+# Data: ChEMBL EGFR bioactivity (IC50 < 10uM) + known binders
+# Expected training time: ~5-15 minutes on single GPU
 
 model:
   vocab_size: 150        # Adjusted during training based on data
   embed_dim: 128
-  hidden_dim: 256
+  hidden_dim: 512        # Increased from 256 for better capacity
   latent_dim: 64
   n_layers: 2
-  dropout: 0.1
+  dropout: 0.2           # Increased from 0.1 to reduce overfitting
   n_states: 4
-  kl_weight: 0.01       # Final KL weight (annealed from 0)
+  kl_weight: 0.001       # Reduced from 0.01 to avoid posterior collapse
+  pad_idx: 0
 
 training:
-  epochs: 200
+  epochs: 300
   batch_size: 128
   learning_rate: 0.001
   weight_decay: 0.00001
   lr_scheduler: cosine
-  patience: 20
+  patience: 40           # Increased from 20 to allow more exploration
   gradient_clip: 1.0
   device: auto
   checkpoint_dir: artifacts/models/vae/
@@ -49,5 +50,12 @@ generation:
   output_path: artifacts/generation/vae_candidates.json
 
 kl_annealing:
-  warmup_epochs: 20      # Linearly anneal KL weight from 0 to kl_weight over this many epochs
-  strategy: linear       # linear or cyclical
+  warmup_epochs: 50      # Increased from 20 to give decoder more time
+  strategy: linear
+
+teacher_forcing:
+  start_ratio: 1.0       # Full teacher forcing at start
+  end_ratio: 0.0         # Fully autoregressive by end
+  warmup_epochs: 30      # Hold at 1.0 for first 30 epochs
+
+early_stop_metric: val_recon_loss  # Track recon loss, not total (avoids KL artifacts)

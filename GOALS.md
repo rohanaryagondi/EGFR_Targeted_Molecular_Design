@@ -23,7 +23,7 @@ The four combinations (DFGin/aCin, DFGin/aCout, DFGout/aCin, DFGout/aCout) prese
 
 **Null hypothesis:** State-aware design produces candidates statistically indistinguishable from static single-structure design on all proxy metrics.
 
-**Current status of the null hypothesis:** Not rejected. The state-aware pipeline produces 49 novel candidates and higher diversity, but without real docking scores and formal statistical testing, the observed differences (mean score delta +0.020, diversity delta +0.035) lack significance testing. The null hypothesis remains alive until p < 0.05 on a meaningful metric with the docking stub replaced.
+**Current status of the null hypothesis:** Formally retained. With a trained MPNN (RMSE=0.72, Pearson=0.83) replacing the docking stub, the state-aware pipeline achieves a mean composite score of 0.5699 vs 0.5437 for static (delta=+0.026). Mann-Whitney U test: p=0.5349, Cohen's d=-0.13 (negligible). The state-aware pipeline produces 36 novel candidates inaccessible to the static approach, but the score difference is not statistically significant. The null hypothesis cannot be rejected: state-aware design does not produce statistically superior composite scores for EGFR, though it expands accessible chemical space.
 
 ---
 
@@ -119,10 +119,10 @@ With the MPNN trained and integrated, the scoring function becomes:
 
 | Component | Weight | Method (current) | Method (target) |
 |-----------|:------:|-------------------|-----------------|
-| reference_similarity | 0.35 | SMILES 3-gram Tanimoto | Morgan/ECFP4 Tanimoto |
-| druglikeness | 0.30 | Heuristic MW/HBA/HBD | RDKit QED + Lipinski + SA score |
-| docking_proxy | 0.20 | Constant 0.5 (stub) | MPNN-predicted pIC50, normalized |
-| state_specificity | 0.15 | Geometric decay | Geometric decay (unchanged) |
+| reference_similarity | 0.35 | Morgan/ECFP4 Tanimoto (WS02, falls back to 3-gram) | Morgan/ECFP4 Tanimoto | Complete |
+| druglikeness | 0.30 | RDKit QED + Lipinski + SA score (WS02, falls back to heuristic) | RDKit QED + Lipinski + SA score | Complete |
+| docking_proxy | 0.20 | 3-tier cascade: MPNN -> DockingProxy MLP -> stub 0.5 | MPNN-predicted pIC50, normalized | MPNN training submitted |
+| state_specificity | 0.15 | Geometric decay | Geometric decay (unchanged) | Complete |
 
 Every component becomes meaningful. The 20% docking weight now carries real discriminative signal.
 
@@ -183,23 +183,24 @@ Replace the weighted linear scoring function with Pareto frontier optimization. 
 | Metric | Current | Target | Status |
 |--------|---------|--------|--------|
 | Passing tests | 548 | 450+ | Complete |
-| Docking scoring | Integration code complete (3-tier cascade) | Trained MPNN (RMSE < 1.0) | Pending training |
+| Docking scoring | MPNN cascade active (RMSE=0.72) | Trained MPNN (RMSE < 1.0) | **Complete** |
 | Similarity method | Morgan/ECFP4 Tanimoto (WS02) | Morgan/ECFP4 Tanimoto | Complete |
-| Statistical testing | Mann-Whitney U, bootstrap CI, Cohen's d (WS03) | p < 0.05 Mann-Whitney U | Complete (awaiting real scores) |
-| Novel candidates | 49 (string-modified) | 100+ (VAE-generated) | Pending training |
-| VAE validity | N/A (model not trained) | >= 50% valid SMILES | Pending training |
-| VAE reconstruction | N/A | > 80% accuracy | Pending training |
-| MPNN RMSE | N/A (model not trained) | < 1.0 pIC50 | Pending training |
-| MPNN R-squared | N/A | > 0.5 | Pending training |
-| hERG AUROC | N/A (model not trained) | > 0.75 | Pending training |
-| ADMET endpoints passing | N/A | >= 4 of 6 with Spearman > 0.5 | Pending training |
+| Statistical testing | Mann-Whitney U: p=0.5349, d=-0.13 | p < 0.05 Mann-Whitney U | **Not significant** |
+| Novel candidates | 36 (template, state-aware only) | 100+ (VAE-generated) | Partial (VAE trained, generation untested) |
+| VAE validity | Retrained (val_recon=1.92), **untested** | >= 50% valid SMILES | Trained, needs generation test |
+| VAE reconstruction | val_recon_loss=1.92 (improved from 2.31) | > 80% accuracy | Trained, needs generation test |
+| MPNN RMSE | **0.7182** | < 1.0 pIC50 | **Complete** ✅ |
+| MPNN R-squared | **0.6863** | > 0.5 | **Complete** ✅ |
+| hERG AUROC | **0.7745** | > 0.75 | **Complete** ✅ |
+| CYP3A4 AUROC | **0.7323** | > 0.70 | **Complete** ✅ |
+| ADMET regression | solubility R²=0.46 (best), others weak | >= 4 of 6 Spearman > 0.5 | Partial (low data coverage) |
 | CI/CD | GitHub Actions (WS06) | GitHub Actions on push/PR | Complete |
 | Druglikeness method | RDKit QED + Lipinski (WS02) | RDKit QED + Lipinski | Complete |
 | Synthetic accessibility | RDKit SA score (WS01) | RDKit SA score filtering | Complete |
-| Null hypothesis | Not rejected | Rejected or formally retained | Pending (needs trained scores) |
+| Null hypothesis | **Not rejected** (p=0.53, composite score) | Rejected or formally retained | **Formally retained** |
 | Workstreams complete | 9 of 9 | 9 of 9 | Complete |
-| Training data prepared | ChEMBL EGFR + TDC ADMET | ChEMBL EGFR + TDC ADMET | Complete |
-| State-conditioned generation | Integration code + data prep complete | Conditional VAE sampling | Pending training |
+| Training data prepared | VAE 8,109 / MPNN 10,466 / ADMET 27,698 | ChEMBL EGFR + TDC ADMET | Complete |
+| State-conditioned generation | VAE retrained (9.5M params, epoch 293), generation untested | Conditional VAE sampling | Trained, needs generation test |
 
 ---
 

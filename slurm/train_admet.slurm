@@ -2,11 +2,12 @@
 #SBATCH --job-name=train_admet
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
-#SBATCH -p gpu
+#SBATCH -p scavenge_gpu
 #SBATCH -A pi_mg269
-#SBATCH --gpus=rtx_5000_ada:1
+#SBATCH --gpus=l40s:1
+#SBATCH --requeue
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
+#SBATCH --mem=16G
 #SBATCH -t 06:00:00
 
 module purge
