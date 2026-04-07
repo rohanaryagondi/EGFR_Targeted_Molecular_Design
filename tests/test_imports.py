@@ -160,6 +160,16 @@ def test_import_docking_proxy():
     )
 
 
+def test_import_docking():
+    from statebind.chemistry.docking import (
+        DockingResult,
+        dock_molecule,
+        dock_batch,
+        is_gnina_available,
+        normalize_vina_score,
+    )
+
+
 def test_import_admet_predictor():
     from statebind.ml.admet_predictor import (
         DEFAULT_ADMET_THRESHOLDS,

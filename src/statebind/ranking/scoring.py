@@ -14,6 +14,7 @@ advantage is state_specificity — everything else is identical.
 
 from __future__ import annotations
 
+import os
 from datetime import datetime, timezone
 
 from statebind.baselines.scoring import (
@@ -25,10 +26,20 @@ from statebind.baselines.scoring import (
 )
 
 
+def _gpu_available() -> bool:
+    """Check if a GPU is available for GNINA docking."""
+    try:
+        import torch
+        return torch.cuda.is_available()
+    except ImportError:
+        return os.environ.get("CUDA_VISIBLE_DEVICES") is not None
+
+
 def _score_docking(smiles: str, pdb_id: str) -> tuple[float, bool, str]:
     """Score docking via learned models with stub fallback.
 
     Cascading fallback:
+    0. GNINA physics-informed docking (WS11) — if installed and receptor prepared
     1. MPNN affinity predictor (WS08) — if trained and torch available
     2. DockingProxy MLP (WS04) — if trained and RDKit available
     3. Constant 0.5 stub — always available
@@ -36,6 +47,37 @@ def _score_docking(smiles: str, pdb_id: str) -> tuple[float, bool, str]:
     Returns:
         (score, is_stub, method_string)
     """
+    # Priority 0: GNINA physics-informed docking (WS11)
+    # Only attempt GNINA when a GPU is available — CPU docking is too slow
+    # for per-molecule scoring in the cascade.
+    if _gpu_available():
+        try:
+            from statebind.chemistry.docking import (
+                dock_molecule,
+                get_receptor_for_state,
+                is_gnina_available,
+                normalize_vina_score,
+            )
+
+            if is_gnina_available():
+                receptor_info = get_receptor_for_state("DFGin_aCin")
+                if receptor_info is not None:
+                    pdbqt_path, box_center, box_size = receptor_info
+                    result = dock_molecule(
+                        smiles, pdbqt_path, box_center, box_size,
+                        exhaustiveness=4, timeout=60,
+                    )
+                    if result.success:
+                        score = normalize_vina_score(result.vina_score)
+                        return (
+                            round(score, 4),
+                            False,
+                            "GNINA physics-informed docking"
+                            " (Vina+CNN, sigmoid-normalized)",
+                        )
+        except (ImportError, Exception):
+            pass
+
     # Priority 1: MPNN affinity predictor
     try:
         from statebind.ml.affinity_predictor import _model_loaded, predict_affinity
@@ -97,23 +139,38 @@ SCORING_METHOD = (
 def _get_scoring_method() -> str:
     """Return scoring method string reflecting active backend.
 
-    Checks MPNN, docking proxy, and RDKit availability at runtime.
+    Checks GNINA, MPNN, docking proxy, and RDKit availability at runtime.
     """
-    # Check docking backend: MPNN > proxy > stub
+    # Check docking backend: GNINA > MPNN > proxy > stub
     try:
-        from statebind.ml.affinity_predictor import _model_loaded
+        from statebind.chemistry.docking import (
+            get_receptor_for_state,
+            is_gnina_available,
+        )
 
-        if _model_loaded():
-            dock_desc = "MPNN_affinity(pIC50)"
+        if (
+            _gpu_available()
+            and is_gnina_available()
+            and get_receptor_for_state("DFGin_aCin") is not None
+        ):
+            dock_desc = "GNINA(Vina+CNN)"
         else:
-            raise ImportError  # fall through to proxy check
+            raise ImportError  # fall through to MPNN check
     except (ImportError, Exception):
         try:
-            from statebind.chemistry.docking_proxy import get_default_proxy
-            proxy = get_default_proxy()
-            dock_desc = "learned_proxy" if proxy.fitted else "STUB(0.5)"
+            from statebind.ml.affinity_predictor import _model_loaded
+
+            if _model_loaded():
+                dock_desc = "MPNN_affinity(pIC50)"
+            else:
+                raise ImportError  # fall through to proxy check
         except (ImportError, Exception):
-            dock_desc = "STUB(0.5)"
+            try:
+                from statebind.chemistry.docking_proxy import get_default_proxy
+                proxy = get_default_proxy()
+                dock_desc = "learned_proxy" if proxy.fitted else "STUB(0.5)"
+            except (ImportError, Exception):
+                dock_desc = "STUB(0.5)"
 
     try:
         from statebind.chemistry.fingerprints import HAS_RDKIT

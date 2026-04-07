@@ -14,6 +14,13 @@ without catching ImportError themselves.
 from __future__ import annotations
 
 from statebind.chemistry.descriptors import compute_exact_properties
+from statebind.chemistry.docking import (
+    DockingResult,
+    dock_batch,
+    dock_molecule,
+    is_gnina_available,
+    normalize_vina_score,
+)
 from statebind.chemistry.docking_proxy import DockingProxy, get_default_proxy
 from statebind.chemistry.fingerprints import (
     HAS_RDKIT,
@@ -35,4 +42,9 @@ __all__ = [
     "HAS_RDKIT",
     "DockingProxy",
     "get_default_proxy",
+    "DockingResult",
+    "dock_molecule",
+    "dock_batch",
+    "is_gnina_available",
+    "normalize_vina_score",
 ]

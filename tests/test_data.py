@@ -201,7 +201,7 @@ class TestDataPaths:
     def test_all_expected_dirs(self):
         paths = DataPaths(PROJECT_ROOT)
         dirs = paths.all_expected_dirs()
-        assert len(dirs) == 10  # data, manifests, raw, raw/3, processed, processed/3
+        assert len(dirs) == 12  # data, manifests, raw, raw/3, processed, processed/3, docking/2
 
     def test_specific_file_paths(self):
         paths = DataPaths(PROJECT_ROOT)
