@@ -278,7 +278,21 @@ def main() -> None:
                  "or chemically valid beyond basic SMILES parsing.")
     lines.append("")
 
-    # ── 12. ADMET Safety Screening (optional) ─────────────────────────
+    # ── 12. Pareto Multi-Objective Analysis (WS12) ────────────────────
+    if "pareto_summary" in figures:
+        lines.append("## 12. Pareto Multi-Objective Analysis")
+        lines.append("")
+        lines.append("Pareto front analysis provides a weight-free comparison of the two "
+                      "pipelines across all 4 scoring objectives simultaneously. The "
+                      "hypervolume indicator measures which pipeline dominates more of "
+                      "the objective space across ALL possible weight combinations.")
+        lines.append("")
+        lines.append("```")
+        lines.append(figures["pareto_summary"])
+        lines.append("```")
+        lines.append("")
+
+    # ── 13. ADMET Safety Screening (optional) ─────────────────────────
     try:
         from statebind.generation.admet_filter import filter_candidates_admet
         from statebind.generation.models import StateConditionedCandidate
@@ -287,7 +301,7 @@ def main() -> None:
         # Quick probe: is the model actually available?
         _probe = predict_admet("CCO")
         if _probe:
-            lines.append("## 12. ADMET Safety Screening")
+            lines.append("## 13. ADMET Safety Screening")
             lines.append("")
             lines.append("ADMET predictions from the trained MultiTaskADMET model "
                          "(GIN backbone, 6 endpoints).")

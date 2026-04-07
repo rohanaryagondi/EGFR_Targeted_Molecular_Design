@@ -86,6 +86,8 @@ class ComparativeResult:
     # WS03: statistical testing results (populated when run_statistics=True)
     statistical_tests: list = field(default_factory=list)
     sensitivity: object = field(default=None)
+    # WS12: Pareto analysis results (always populated when numpy available)
+    pareto: object = field(default=None)
 
 
 def compute_overlap(merged: MergedRanking) -> OverlapAnalysis:
@@ -228,6 +230,15 @@ def run_full_comparison(
         except ImportError:
             pass
 
+    # WS12: Pareto analysis always runs (only needs numpy, a core dep)
+    pareto_result = None
+    try:
+        from statebind.evaluation.pareto_comparison import run_pareto_comparison
+
+        pareto_result = run_pareto_comparison(merged)
+    except ImportError:
+        pass
+
     return ComparativeResult(
         overlap=overlap,
         diversity=diversity,
@@ -239,4 +250,5 @@ def run_full_comparison(
         state_aware_n=merged.state_aware_pool.n_ranked,
         statistical_tests=statistical_tests,
         sensitivity=sensitivity_result,
+        pareto=pareto_result,
     )
