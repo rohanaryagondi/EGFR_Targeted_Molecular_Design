@@ -29,13 +29,13 @@ Both pipelines are scored with **exactly the same function**:
 ```
 composite = 0.35 × reference_similarity
           + 0.30 × druglikeness
-          + 0.20 × docking_proxy      ← STUB (constant 0.5)
+          + 0.20 × docking_proxy      ← 3-tier cascade: MPNN → DockingProxy MLP → stub
           + 0.15 × state_specificity   ← 0 for static baseline
 ```
 
 **Why these weights?** Reference similarity and druglikeness are the most
-informative available axes. The docking proxy is downweighted because it is
-a stub. State specificity is included because pocket-specificity is a genuine
+informative available axes. The docking proxy carries real signal via a trained
+MPNN (RMSE=0.72, R²=0.69). State specificity is included because pocket-specificity is a genuine
 design desideratum, but weighted modestly to avoid inflating the advantage.
 
 ### Fairness Considerations
@@ -45,9 +45,10 @@ design desideratum, but weighted modestly to avoid inflating the advantage.
    credit. However, this means the comparison has a built-in 0.15 × max_specificity
    advantage for state-aware candidates. All interpretations account for this.
 
-2. **The docking stub is identical for both pipelines.** Since both receive
-   the same constant score, docking does not influence the relative ranking.
-   This is a known limitation, not a hidden bias.
+2. **The MPNN scoring cascade is identical for both pipelines.** Both pipelines
+   use the same 3-tier cascade (MPNN → DockingProxy MLP → constant 0.5 stub).
+   The MPNN provides real discriminative signal (trained on 10,466 EGFR compounds),
+   so docking now influences ranking — but identically for both pipelines.
 
 3. **Candidate deduplication**: When merging, if the same SMILES appears in
    both pipelines, the higher-scoring version is kept.
@@ -121,8 +122,9 @@ All of the following must hold:
 
 ## Common Pitfalls
 
-1. **Ignoring the docking stub**: Any claim about "better binding candidates"
-   is invalid without real docking. The docking component is a constant.
+1. **Docking is an MPNN proxy, not physics-based**: The MPNN cascade provides
+   real discriminative signal (RMSE=0.72 pIC50) but is not a substitute for
+   physics-based docking. Claims about binding mode or pose are not supported.
 
 2. **Conflating SMILES novelty with chemical novelty**: New SMILES ≠
    new pharmacophore. Some "novel" candidates may be trivially close
@@ -155,7 +157,7 @@ This evaluation framework **does NOT** support claims about:
 
 ### What would make the evidence stronger
 
-- Replace docking stub with AutoDock Vina or GNINA scores
+- Replace MPNN proxy with physics-based AutoDock Vina or GNINA scores
 - Add molecular fingerprint-based (ECFP4) similarity instead of SMILES n-grams
 - Include synthetic accessibility scoring (SA score or ASKCOS)
 - Expand to multiple kinase families

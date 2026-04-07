@@ -29,7 +29,7 @@ Single-structure pipeline: 1M17 → pocket definition → candidate library → 
 Scoring uses three components:
 - reference_similarity (Tanimoto to erlotinib/gefitinib/osimertinib)
 - druglikeness (MW, HBA, HBD, ring count)
-- docking_proxy (STUB: constant 0.5)
+- docking_proxy (3-tier cascade: MPNN → DockingProxy MLP → stub)
 
 ### Decision: Build the baseline before the state-aware pipeline
 This follows the baseline-first principle from the project charter. The baseline defines the floor that state-aware design must beat. Building it first prevents unconscious tuning of the evaluation to favor the state-aware approach.
@@ -159,7 +159,7 @@ Every function has type annotations. Every data structure is a Pydantic model or
 All paths flow from config files or function arguments. The `DataPaths` utility centralizes path construction. Artifacts go under `artifacts/`, reports under `reports/`.
 
 ### Tests before code (in spirit)
-Test files are written alongside modules. The test suite validates schemas, pipeline outputs, metric ranges, and figure generation — not just "does it run." 359 tests at 3.5 seconds means the suite runs on every save.
+Test files are written alongside modules. The test suite validates schemas, pipeline outputs, metric ranges, and figure generation — not just "does it run." 548 tests at fast execution means the suite runs on every save.
 
 ### Git hygiene
 One commit per phase. Each commit message states what the phase accomplished. No squashing, no rewriting history.
@@ -170,7 +170,7 @@ One commit per phase. Each commit message states what the phase accomplished. No
 
 | Gap | Fix | Effort |
 |-----|-----|--------|
-| Docking stub | Integrate AutoDock Vina via subprocess | Medium |
+| Physics-based docking | Replace MPNN proxy with AutoDock Vina/GNINA | Medium |
 | SMILES fingerprints | Add RDKit ECFP4/Morgan | Low |
 | Synthetic accessibility | Add SA score from RDKit | Low |
 | Larger benchmark | Automate PDB/COSMIC data acquisition | High |

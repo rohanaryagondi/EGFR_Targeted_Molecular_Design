@@ -69,7 +69,7 @@ Logs: `artifacts/logs/{name}/`.
 | 4 | `FileNotFoundError` on any data path | Use `DataPaths()` for resolution. Check `data/raw/` exists. Run `scripts/validate_data_layout.py`. |
 | 5 | Tests fail with `assert statebind.__version__ == "0.1.0"` | Version is pinned in both `pyproject.toml:7` and `src/statebind/__init__.py`. Keep them in sync. |
 | 6 | `pydantic.ValidationError` on model construction | Check field types match Pydantic v2 expectations. Common: `float` vs `int`, missing required fields. |
-| 7 | All docking scores are 0.5 | Expected. `_score_docking_stub` returns constant 0.5. This is a known stub. |
-| 8 | State-aware scores barely beat static | Expected with current scoring. The state_specificity component is only 15% weight, and the docking stub wastes another 20%. |
+| 7 | All docking scores are 0.5 | The MPNN cascade is active. If all scores are 0.5, the MPNN and DockingProxy MLP both failed to load and the fallback stub is being used. Check that `artifacts/models/mpnn/best_model.pt` exists and torch is installed. |
+| 8 | State-aware scores barely beat static | Expected. The state_specificity component is only 15% weight. The MPNN cascade now provides real docking signal (20% weight), but the static baseline still wins on mean score because VAE-generated molecules have lower reference similarity. |
 | 9 | `torch_geometric` import fails despite torch being installed | PyG requires matching CUDA/torch versions. Install via: `pip install torch-geometric -f https://data.pyg.org/whl/torch-{version}+{cuda}.html` |
 | 10 | Circular import error between modules | You violated the dependency graph. The import direction must flow downward. |

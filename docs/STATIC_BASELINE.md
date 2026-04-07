@@ -39,7 +39,7 @@ Build Candidate Library (reference compounds + simple analogs)
 Apply Property Filters (Lipinski-like MW, HBA, HBD, rings)
         │
         ▼
-Score Candidates (similarity + drug-likeness + docking stub)
+Score Candidates (similarity + drug-likeness + docking proxy)
         │
         ▼
 Rank and Evaluate (composite score, diversity, validity)
@@ -85,13 +85,13 @@ These limitations are **by design** — they define the gap that state-aware des
 |-----------|--------|--------|--------|
 | Reference similarity | 0.4 | SMILES 3-gram Tanimoto to known binders | Implemented (heuristic) |
 | Drug-likeness | 0.3 | Property-based linear scoring | Implemented (heuristic) |
-| Docking proxy | 0.3 | Placeholder (constant 0.5) | **STUB** |
+| Docking proxy | 0.3 | 3-tier cascade: MPNN → DockingProxy MLP → stub | **Active** (MPNN RMSE=0.72) |
 
 ## What Replacing the Stubs Would Change
 
-- **Docking stub → Vina/GNINA**: Would add real pose-based discrimination. The most
-  impactful upgrade. Would enable actual comparison of binding affinity estimates
-  between static and state-aware approaches.
+- **MPNN proxy → Vina/GNINA**: The MPNN cascade now provides real discriminative signal
+  (RMSE=0.72 pIC50), but physics-based docking would add pose-level information and
+  interaction-specific discrimination beyond what the learned proxy captures.
 
 - **SMILES similarity → Morgan fingerprints**: Would improve structural comparison
   accuracy. Moderate impact on ranking quality.

@@ -1,7 +1,7 @@
 # Known Limitations
 
-**Last updated:** 2026-03-30T00:00:00+00:00
-**Briefing session:** 1 (first briefing)
+**Last updated:** 2026-04-07T00:00:00+00:00
+**Briefing session:** 2 (final update)
 
 ---
 
@@ -21,8 +21,9 @@ molecules from known non-molecules. It has never seen a novel candidate structur
 different from its training set. When the MLP encounters a truly novel molecule, its
 prediction is essentially random.
 
-The MPNN affinity predictor is designed to replace this, but it is untrained. Even when
-trained, it will predict pIC50 from molecular graphs — still a learned proxy, not a
+The MPNN affinity predictor has replaced this as tier 1 in the scoring cascade
+(RMSE=0.7182, R²=0.6863, Pearson=0.8323, trained on 10,466 ChEMBL EGFR compounds).
+However, it predicts pIC50 from molecular graphs — still a learned proxy, not a
 physics-based binding calculation.
 
 > **Opportunity:** Integrating real docking software (AutoDock Vina, GNINA, or Glide)
@@ -45,12 +46,14 @@ bind EGFR through different interactions.
 > learned similarity metric (e.g., contrastive learning on activity data) would move
 > beyond fingerprint matching entirely.
 
-### 1.3 ADMET is a filter, not a scoring component
+### 1.3 ADMET is informational only, not a scoring or filtering component
 
-The ADMET predictor flags candidates with hERG liability or CYP3A4 inhibition, but it
-does not contribute to the unified scoring function. A candidate with terrible predicted
-ADMET properties can still score highly — it only gets flagged after ranking. Safety is
-a post-hoc check, not an optimization objective.
+The ADMET predictor (hERG AUROC=0.7745, CYP3A4 AUROC=0.7323) was trained and
+integrated, but hard filtering was found to reject ALL kinase inhibitors on hERG
+liability. This is expected behavior — hERG inhibition is a known class liability for
+kinase inhibitors. As a result, ADMET is used informational only: it flags candidates
+but does not filter or contribute to the unified score. A candidate with predicted
+ADMET liabilities still scores and ranks normally.
 
 > **Opportunity:** Adding ADMET as a 5th scoring component (or restructuring as a
 > constrained optimization where ADMET thresholds are hard constraints rather than
@@ -147,11 +150,11 @@ effects.
 
 ### 3.1 No pre-training on large chemical databases
 
-The MPNN and ADMET models will be trained from scratch on relatively small datasets
-(1,678 compounds for MPNN, TDC benchmarks for ADMET). Modern molecular property
-prediction benefits enormously from pre-training on millions of compounds (e.g.,
-self-supervised pre-training on ChEMBL, PubChem, or ZINC) followed by fine-tuning on
-the target task.
+The MPNN and ADMET models were trained from scratch on moderate datasets (10,466
+compounds for MPNN, 27,698 molecules for ADMET). While the MPNN achieved good metrics
+(RMSE=0.7182, Pearson=0.8323), modern molecular property prediction benefits enormously
+from pre-training on millions of compounds (e.g., self-supervised pre-training on
+ChEMBL, PubChem, or ZINC) followed by fine-tuning on the target task.
 
 > **Opportunity:** Pre-training the graph encoder on a large self-supervised task (e.g.,
 > masked atom prediction, contrastive learning on augmented molecular graphs) before
@@ -238,18 +241,19 @@ the molecule's shape.
 > candidates by how they interact with the pocket, not just what they look like.
 > State-specific interaction patterns could be a powerful discriminator.
 
-### 4.3 Candidate generation is string modification, not de novo design
+### 4.3 Candidate generation is mixed: template + VAE
 
-The current 49 state-aware candidates and 30 static candidates are produced by
-string-level SMILES modifications (substitutions, insertions, deletions on SMILES
-text). This is not true molecular design — it is text manipulation that happens to
-produce valid SMILES. The structural diversity is limited by the starting molecules.
+The 461 state-aware candidates include 36 from template-based string modification and
+395 from the trained VAE (SELFIES-encoded, v3). The 30 static candidates are still
+string-modified. While the VAE produces genuinely novel molecules (99.9% valid, 94.8%
+unique, 431 novel), it generates SMILES/SELFIES (1D representations) without 3D
+structural awareness of the binding pocket.
 
-> **Opportunity:** The VAE, once trained, will produce genuinely novel molecules from
-> latent space sampling. Beyond that, reinforcement learning (optimize the generator
-> toward high-scoring regions), genetic algorithms on molecular graphs, or 3D diffusion
-> models would enable exploration of chemical space far beyond what string modification
-> can reach.
+> **Opportunity:** Reinforcement learning (optimize the generator toward high-scoring
+> regions), genetic algorithms on molecular graphs, or 3D diffusion models (DiffSBDD,
+> Pocket2Mol, TargetDiff) would enable exploration of chemical space with structural
+> awareness of the target pocket. The VAE's latent space could also be explored via
+> Bayesian optimization to find high-affinity regions.
 
 ### 4.4 No water or solvent modeling
 
@@ -275,8 +279,9 @@ networks in the pocket can form bridging interactions or create barriers.
    component compares against 3 drugs. This biases toward known scaffolds and misses
    novel chemotypes.
 
-3. **"Is 1,678 compounds enough to train a meaningful affinity predictor?"** — Modern
-   molecular property prediction often uses 10,000-100,000+ compounds. 1,678 is small.
+3. **"Is 10,466 compounds enough to train a meaningful affinity predictor?"** — Modern
+   molecular property prediction often uses 100,000+ compounds. 10,466 is moderate;
+   the MPNN achieved RMSE=0.7182 but would benefit from pre-training on larger datasets.
 
 4. **"4 discrete states is a gross oversimplification."** — The conformational landscape
    is continuous. The discrete model misses intermediate states and transitions.

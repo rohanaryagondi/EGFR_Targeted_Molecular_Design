@@ -47,7 +47,7 @@ StateBind is simultaneously a scientific argument, an engineering demonstration,
 **Communication standard:**
 - Every claim is qualified. "Computationally better-scoring" not "better drugs."
 - Limitations are stated alongside results, not buried in appendices.
-- The docking stub (or its MPNN replacement) is labeled, not hidden.
+- The MPNN docking proxy is labeled as a learned proxy, not hidden.
 - The project tells a coherent story from question to architecture to qualified answer.
 
 ---
@@ -108,7 +108,7 @@ The full workstream suite has transformed the pipeline from a proof-of-concept i
 
 - WS01 (Chemistry Foundation) + WS02 (Scoring Integration): RDKit throughout, Morgan fingerprints in the scoring function, SA scores filtering unrealizable candidates.
 - WS03 (Statistical Testing) + WS05 (Visualization): Formal significance tests with matplotlib figures suitable for publication or README.
-- WS04 (Docking Proxy) + WS08 (MPNN Affinity): The docking stub replaced by a trained MPNN that actually discriminates binding quality. The 20% scoring weight currently wasted on a constant 0.5 becomes informative.
+- WS04 (Docking Proxy) + WS08 (MPNN Affinity): The docking stub replaced by a trained MPNN (RMSE=0.72, R²=0.69, 12.7M params) that discriminates binding quality. The 20% scoring weight now carries real affinity signal.
 - WS06 (CI/CD): GitHub Actions running pytest on every push/PR. No more silent regressions.
 - WS07 (Conditional VAE): State-conditioned molecular generation producing genuinely novel chemistry, not SMILES string modifications.
 - WS09 (ADMET Predictor): Safety filtering integrated into the generation pipeline. Candidates with hERG liability or poor metabolic stability are flagged before ranking.
@@ -234,7 +234,7 @@ Replace the weighted linear scoring function with Pareto frontier optimization. 
 
 **Show the architecture.** The pipeline is modular, config-driven, and testable. Twelve subpackages in a sequential, acyclic dependency graph. Pydantic models at module boundaries. YAML configs. Disk-based artifact communication. This is not a Jupyter notebook experiment; it is engineered software that happens to answer a scientific question.
 
-**Present qualified results.** The state-aware pipeline discovers 49 novel candidates inaccessible to the static approach (back-pocket extensions, P-loop binders, type-II scaffolds) with higher chemical diversity. But the docking component is a stub (or an MPNN proxy, depending on when the audience sees the project), and the comparison lacks (or includes) formal statistical testing. State the limitations in the same breath as the results.
+**Present qualified results.** The state-aware pipeline discovers 431 novel candidates inaccessible to the static approach (back-pocket extensions, P-loop binders, type-II scaffolds, VAE-generated molecules) with higher chemical diversity (0.9056 vs 0.5684). The docking component uses a trained MPNN proxy (RMSE=0.72 pIC50), and the comparison includes formal statistical testing (Mann-Whitney U: p<0.001, Cohen's d=1.36). The null hypothesis is formally retained: static wins on mean score because VAE molecules trade reference similarity for novelty. State the limitations in the same breath as the results.
 
 **Emphasize what makes this rigorous.** The baseline is built and scored before the state-aware pipeline runs. Both pipelines are scored with the same function. The controlled variable is generation strategy, not scoring. The null hypothesis is taken seriously. A null result (state-awareness does not help) would be reported with the same thoroughness.
 

@@ -1,13 +1,13 @@
 # Architecture
 
-**Last updated:** 2026-03-30T00:00:00+00:00
-**Briefing session:** 1 (first briefing)
+**Last updated:** 2026-04-07T00:00:00+00:00
+**Briefing session:** 2 (final update)
 
 ---
 
 ## Pipeline Overview
 
-StateBind is organized as a sequential, acyclic pipeline of 13 Python subpackages.
+StateBind is organized as a sequential, acyclic pipeline of 12 Python subpackages.
 Data flows downward through 7 phases, from raw inputs to a head-to-head comparison.
 Modules communicate exclusively via JSON artifact files on disk — never through
 in-memory shared state. This makes the pipeline resumable, debuggable, and allows
@@ -62,9 +62,10 @@ any phase to be re-run independently.
 ### Phase 6: Candidate Generation
 
 - **generation** — Generates candidate molecules conditioned on specific conformational
-  states. Uses 7 string-modification strategies (currently) with planned VAE-based
-  generation. Includes diversity computation and candidate filtering. A safety filter
-  gate can flag ADMET liabilities when the predictor is available.
+  states. Uses template-based string-modification strategies (36 candidates) plus
+  VAE-based generation (395 candidates from trained SELFIES VAE v3). Includes diversity
+  computation and candidate filtering. ADMET safety profiling flags liabilities
+  (informational only).
 
 ### Machine Learning
 
@@ -84,10 +85,6 @@ any phase to be re-run independently.
   analysis, diversity comparison, score distributions, top-K composition, novelty
   analysis, and (optionally) statistical hypothesis testing and weight sensitivity
   analysis. Includes visualization for all metrics.
-
-### Placeholder
-
-- **pockets** — Reserved for future pocket analysis. Currently empty.
 
 ---
 
@@ -138,7 +135,7 @@ Both pipelines are scored by the same function with 4 components:
 |-----------|--------|-------------|
 | Reference similarity | 0.35 | Computes Morgan fingerprint (ECFP4, radius 2, 2048 bits) Tanimoto similarity between the candidate and 3 known EGFR drugs (erlotinib, gefitinib, osimertinib). Takes the maximum similarity across the 3 references. Falls back to SMILES character 3-gram Tanimoto when RDKit is unavailable. |
 | Drug-likeness | 0.30 | Weighted composite: QED score (50%) + Lipinski violation penalty (25%) + synthetic accessibility score (25%). QED is a quantitative estimate of drug-likeness from 0 to 1. Lipinski checks 4 rules (MW, HBA, HBD, LogP); score = (4 - violations) / 4. SA score ranges 1-10; normalized to 0-1. Falls back to heuristic linear scoring on MW/HBA/HBD/ring count. |
-| Docking proxy | 0.20 | Cascading 3-tier fallback. **Tier 1:** MPNN affinity predictor — a graph neural network predicts pIC50, normalized to [0, 1] via sigmoid((pIC50 - 5) / 2). Currently unavailable (model untrained). **Tier 2:** DockingProxy MLP — a lightweight numpy-based neural network trained on 9 known EGFR binders and 25 decoys, using 13 Morgan fingerprint bits + 7 molecular descriptors as input. Currently active; discriminates known binders from non-binders but trained on tiny dataset. **Tier 3:** Constant 0.5 stub — returns 0.5 for all inputs, zero discriminative power. Last resort. |
+| Docking proxy | 0.20 | Cascading 3-tier fallback. **Tier 1 (active):** MPNN affinity predictor — a 12.7M-param graph neural network trained on 10,466 ChEMBL EGFR compounds (RMSE=0.7182, R²=0.6863, Pearson=0.8323). Predicts pIC50, normalized to [0, 1] via sigmoid((pIC50 - 5) / 2). **Tier 2:** DockingProxy MLP — a lightweight numpy-based neural network trained on 9 known EGFR binders and 25 decoys, using 13 Morgan fingerprint bits + 7 molecular descriptors as input. Fallback when MPNN unavailable. **Tier 3:** Constant 0.5 stub — returns 0.5 for all inputs, zero discriminative power. Last resort. |
 | State specificity | 0.15 | Geometric decay based on how many conformational states a candidate appears in. 1 state → 1.0, 2 states → 0.5, 3 states → 0.25, 4 states → 0.0. For the static baseline, this is always 0.0 (no state information). This is the only component where the state-aware pipeline has an advantage. |
 
 **Weight constraint:** All 4 weights must be present and sum to exactly 1.0 (tolerance
@@ -177,7 +174,8 @@ The unified scorer is what matters for the head-to-head.
 **Hyperparameters (from config):** vocab_size=150, embed_dim=128, hidden_dim=256,
 latent_dim=64, KL weight=0.01 with 20-epoch warmup.
 
-**Status:** Architecture complete. Training data prepared. Not trained.
+**Status:** Trained. VAE v3 uses SELFIES encoding. 300 epochs on H200. 9.5M params.
+99.9% valid, 94.8% unique. 395 candidates generated.
 
 ### Affinity MPNN
 
@@ -198,10 +196,11 @@ the docking proxy stub in the scoring function.
 **Hyperparameters (from config):** hidden_dim=128, 3 message-passing layers,
 mean_max readout.
 
-**Training data:** 1,678 ChEMBL EGFR compounds with pIC50 values (range 4.0-11.0,
-mean 6.50). Includes ~30 non-EGFR decoys with low pIC50 (3.0-4.5).
+**Training data:** 10,466 ChEMBL EGFR compounds with pIC50 values (range 4.0-11.0).
+Originally 1,678 before a pagination fix expanded the dataset.
 
-**Status:** Architecture complete. Training data prepared. Adapter written. Not trained.
+**Status:** Trained. 12.7M params. RMSE=0.7182, R²=0.6863, Pearson=0.8323. Active
+as tier 1 in the scoring cascade.
 
 ### Multi-task ADMET
 
@@ -222,10 +221,11 @@ mean 6.50). Includes ~30 non-EGFR decoys with low pIC50 (3.0-4.5).
   - Aqueous solubility (regression)
 - Loss: Weighted sum of MSE (regression tasks) and BCE (classification tasks).
 
-**Training data:** Therapeutics Data Commons (TDC) ADMET benchmarks.
+**Training data:** 27,698 molecules from Therapeutics Data Commons (TDC) ADMET benchmarks
+covering 6 endpoints.
 
-**Status:** Architecture complete. Training data prepared. Adapter + filter written.
-Not trained.
+**Status:** Trained. 187K params. hERG AUROC=0.7745, CYP3A4 AUROC=0.7323. Used
+informational only — hard filtering rejects ALL kinase inhibitors on hERG.
 
 ---
 

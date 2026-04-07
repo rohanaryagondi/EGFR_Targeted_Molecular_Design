@@ -1,7 +1,7 @@
 # Project Overview: StateBind
 
-**Last updated:** 2026-03-30T00:00:00+00:00
-**Briefing session:** 1 (first briefing)
+**Last updated:** 2026-04-07T00:00:00+00:00
+**Briefing session:** 2 (final update)
 
 ---
 
@@ -68,7 +68,7 @@ under identical scoring conditions:
 - Extracts pocket descriptors for each state
 - Generates candidates conditioned on specific conformational states
 - Tracks which states each candidate appears in
-- Currently produces 49 candidates via 7 state-conditioned strategies
+- Currently produces 461 candidates (36 template + 395 VAE-generated + 30 shared)
 
 ### Fair Comparison
 
@@ -118,13 +118,15 @@ answer is no (or inconclusive), that is equally valuable scientific information.
 
 ## Current Position
 
-The pipeline infrastructure is complete. All modules are built, tested (540 tests),
-and integrated. The project is now at a critical juncture: three ML models need
-GPU training before the central hypothesis can be tested with real (non-stub)
-predictions. The statistical testing framework exists and is ready to run the moment
-trained models produce real scores.
+The pipeline infrastructure is complete. All modules are built, tested (548 tests),
+and integrated. All three ML models have been trained and their predictions are
+active in the pipeline. The central hypothesis has been tested with trained model
+scores and the null hypothesis was formally retained.
 
 The null hypothesis — that the state-aware pipeline does not outperform the static
-baseline — has not yet been rejected. The current observed score delta (+0.020 mean,
-+0.035 diversity) lacks statistical backing and uses stub/proxy scores for 20% of
-the scoring weight.
+baseline — was formally retained. The static baseline achieved higher mean scores
+(0.5437 vs 0.4378), though the state-aware pipeline produced far more candidates
+(461 vs 30), greater diversity (0.9056 vs 0.5684), higher max score (0.7794 vs
+0.7288), and 431 novel molecules. Statistical tests: Mann-Whitney U p<0.001,
+Cohen's d=1.36 (favoring static). Weight sensitivity analysis: 44% of weight
+combinations favor state-aware, 56% favor static.

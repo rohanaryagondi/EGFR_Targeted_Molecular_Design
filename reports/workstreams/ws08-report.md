@@ -33,7 +33,7 @@ architecture already exists in `ml/mpnn.py`; this workstream creates integration
      ~30 non-binder decoys (aspirin, caffeine, etc.) with low pIC50 (3.0-4.5)
    - Deduplication by canonical SMILES, median pIC50 for duplicates
    - Output: `data/processed/egfr_affinity.json` + metadata JSON
-   - **Test run:** ChEMBL API returned 1,678 unique compounds (pIC50 4.0-11.0, mean 6.50)
+   - **Test run:** ChEMBL API returned 1,678 unique compounds (pIC50 4.0-11.0, mean 6.50). Later expanded to 10,466 compounds via pagination fix (WS10).
 
 3. **Created `src/statebind/ml/affinity_predictor.py`:**
    - Singleton pattern matching `admet_predictor.py` exactly
@@ -65,7 +65,7 @@ architecture already exists in `ml/mpnn.py`; this workstream creates integration
 
 **What is done:**
 - `scripts/prepare_mpnn_data.py` — data preparation with 3-tier fallback ✅
-- `data/processed/egfr_affinity.json` — 1,678 compounds from ChEMBL API ✅
+- `data/processed/egfr_affinity.json` — 10,466 compounds from ChEMBL API (originally 1,678; expanded via WS10 pagination fix) ✅
 - `src/statebind/ml/affinity_predictor.py` — singleton scoring adapter ✅
 - `src/statebind/ranking/scoring.py` — 3-tier cascading fallback (MPNN → proxy → stub) ✅
 - `tests/test_mpnn_integration.py` — 22 tests, all passing ✅
@@ -103,7 +103,7 @@ architecture already exists in `ml/mpnn.py`; this workstream creates integration
 | File | Changes |
 |------|---------|
 | `src/statebind/ranking/scoring.py` | `_score_docking()`: 3-tier cascade (MPNN→proxy→stub); `_get_scoring_method()`: MPNN check; docstring update |
-| `data/processed/egfr_affinity.json` | Generated: 1,678 ChEMBL EGFR compounds with pIC50 |
+| `data/processed/egfr_affinity.json` | Generated: 10,466 ChEMBL EGFR compounds with pIC50 (originally 1,678; expanded via WS10 pagination fix) |
 
 ## Tests Written
 

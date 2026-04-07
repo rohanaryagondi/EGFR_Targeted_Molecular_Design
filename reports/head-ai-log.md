@@ -72,7 +72,7 @@ then review ideas here.
 
 | Date | Suggestions | Implemented | Accepted | Wont-fix | Notes |
 |------|------------|-------------|----------|----------|-------|
-| 2026-03-30 | S001-S012 (12 total) | 10 | 1 (S010) | 1 (S012) | First Admin AI audit. Fixed all P0s and P1s. Deferred S010 (ruff). |
+| 2026-03-30 | S001-S012 (12 total) | 11 | 0 | 1 (S012) | First Admin AI audit. Fixed all P0s and P1s. S010 (ruff) deferred then implemented 2026-04-06. |
 | 2026-04-05 | S013-S024 (12 total) | 2 (S013, S014) | 5 (S015-S018, S021, S024) | 4 (S019, S020, S022, S023) | Second Admin AI audit. P0s fixed immediately. CLAUDE.md already restructured by human (makes S020, S023 moot). |
 
 **Detail:**
@@ -85,7 +85,7 @@ then review ideas here.
 - S007 (P1): Implemented. Updated 4 module READMEs (evaluation, ml, ranking, generation).
 - S008 (P1): Implemented. Fixed INTERFACES.md Contracts 5 (VAE) and 6 (ADMET) to match code.
 - S009 (P1): Implemented. Checked 3 data prep items in TODO.md.
-- S010 (P2): Accepted, deferred. ~40 ruff violations need dedicated cleanup session.
+- S010 (P2): Implemented (2026-04-06). All 121 ruff violations fixed. CI lint passes clean.
 - S011 (P2): Implemented. Updated GOALS.md Section 3 to mark WS01/WS03 as complete.
 - S012 (P3): Wont-fix. __init__.py exports work as-is; adding them is maintenance burden.
 
@@ -145,7 +145,7 @@ then review ideas here.
 - Full pipeline re-run with trained models
 - Statistical hypothesis testing with real (non-stub) scores
 - Vision idea review (12 ideas proposed, none accepted/deferred yet)
-- ~40 pre-existing ruff violations in `src/` (S010 accepted, deferred)
+- ~~40 pre-existing ruff violations in `src/`~~ S010 implemented 2026-04-06: all 121 ruff violations fixed (121->0). CI lint passes clean.
 - Accepted admin suggestions S015-S018, S021, S024 (module CRITICAL.md refs, stale content)
 
 **Known artifacts on disk:**
@@ -174,7 +174,7 @@ then review ideas here.
 4. **Fix accepted admin items** -- S015-S018, S021, S024 (module CRITICAL.md refs, stale
    content, missing VAE generation script).
 
-5. **Fix ruff violations (S010)** -- ~40 violations block CI.
+5. ~~**Fix ruff violations (S010)**~~ -- Done 2026-04-06. All 121 violations fixed. CI lint passes clean.
 
 ---
 
@@ -214,8 +214,8 @@ If your context compacts:
    Modular Agents, Assistant AI, Visionary AI, Admin AI. You consume output from
    Visionary (ideas) and Admin (suggestions).
 
-7. **Admin AI has been run.** 12 suggestions triaged. 10 implemented, 1 deferred (S010
-   ruff violations), 1 wont-fix (S012 __init__.py). See `admin/suggestions.md`.
+7. **Admin AI has been run.** 12 suggestions triaged. 11 implemented (S010 ruff fixed
+   2026-04-06, 121->0 violations), 1 wont-fix (S012 __init__.py). See `admin/suggestions.md`.
 
 8. **Documentation is now current.** All stale refs fixed (2026-03-30). But line numbers
    drift with every code change — consider function name anchors as primary references.

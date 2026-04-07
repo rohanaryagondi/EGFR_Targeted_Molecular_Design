@@ -40,7 +40,7 @@ EGFR is a validated oncology target with extensive structural coverage in the PD
 
 4. **Molecular generation:** Generate candidate small molecules for state-specific pockets. Method: fragment-based enumeration or a lightweight pretrained SMILES generator conditioned on pocket descriptors. Baseline: generate against the single most-deposited PDB structure (typically 1M17 or similar).
 
-5. **Scoring and ranking:** Score all candidates with a unified function (reference similarity, druglikeness, docking proxy, state specificity). Apply Lipinski-like property filters. Compare state-aware vs. static baseline on diversity, novelty, score distributions, and top-K composition. _Note: docking proxy is currently a stub (constant 0.5). Real docking integration (Vina/GNINA) is planned future work._
+5. **Scoring and ranking:** Score all candidates with a unified function (reference similarity, druglikeness, docking proxy, state specificity). Apply Lipinski-like property filters. Compare state-aware vs. static baseline on diversity, novelty, score distributions, and top-K composition. _Note: docking proxy uses a 3-tier cascade (MPNN → DockingProxy MLP → stub). Physics-based docking (Vina/GNINA) is planned future work._
 
 6. **Report:** A final comparison showing score distributions, overlap analysis, novelty breakdown, and an honest verdict with stated limitations.
 

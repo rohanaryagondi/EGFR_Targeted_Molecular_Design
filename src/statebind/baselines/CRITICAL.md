@@ -1,6 +1,6 @@
 # Critical Information -- Baselines
 
-- Docking stub at `scoring.py:202-216` (`_score_docking_stub`) returns constant 0.5 for ALL candidates regardless of input. This is the #1 score-quality bottleneck.
+- Docking stub at `scoring.py:202-216` (`_score_docking_stub`) returns constant 0.5 for ALL candidates regardless of input. This is now the last-resort fallback only -- the primary scorer is MPNN (WS08), with DockingProxy MLP (WS04) as the second tier. The stub is reached only if both upstream models fail to load.
 - Reference binders (erlotinib, gefitinib, osimertinib) are SMILES literals at `scoring.py:59-66`. Adding or removing references changes ALL similarity scores.
 - `_tanimoto_ngram` at `scoring.py:43-54` uses SMILES character 3-grams, NOT Morgan/ECFP4 fingerprints. It is a crude text-similarity proxy (fallback only since WS02).
 - `_score_druglikeness` at `scoring.py:101-147` uses heuristic property ranges, NOT RDKit descriptors. Returns 0.0 if all properties are None. `_score_druglikeness_enhanced` at `scoring.py:150` uses RDKit QED+Lipinski+SA (WS02).
