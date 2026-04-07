@@ -13,8 +13,13 @@ from __future__ import annotations
 from collections import Counter
 
 import numpy as np
-from sklearn.cluster import AgglomerativeClustering
-from sklearn.preprocessing import StandardScaler
+
+try:
+    from sklearn.cluster import AgglomerativeClustering
+    from sklearn.preprocessing import StandardScaler
+    HAS_SKLEARN = True
+except ImportError:
+    HAS_SKLEARN = False
 
 from statebind.structure.models import (
     AtlasEntry,
@@ -38,6 +43,11 @@ def cluster_structures(
     Returns:
         Tuple of (updated entries with cluster_id, cluster descriptions).
     """
+    if not HAS_SKLEARN:
+        raise ImportError(
+            "scikit-learn is required for clustering. "
+            "Install with: pip install statebind[science]"
+        )
     if len(entries) < n_clusters:
         raise ValueError(
             f"Need at least {n_clusters} entries for {n_clusters} clusters, "
@@ -148,6 +158,11 @@ def compute_pairwise_distances(
     Returns:
         List of PairwiseSimilarity for all pairs.
     """
+    if not HAS_SKLEARN:
+        raise ImportError(
+            "scikit-learn is required for pairwise distances. "
+            "Install with: pip install statebind[science]"
+        )
     n = len(entries)
     X = np.array([e.features.to_vector() for e in entries])
 
@@ -182,6 +197,11 @@ def compute_cluster_quality(
     - mean_inter_cluster_dist: mean distance between clusters
     - separation_ratio: inter/intra ratio (higher = better separation)
     """
+    if not HAS_SKLEARN:
+        raise ImportError(
+            "scikit-learn is required for cluster quality metrics. "
+            "Install with: pip install statebind[science]"
+        )
     X = np.array([e.features.to_vector() for e in entries])
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)

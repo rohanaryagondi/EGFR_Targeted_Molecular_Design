@@ -173,6 +173,15 @@ class TestFeatureDistinguishesStates:
 # ── Clustering Tests ────────────────────────────────────────────────────
 
 
+_has_sklearn = False
+try:
+    import sklearn  # noqa: F401
+    _has_sklearn = True
+except ImportError:
+    pass
+
+
+@pytest.mark.skipif(not _has_sklearn, reason="scikit-learn not installed")
 class TestClustering:
     def _build_entries(self) -> list[AtlasEntry]:
         from statebind.processing.structures import build_structure_dataset
@@ -275,6 +284,7 @@ class TestPocketComparison:
 # ── Atlas Builder Tests ─────────────────────────────────────────────────
 
 
+@pytest.mark.skipif(not _has_sklearn, reason="scikit-learn not installed")
 class TestStateAtlas:
     def test_build_atlas_returns_atlas(self):
         atlas = build_state_atlas(n_clusters=4)

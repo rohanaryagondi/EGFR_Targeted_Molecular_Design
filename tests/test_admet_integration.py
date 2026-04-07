@@ -112,6 +112,14 @@ class TestADMETDataPreparation:
 _CHECKPOINT = Path("artifacts/models/admet/best_model.pt")
 
 
+def _has_torch_geometric() -> bool:
+    try:
+        import torch_geometric  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
 class TestADMETModelQuality:
     """Model quality tests -- skipped when no trained model available.
 
@@ -121,6 +129,9 @@ class TestADMETModelQuality:
     pytestmark = [
         pytest.mark.skipif(
             not _CHECKPOINT.exists(), reason="No trained ADMET checkpoint"
+        ),
+        pytest.mark.skipif(
+            not _has_torch_geometric(), reason="torch_geometric not installed"
         ),
     ]
 
