@@ -45,7 +45,10 @@ class ParetoResult:
             "front_indices": self.front_indices,
             "front_scores": self.front_scores.tolist(),
             "hypervolume": round(self.hypervolume, 4),
-            "crowding_distances": [round(d, 4) for d in self.crowding_distances],
+            "crowding_distances": [
+                None if d == float("inf") else round(d, 4)
+                for d in self.crowding_distances
+            ],
             "n_candidates": self.n_candidates,
             "n_objectives": self.n_objectives,
             "objective_names": self.objective_names,

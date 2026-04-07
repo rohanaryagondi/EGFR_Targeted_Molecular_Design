@@ -86,7 +86,7 @@ class ComparativeResult:
     # WS03: statistical testing results (populated when run_statistics=True)
     statistical_tests: list = field(default_factory=list)
     sensitivity: object = field(default=None)
-    # WS12: Pareto analysis results (populated when run_statistics=True)
+    # WS12: Pareto analysis results (always populated when numpy available)
     pareto: object = field(default=None)
 
 
@@ -230,14 +230,14 @@ def run_full_comparison(
         except ImportError:
             pass
 
+    # WS12: Pareto analysis always runs (only needs numpy, a core dep)
     pareto_result = None
-    if run_statistics:
-        try:
-            from statebind.evaluation.pareto_comparison import run_pareto_comparison
+    try:
+        from statebind.evaluation.pareto_comparison import run_pareto_comparison
 
-            pareto_result = run_pareto_comparison(merged)
-        except ImportError:
-            pass
+        pareto_result = run_pareto_comparison(merged)
+    except ImportError:
+        pass
 
     return ComparativeResult(
         overlap=overlap,

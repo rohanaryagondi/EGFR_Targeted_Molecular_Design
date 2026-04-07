@@ -219,12 +219,13 @@ class TestFigures:
 
     def test_generate_all_figures(self, result, merged):
         figures = generate_all_figures(result, merged)
-        assert len(figures) == 5
-        expected_keys = {
+        base_keys = {
             "score_distribution", "diversity_comparison",
             "top_k_composition", "novelty_breakdown", "overlap_venn",
         }
-        assert set(figures.keys()) == expected_keys
+        assert base_keys.issubset(set(figures.keys()))
+        # WS12: Pareto summary is included when numpy available
+        assert len(figures) >= 5
         for content in figures.values():
             assert isinstance(content, str)
             assert len(content) > 0
