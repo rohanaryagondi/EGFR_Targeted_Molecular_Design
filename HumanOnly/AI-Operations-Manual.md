@@ -403,8 +403,8 @@ For ML work done on an HPC cluster (no local worktree), tell the Head AI:
 
 ## 4. HPC Training Instructions
 
-The ML models are written but not trained. Training requires a GPU with CUDA. Do this
-on your HPC cluster, not inside an AI coding session.
+All 3 ML models have been trained (2026-04-06). These instructions are retained for
+reference if retraining is needed. Training requires a GPU with CUDA on your HPC cluster.
 
 ### Setup
 
