@@ -370,6 +370,124 @@ Training happens separately on HPC (Section 4).
 
 ---
 
+### WS11: GNINA Physics-Informed Docking
+
+**Origin:** Vision Idea 005 (accepted 2026-04-07).
+
+**Prompt:**
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/11-gnina-docking.md,
+> (3) src/statebind/chemistry/README.md, (4) src/statebind/ranking/CRITICAL.md,
+> (5) src/statebind/structure/README.md,
+> (6) reports/workstreams/ws11-report.md (your progress report -- update continuously).
+> Integrate GNINA as the top tier of the docking fallback chain. Create a Python wrapper
+> around GNINA CLI, prepare receptor PDBQT files for each conformational state, and add
+> state-specific docking analysis. Wire GNINA into ranking/scoring.py as tier 0 in the
+> cascade. Update your progress report after every major step. Run all tests.
+
+**Expected output:**
+- New: `src/statebind/chemistry/docking.py` (GNINA wrapper, DockingResult model)
+- New: `scripts/prepare_docking_receptors.py` (receptor PDBQT + box config per state)
+- New: `src/statebind/evaluation/docking_analysis.py` (state-specific analysis)
+- New: `configs/docking.yaml` (GNINA parameters)
+- Modified: `src/statebind/ranking/scoring.py` (GNINA tier 0 in cascade)
+- New: `tests/test_docking.py` with 20+ tests
+
+**Verify:**
+```bash
+pytest -v --tb=short
+# GNINA-dependent tests auto-skip if GNINA not installed:
+pytest tests/test_docking.py -v
+# If GNINA is installed, verify known binder docking:
+python -c "
+from statebind.chemistry.docking import is_gnina_available
+print('GNINA available:', is_gnina_available())
+"
+```
+
+**Prerequisite:** All WS01-WS09 complete. GNINA must be installed on the cluster.
+
+---
+
+### WS12: Pareto Multi-Objective Optimization
+
+**Origin:** Vision Idea 008 (accepted 2026-04-07).
+
+**Prompt:**
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/12-pareto-optimization.md,
+> (3) src/statebind/evaluation/README.md, (4) src/statebind/evaluation/CRITICAL.md,
+> (5) src/statebind/ranking/README.md,
+> (6) reports/workstreams/ws12-report.md (your progress report -- update continuously).
+> Add Pareto front analysis and hypervolume comparison to the evaluation pipeline.
+> Compute Pareto fronts for both pipelines, compare via hypervolume indicator, and
+> produce 2D projection and parallel coordinates visualizations. This complements (does
+> NOT replace) the existing weighted-sum comparison. Update your progress report after
+> every major step. Run all tests.
+
+**Expected output:**
+- New: `src/statebind/ranking/pareto.py` (Pareto front, hypervolume)
+- New: `src/statebind/evaluation/pareto_comparison.py` (pipeline comparison)
+- Modified: `src/statebind/evaluation/figures.py` (Pareto plots)
+- Modified: `src/statebind/evaluation/comparison.py` (Pareto section in results)
+- New: `tests/test_pareto.py` with 20+ tests
+
+**Verify:**
+```bash
+pytest -v --tb=short
+python -c "
+from statebind.ranking.pareto import compute_pareto_front
+import numpy as np
+scores = np.random.rand(20, 4)
+result = compute_pareto_front(scores, ['sim', 'drug', 'dock', 'state'])
+print(f'Front size: {len(result.front_indices)} / {scores.shape[0]}')
+"
+```
+
+**Prerequisite:** None for code. Uses existing scored data in `artifacts/ranking/comparison.json`.
+
+---
+
+### WS13: Retrospective Time-Split Validation
+
+**Origin:** Vision Idea 009 (accepted 2026-04-07).
+
+**Prompt:**
+> Read: (1) CLAUDE.md (especially Rules 10 and Section 17),
+> (2) workstreams/13-retrospective-validation.md,
+> (3) src/statebind/evaluation/README.md,
+> (4) scripts/prepare_mpnn_data.py (for ChEMBL data patterns),
+> (5) scripts/compare_baseline_vs_state_aware.py (for pipeline execution patterns),
+> (6) reports/workstreams/ws13-report.md (your progress report -- update continuously).
+> Build a retrospective validation framework: create time-split datasets from ChEMBL
+> (2010 and 2015 cutoffs), retrain MPNN on pre-cutoff data, run both pipelines under
+> time restriction, and evaluate whether generated candidates resemble drugs approved
+> after the cutoff. Scientific honesty is paramount -- report results as found. Update
+> your progress report after every major step. Run all tests.
+
+**Expected output:**
+- New: `scripts/build_timesplit_datasets.py` (ChEMBL time-split data curation)
+- New: `scripts/run_retrospective_validation.py` (full pipeline under time restriction)
+- New: `src/statebind/evaluation/retrospective.py` (enrichment, similarity metrics)
+- New: `configs/retrospective.yaml` (cutoff dates, future drug SMILES)
+- New: `tests/test_retrospective.py` with 15+ tests
+
+**Verify:**
+```bash
+pytest -v --tb=short
+# Verify no data leakage:
+python -c "
+from statebind.evaluation.retrospective import compute_enrichment_factor
+ef = compute_enrichment_factor([0.8, 0.6, 0.3, 0.1], threshold=0.5, top_k=2)
+print(f'Enrichment factor: {ef:.2f}')
+"
+```
+
+**Prerequisite:** Trained MPNN (for retraining on restricted data). Full pipeline must run
+end-to-end. Requires ChEMBL API access for time-split data curation.
+
+---
+
 ## 3.5. Merging Completed Worktrees (Head AI Procedure)
 
 When modular agents finish their workstreams, use the Head AI to merge and push.
@@ -586,6 +704,11 @@ agent:
 - Re-run full pipeline end-to-end
 - Run statistical tests
 - Regenerate reports
+
+**Wave 8 -- Vision Phase (after pipeline run + null hypothesis retained):**
+- WS11: GNINA Docking + WS12: Pareto Optimization (deploy in parallel)
+- WS13: Retrospective Validation (after WS11/WS12 underway)
+- Merge order: WS11 -> WS12 -> WS13 (WS11 modifies scoring.py; WS12/WS13 modify comparison.py)
 
 ### Agent Scope Rules
 

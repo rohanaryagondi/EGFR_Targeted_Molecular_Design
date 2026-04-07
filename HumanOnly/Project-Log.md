@@ -4,6 +4,35 @@ Timestamped history of major project events. Newest first.
 
 ---
 
+## 2026-04-07 (evening)
+
+**Vision idea review: 3 accepted, 9 deferred**
+Head AI Generation 4 reviewed all 12 Visionary ideas. Decision framework: accept ideas that address root causes of the null result (scoring quality, evaluation methodology, validation) with medium effort. Defer architecture changes, Epic-scope ideas, and premature optimizations.
+
+Accepted:
+- **005: GNINA Docking** → WS11: Real physics-based docking for 20% of scoring weight
+- **008: Pareto Optimization** → WS12: Weight-free hypervolume comparison
+- **009: Retrospective Time-Split Validation** → WS13: Predict future drugs from historical data
+
+Key deferrals: 001 (continuous conditioning -- null result not caused by discretization), 006 (learned similarity -- risk of appearing to p-hack), 002 (3D diffusion -- Epic scope).
+
+**3 workstream briefs created**
+Full briefs with interface contracts, testing requirements, and definitions of done:
+- `workstreams/11-gnina-docking.md`
+- `workstreams/12-pareto-optimization.md`
+- `workstreams/13-retrospective-validation.md`
+
+**All project documentation updated**
+- 12 idea files: status changed to accepted (3) or deferred (9)
+- `reports/head-ai-log.md`: vision review log, decisions, task assignments, next steps
+- `workstreams/README.md`: new WS11-13, Group D parallel group, conflict zones
+- `HumanOnly/AI-Operations-Manual.md`: WS11-13 deployment prompts, Wave 8 order of operations
+- `HumanOnly/Project-Briefing.md`: pending section rewritten with accepted/deferred split
+- `HumanOnly/Project-Log.md`: this entry
+- 3 report templates: `reports/workstreams/ws{11,12,13}-report.md`
+
+---
+
 ## 2026-04-07
 
 **Comprehensive documentation refresh**

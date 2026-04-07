@@ -2,7 +2,7 @@
 
 **Category:** ML Improvements
 **Priority:** P1: High
-**Status:** proposed
+**Status:** deferred
 **Date proposed:** 2026-03-30
 **Effort:** Large (2-4 weeks)
 

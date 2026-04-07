@@ -2,7 +2,7 @@
 
 **Category:** ML Improvements, Novel Approaches
 **Priority:** P1: High
-**Status:** proposed
+**Status:** deferred
 **Date proposed:** 2026-03-30
 **Effort:** Epic (1+ months)
 

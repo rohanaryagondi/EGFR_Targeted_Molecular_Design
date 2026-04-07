@@ -16,10 +16,10 @@
 
 ## Status
 
-- **Last session:** 2026-04-05
+- **Last session:** 2026-04-07
 - **Branch:** ML (always)
-- **Last updated:** 2026-04-05T18:30:00+00:00
-- **Head AI generation:** 3
+- **Last updated:** 2026-04-07T16:00:00+00:00
+- **Head AI generation:** 4
 
 ---
 
@@ -59,10 +59,28 @@
 
 | Date | Ideas Reviewed | Accepted | Deferred | Notes |
 |------|---------------|----------|----------|-------|
-| (none yet) | -- | -- | -- | Vision system scaffolded (commit 22c2694) but never run. No briefings written, no ideas proposed. |
+| 2026-04-07 | 001-012 (12 total) | 3 (005, 008, 009) | 9 (001-004, 006-007, 010-012) | First vision review. Pipeline ran end-to-end, null hypothesis retained. Accepted ideas target scoring quality, evaluation methodology, and validation. |
 
-**Next action:** Run Assistant AI to write briefings, then Visionary AI to propose ideas,
-then review ideas here.
+**Accepted ideas:**
+- **005: GNINA Physics-Informed Docking** -- Activates 20% docking weight with real
+  physics. No ML training dependency. Provides binding poses. Start first.
+- **008: Pareto Multi-Objective Optimization** -- Eliminates arbitrary weight problem
+  driving the null result. Hypervolume indicator = weight-free comparison. Runs on
+  existing data.
+- **009: Retrospective Time-Split Validation** -- Most impactful validation for a
+  computational-only project. Tests whether pipeline predicts post-2015 EGFR drugs
+  from pre-2015 data.
+
+**Deferred ideas (with rationale):**
+- 001: Continuous conditioning -- null result isn't from discretization; changes research question
+- 002: 3D diffusion -- Epic scope; generation quality isn't the bottleneck
+- 003: Kinome selectivity -- doesn't address null result; MPNN not yet validated single-target
+- 004: Ensemble uncertainty -- 5-10x GPU cost; consider MC dropout as lighter alternative
+- 006: Learned similarity -- changing 35% of scoring post-null-result risks p-hacking appearance
+- 007: Retrosynthetic gate -- P2; SA heuristic adequate for v1
+- 010: Self-supervised pre-training -- models trained and working; revisit if 009 shows poor generalization
+- 011: Water thermodynamics -- large effort, uncertain payoff; fix evaluation first
+- 012: RL optimization -- generation working (99.9% valid); fix scoring before optimizing toward it
 
 ---
 
@@ -97,7 +115,9 @@ then review ideas here.
 
 | Date | Idea | Workstream Created | Assigned To | Status |
 |------|------|--------------------|-------------|--------|
-| (none yet) | -- | -- | -- | -- |
+| 2026-04-07 | 005: GNINA Docking | WS11 | Modular Agent | Brief complete, not started |
+| 2026-04-07 | 008: Pareto Optimization | WS12 | Modular Agent | Brief complete, not started |
+| 2026-04-07 | 009: Time-Split Validation | WS13 | Modular Agent | Brief complete, not started |
 
 ---
 
@@ -121,6 +141,8 @@ then review ideas here.
 | 2026-04-05 | WS10: Fix training data scarcity by adding pagination and installing PyTDC | Leave small datasets, add data augmentation | Root causes were purely technical (missing pagination, missing dependency). Fixing them gives 29x-503x more data with no scientific compromise. |
 | 2026-04-05 | Clear stale VAE checkpoint and retrain on expanded data | Keep old model, fine-tune | Old model trained on 276 samples is not meaningful. Clean retrain on 8,109 samples. |
 | 2026-04-05 | Increase SLURM time limits: MPNN 1h→4h, ADMET 1h→6h, ADMET mem 16G→32G | Keep original limits | Datasets are 6-500x larger; original 1h limits would cause timeout failures. |
+| 2026-04-07 | Accept ideas 005, 008, 009; defer 9 others | Accept more ideas (e.g., 001 continuous conditioning) | Null result is driven by ref_similarity bias and arbitrary weights, not by 4-state discretization. The 3 accepts fix scoring (005), evaluation (008), and validation (009) -- the 3 root weaknesses. Deferring 001/006 avoids changing the scoring post-null-result. |
+| 2026-04-07 | Implementation order: 005+008 parallel, then 009 | 009 first (most impactful) | 009 requires retraining with restricted data, which benefits from having GNINA docking (005) available. 008 runs on existing data. Start 005+008 in parallel, 009 once data curation begins. |
 
 ---
 
@@ -139,14 +161,13 @@ then review ideas here.
 - Vision System scaffolded + 12 ideas proposed (all status: proposed, awaiting review)
 
 **What is NOT done:**
-- MPNN and ADMET model training (jobs submitted, pending GPU queue)
-- Wire MPNN into scoring cascade (after training completes)
-- Generate VAE candidates with trained model
-- Full pipeline re-run with trained models
-- Statistical hypothesis testing with real (non-stub) scores
-- Vision idea review (12 ideas proposed, none accepted/deferred yet)
-- ~~40 pre-existing ruff violations in `src/`~~ S010 implemented 2026-04-06: all 121 ruff violations fixed (121->0). CI lint passes clean.
-- Accepted admin suggestions S015-S018, S021, S024 (module CRITICAL.md refs, stale content)
+- ~~MPNN and ADMET model training~~ Complete. Checkpoints at `artifacts/models/`.
+- ~~Generate VAE candidates with trained model~~ Complete. 461 state-aware candidates generated.
+- ~~Full pipeline re-run~~ Complete. Null hypothesis retained (static 0.5437 vs state-aware 0.4378).
+- ~~Vision idea review~~ Complete (2026-04-07). 3 accepted, 9 deferred.
+- ~~ruff violations~~ S010 implemented 2026-04-06. CI lint clean.
+- ~~Create workstreams for accepted ideas~~ Complete. Briefs, reports, INTERFACES, deployment prompts all written.
+- ~~Admin suggestions S015-S018, S021, S024~~ Already implemented by previous session (confirmed in suggestions.md).
 
 **Known artifacts on disk:**
 - `data/processed/egfr_affinity.json` -- 10,466 ChEMBL EGFR compounds (pIC50)
@@ -158,23 +179,18 @@ then review ideas here.
 
 ## Next Steps
 
-1. **Monitor MPNN/ADMET training** -- jobs 7285710/7285711 in GPU queue. Check
-   `squeue -u rag88` and `tail logs/train_mpnn_7285710.out` when running.
+1. **Launch WS11 + WS12 in parallel** -- both are independent. WS11 needs GNINA
+   installation + receptor prep. WS12 needs pymoo + Pareto computation on existing data.
+   Briefs are at `workstreams/11-gnina-docking.md` and `workstreams/12-pareto-optimization.md`.
+   Deployment prompts are in `HumanOnly/AI-Operations-Manual.md` Section 3.
 
-2. **After training completes** -- wire models into pipeline:
-   - MPNN: verify `ml/affinity_predictor.py` loads checkpoint, test scoring cascade
-   - ADMET: verify `ml/admet_predictor.py` loads checkpoint, test filtering
-   - VAE: run `scripts/generate_vae_candidates.py` (S024: script needs to be created)
-   - Re-run full comparison: `scripts/compare_baseline_vs_state_aware.py`
-   - Apply statistical tests (Mann-Whitney U), report p-values
+2. **Launch WS13** after WS11/WS12 are underway -- needs ChEMBL time-split data
+   curation + restricted MPNN retraining. Brief at `workstreams/13-retrospective-validation.md`.
 
-3. **Review 12 Vision ideas** -- all in `vision/ideas/` with status "proposed". Accept
-   or defer each. Create workstream briefs for accepted ideas.
+3. **After all 3 workstreams complete** -- re-run full comparison with GNINA scores
+   and Pareto evaluation. Update the paper narrative based on results.
 
-4. **Fix accepted admin items** -- S015-S018, S021, S024 (module CRITICAL.md refs, stale
-   content, missing VAE generation script).
-
-5. ~~**Fix ruff violations (S010)**~~ -- Done 2026-04-06. All 121 violations fixed. CI lint passes clean.
+4. **Run Assistant AI** to refresh briefings before any further Visionary sessions.
 
 ---
 

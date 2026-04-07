@@ -15,6 +15,9 @@ Independent improvement tasks designed for parallel AI development. Each workstr
 | 07 | [Conditional VAE](07-conditional-vae.md) | **Complete** (data prep + integration) | High | High | None (01 helpful) |
 | 08 | [MPNN Affinity](08-mpnn-affinity.md) | **Complete** (integration; training on HPC) | High | Critical | 01 |
 | 09 | [ADMET Predictor](09-admet-predictor.md) | **Complete** | High | High | 01 |
+| 11 | [GNINA Docking](11-gnina-docking.md) | **Not started** | Moderate | High | 01, structure atlas |
+| 12 | [Pareto Optimization](12-pareto-optimization.md) | **Not started** | Low | High | None (uses existing scores) |
+| 13 | [Retrospective Validation](13-retrospective-validation.md) | **Not started** | Moderate | Critical | MPNN, full pipeline |
 
 ## Dependency Graph
 
@@ -28,6 +31,9 @@ Independent improvement tasks designed for parallel AI development. Each workstr
 07-conditional-vae      ──► (independent, 01 helpful but not required)
 08-mpnn-affinity        ──► depends on 01
 09-admet-predictor      ──► depends on 01
+11-gnina-docking        ──► depends on 01 + structure atlas
+12-pareto-optimization  ──► (independent, uses existing scores)
+13-retrospective-valid. ──► depends on trained MPNN + full pipeline
 ```
 
 ## Parallel Groups
@@ -47,11 +53,18 @@ Independent improvement tasks designed for parallel AI development. Each workstr
 **Group C** (after Workstream 03 completes):
 - Workstream 05: Visualization
 
+**Group D** (Vision Phase -- after full pipeline run, all models trained):
+- Workstream 11: GNINA Docking (parallel with WS12)
+- Workstream 12: Pareto Optimization (parallel with WS11)
+- Workstream 13: Retrospective Validation (after WS11/WS12 underway)
+
 ## Conflict Zones
 
 Workstreams 02, 04, and 08 all modify `ranking/scoring.py`. They should NOT run in parallel. Recommended execution order: 02 -> 04 -> 08, so each fallback layer builds on the previous.
 
 Workstream 09 modifies the filtering pipeline (`generation/` module) but does not conflict with scoring workstreams.
+
+**Group D conflicts:** Workstream 11 modifies `ranking/scoring.py` (adds GNINA tier to cascade). It should merge BEFORE WS12 and WS13 start their comparison runs, so they benefit from real docking scores. WS12 modifies `evaluation/comparison.py` and `evaluation/figures.py`. WS13 also modifies `evaluation/comparison.py`. WS12 should merge before WS13 to avoid conflicts in comparison.py.
 
 ## Interface Contracts
 
@@ -74,6 +87,9 @@ on the `ML` branch.
 | 07 | `ws07-vae` | `ws07/vae` | Conditional VAE |
 | 08 | `ws08-mpnn` | `ws08/mpnn` | MPNN Affinity |
 | 09 | `ws09-admet` | `ws09/admet` | ADMET Predictor |
+| 11 | `ws11-gnina` | `ws11/gnina` | GNINA Docking |
+| 12 | `ws12-pareto` | `ws12/pareto` | Pareto Optimization |
+| 13 | `ws13-retro` | `ws13/retro` | Retrospective Validation |
 
 All worktrees live under `.claude/worktrees/`. After a workstream completes, the Head
 AI merges the worktree branch into `ML` (see `CLAUDE.md` Section 16).

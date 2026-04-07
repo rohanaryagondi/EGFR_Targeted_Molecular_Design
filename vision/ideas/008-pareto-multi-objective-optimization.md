@@ -2,7 +2,7 @@
 
 **Category:** Novel Approaches, Scientific Rigor
 **Priority:** P1: High
-**Status:** proposed
+**Status:** accepted
 **Date proposed:** 2026-03-30
 **Effort:** Medium (1-2 weeks)
 

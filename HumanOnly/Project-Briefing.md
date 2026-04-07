@@ -21,34 +21,32 @@ Last updated: 2026-04-07
 - **MPNN scoring cascade active:** MPNN → DockingProxy MLP → constant 0.5 stub. Verified: osimertinib=0.75, ethanol=0.34
 - **Full comparison run:** State-aware mean=0.4378 vs static=0.5437. Mann-Whitney U: p<0.001, d=1.36 (static favored). **Null hypothesis formally retained.** 431 novel candidates, diversity 0.9056 vs 0.5684
 - **548 tests across 19 files**, all passing. Ruff clean (121→0)
-- **Vision System:** 12 strategic improvement ideas proposed by Visionary AI (not yet reviewed by Head AI)
-- **Admin AI:** First audit complete, 12 suggestions triaged (10 implemented, 1 deferred, 1 wont-fix)
+- **Vision System:** 12 ideas proposed, **3 accepted** (005 GNINA, 008 Pareto, 009 Time-Split), 9 deferred
+- **Admin AI:** Two audits complete, 24 suggestions triaged (all resolved)
 - **Documentation:** Comprehensive refresh completed 2026-04-07 (20 files updated)
 
 ---
 
-## What's Pending (Stretch Goals Only)
+## What's Pending
 
-All core work is complete. Remaining items are stretch goals:
+### Vision Phase: 3 Accepted Workstreams
 
-### 1. Vision Idea Review
+| WS | Idea | Priority | Why |
+|----|------|----------|-----|
+| **11** | GNINA Physics-Informed Docking | Start first | Real docking scores + binding poses for 20% of scoring weight |
+| **12** | Pareto Multi-Objective Optimization | Parallel with WS11 | Weight-free hypervolume comparison eliminates arbitrary weight problem |
+| **13** | Retrospective Time-Split Validation | After WS11/WS12 | Predict future drugs from historical data -- strongest computational validation |
 
-12 ideas proposed by Visionary AI, not yet reviewed. Run Head AI with:
-> Read all idea files in `vision/ideas/` that have `Status: proposed`. For each idea, decide whether to accept or defer.
+Deploy WS11 + WS12 in parallel, WS13 after they're underway. See AI-Operations-Manual.md Sections 3 and 7 (Wave 8).
 
-Ideas span: continuous conditioning, 3D pocket diffusion, kinome selectivity, ensemble uncertainty, GNINA docking, learned similarity, retrosynthetic feasibility, Pareto optimization, time-split validation, self-supervised pretraining, water thermodynamics, RL molecular optimization.
+### Deferred Ideas (9 total, revisit post-paper)
 
-### 2. Real Docking Validation
+001 (continuous conditioning), 002 (3D diffusion), 003 (kinome selectivity), 004 (ensemble uncertainty), 006 (learned similarity), 007 (retrosynthesis), 010 (pre-training), 011 (water thermodynamics), 012 (RL optimization). Full rationale in `reports/head-ai-log.md`.
 
-MPNN provides learned affinity predictions but is not physics-based docking. AutoDock Vina or GNINA would provide pose-level validation.
+### Remaining Stretch Goals
 
-### 3. Active Learning Loop
-
-VAE generates → MPNN scores → top candidates retrain MPNN → updated scores guide next VAE round.
-
-### 4. Multi-Target Expansion
-
-Replicate for ABL, ALK, BRAF to test generalizability beyond EGFR.
+- Active learning loop (VAE → MPNN → retrain cycle)
+- Multi-target expansion (ABL, ALK, BRAF)
 
 ---
 

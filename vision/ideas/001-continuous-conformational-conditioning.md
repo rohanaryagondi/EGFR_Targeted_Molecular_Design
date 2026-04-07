@@ -2,7 +2,7 @@
 
 **Category:** Novel Approaches, Scientific Rigor
 **Priority:** P0: Critical
-**Status:** proposed
+**Status:** deferred
 **Date proposed:** 2026-03-30
 **Effort:** Large (2-4 weeks)
 

@@ -2,7 +2,7 @@
 
 **Category:** Pipeline Gaps
 **Priority:** P2: Medium
-**Status:** proposed
+**Status:** deferred
 **Date proposed:** 2026-03-30
 **Effort:** Medium (1-2 weeks)
 

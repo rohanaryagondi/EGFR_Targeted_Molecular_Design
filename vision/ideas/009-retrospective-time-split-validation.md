@@ -2,7 +2,7 @@
 
 **Category:** Validation, Scientific Rigor
 **Priority:** P0: Critical
-**Status:** proposed
+**Status:** accepted
 **Date proposed:** 2026-03-30
 **Effort:** Medium (1-2 weeks)
 

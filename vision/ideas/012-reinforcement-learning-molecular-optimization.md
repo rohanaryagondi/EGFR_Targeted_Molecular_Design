@@ -2,7 +2,7 @@
 
 **Category:** Novel Approaches, ML Improvements
 **Priority:** P2: Medium
-**Status:** proposed
+**Status:** deferred
 **Date proposed:** 2026-03-30
 **Effort:** Large (2-4 weeks)
 

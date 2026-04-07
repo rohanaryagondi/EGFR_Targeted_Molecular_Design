@@ -377,6 +377,136 @@ def reset_singleton() -> None:
 
 ---
 
+## Contract 8: GNINA Docking
+
+**Producer:** Workstream 11 (GNINA Docking)
+**Consumers:** Workstream 02 (Scoring Integration) -- via ranking/scoring.py fallback chain
+
+### `statebind.chemistry.docking`
+
+```python
+from pydantic import BaseModel
+from pathlib import Path
+
+class DockingResult(BaseModel):
+    smiles: str
+    receptor_state: str
+    vina_score: float            # kcal/mol (more negative = better)
+    cnn_score: float             # [0, 1]
+    cnn_affinity: float          # predicted pKd
+    pose_pdb: str | None = None  # PDB block of best pose
+    n_poses: int = 0
+    success: bool = True
+    error: str | None = None
+
+def dock_molecule(
+    smiles: str,
+    receptor_pdbqt: str | Path,
+    box_center: tuple[float, float, float],
+    box_size: tuple[float, float, float] = (25.0, 25.0, 25.0),
+    exhaustiveness: int = 8,
+    num_modes: int = 5,
+    timeout: int = 120,
+) -> DockingResult:
+    """Dock molecule using GNINA. Returns DockingResult with success=False on failure."""
+
+def is_gnina_available() -> bool:
+    """Check if GNINA binary is installed and callable."""
+```
+
+### Scoring Integration
+
+```python
+# In ranking/scoring.py, the docking fallback chain becomes:
+# 1. GNINA -> 2. MPNN -> 3. DockingProxy MLP -> 4. Constant 0.5 stub
+```
+
+---
+
+## Contract 9: Pareto Optimization
+
+**Producer:** Workstream 12 (Pareto Optimization)
+**Consumers:** evaluation pipeline, comparison reports
+
+### `statebind.ranking.pareto`
+
+```python
+from dataclasses import dataclass
+import numpy as np
+
+@dataclass
+class ParetoResult:
+    front_indices: list[int]
+    front_scores: np.ndarray      # (n_front, n_objectives)
+    hypervolume: float
+    crowding_distances: list[float]
+    n_candidates: int
+    n_objectives: int
+    objective_names: list[str]
+
+@dataclass
+class ParetoComparison:
+    static_result: ParetoResult
+    state_aware_result: ParetoResult
+    hypervolume_ratio: float       # state_aware_hv / static_hv
+    dominance_fraction: float      # fraction of static front dominated by state-aware
+
+def compute_pareto_front(
+    scores: np.ndarray,
+    objective_names: list[str] | None = None,
+    reference_point: list[float] | None = None,
+    maximize: bool = True,
+) -> ParetoResult: ...
+
+def compare_pareto_fronts(
+    static_scores: np.ndarray,
+    state_aware_scores: np.ndarray,
+    objective_names: list[str] | None = None,
+    reference_point: list[float] | None = None,
+) -> ParetoComparison: ...
+```
+
+---
+
+## Contract 10: Retrospective Validation
+
+**Producer:** Workstream 13 (Retrospective Validation)
+**Consumers:** evaluation pipeline, final reports
+
+### `statebind.evaluation.retrospective`
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class RetrospectiveResult:
+    cutoff_year: int
+    pipeline: str                    # "static" or "state_aware"
+    enrichment_factor_10: float
+    enrichment_factor_50: float
+    max_similarity_to_future: float
+    mean_similarity_to_future: float
+    n_candidates: int
+    n_future_drugs: int
+    future_drug_ranks: dict[str, int | None]
+    novelty_vs_training: float
+
+def compute_enrichment_factor(
+    candidate_similarities: list[float],
+    threshold: float = 0.4,
+    top_k: int = 10,
+) -> float:
+    """Enrichment factor: hits in top-K relative to random expectation."""
+
+def compute_retrospective_metrics(
+    candidates: list[dict],
+    future_drugs: list[dict],
+    training_smiles: set[str],
+) -> RetrospectiveResult: ...
+```
+
+---
+
 ## Contract 7: Existing Interfaces (Do Not Break)
 
 These are existing interfaces that multiple workstreams depend on. Do NOT change their signatures.
