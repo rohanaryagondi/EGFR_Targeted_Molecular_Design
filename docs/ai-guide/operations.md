@@ -18,7 +18,10 @@ pushes go to `origin/ML`. **Never merge without explicit human confirmation.**
 4. **Run tests** in each worktree before merging:
    `cd .claude/worktrees/ws{NN}-{name} && pytest -v --tb=short`
 5. **Merge:** `git merge ws{NN}/{description} -m "Merge WS{NN}: {title}"`
-6. **Push and verify:** `git push origin ML && git log --oneline -10`
+6. **SLURM GPU test** (mandatory if scoring/ML/docking/evaluation changed):
+   Submit `scripts/run_tests_all.slurm` and verify 618/618 pass, 0 skips.
+   See `docs/ai-guide/testing-and-deps.md` for the full 3-tier policy.
+7. **Push and verify:** `git push origin ML && git log --oneline -10`
 
 ---
 

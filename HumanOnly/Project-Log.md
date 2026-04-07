@@ -4,6 +4,23 @@ Timestamped history of major project events. Newest first.
 
 ---
 
+## 2026-04-07 (night)
+
+**WS11 + WS12 merged, sklearn fix, 618 tests passing**
+
+Head AI Generation 5 reviewed and merged two workstreams:
+
+- **WS11 (GNINA Docking):** Physics-based docking as tier 0 in scoring cascade. GNINA v1.1 wrapper, receptor preparation for all 4 states, GPU guard, 33 new tests. Validation: binders -7.32 vs non-binders -4.16 kcal/mol. Agent had not committed — Head AI committed and merged.
+- **WS12 (Pareto Optimization):** Weight-free hypervolume comparison alongside weighted-sum scoring. Pareto front plots (2D projections + parallel coordinates), 36 new tests. Agent committed properly.
+
+**sklearn import fix:** `structure/clustering.py` used unconditional sklearn import, violating the project's optional dependency pattern. Wrapped in try/except with HAS_SKLEARN guard. Tests updated to skip gracefully. Also fixed torch_geometric skip in ADMET tests.
+
+**Testing policy established:** Three tiers documented in `docs/ai-guide/testing-and-deps.md`. Changes to scoring/ML/docking/evaluation require SLURM GPU test (scripts/run_tests_all.slurm). Gold standard: 618 passed, 0 skipped, 0 failures (verified on SLURM job 7587145, L40S GPU, 65 min).
+
+**Test count:** 548 → 618 (+33 docking, +36 Pareto, +1 import test).
+
+---
+
 ## 2026-04-07 (evening)
 
 **Vision idea review: 3 accepted, 9 deferred**

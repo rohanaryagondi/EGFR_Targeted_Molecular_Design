@@ -49,7 +49,7 @@ function delegates to component scorers defined in `baselines/scoring.py`.
 |-----------|--------|---------------|-----------|--------|
 | reference_similarity | 0.35 | Morgan/ECFP4 fingerprint Tanimoto vs 3 reference binders (falls back to SMILES 3-gram) | `baselines/scoring.py:78` (`_score_reference_similarity`) | Complete (WS02: Morgan fingerprints) |
 | druglikeness | 0.30 | RDKit QED + Lipinski Ro5 (falls back to linear approximation) | `baselines/scoring.py:101` (`_score_druglikeness`) | Complete (WS02: RDKit descriptors) |
-| docking_proxy | 0.20 | 3-tier cascade: MPNN -> DockingProxy MLP -> constant 0.5 stub | `baselines/scoring.py:202` (`_score_docking_stub`) | All models trained and integrated. MPNN active in cascade (RMSE=0.72, R²=0.69, Pearson=0.83). ADMET informational only (hard filtering rejects all kinase inhibitors on hERG). VAE v3 (SELFIES) generates 99.9% valid molecules. |
+| docking_proxy | 0.20 | 4-tier cascade: GNINA -> MPNN -> DockingProxy MLP -> constant 0.5 stub | `ranking/scoring.py:_score_docking()` | GNINA (WS11) provides physics-based Vina + CNN scores. GPU guard prevents CPU docking. MPNN active as fallback (RMSE=0.72, R²=0.69, Pearson=0.83). |
 | state_specificity | 0.15 | Geometric decay: 1.0/0.5/0.25/0.0 by number of states candidate appears in | `ranking/scoring.py:139` (`_compute_state_specificity`) | Functional; always 0 for static baseline |
 
 ### Weight Definition & Validation
@@ -73,6 +73,12 @@ The docking_proxy component has a planned 3-tier fallback (see
 `workstreams/INTERFACES.md` Contract 4):
 
 ```
+Priority 0: GNINA physics-informed docking (WS11)
+    - Requires: bin/gnina binary + prepared receptors + GPU detected
+    - Implemented in: chemistry/docking.py (wrapper) + ranking/scoring.py:_score_docking_gnina()
+    - Score: sigmoid(-vina_score / 3) maps kcal/mol to [0, 1]
+    - GPU guard: only attempted when torch.cuda.is_available() or CUDA_VISIBLE_DEVICES set
+
 Priority 1: MPNN prediction (AffinityMPNN predicts pIC50, normalize via sigmoid)
     - Requires: trained model at artifacts/models/mpnn/best_model.pt + torch
     - Implemented in: ml/mpnn.py (model) + ml/affinity_predictor.py (integration adapter)

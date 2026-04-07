@@ -15,8 +15,8 @@ Independent improvement tasks designed for parallel AI development. Each workstr
 | 07 | [Conditional VAE](07-conditional-vae.md) | **Complete** (data prep + integration) | High | High | None (01 helpful) |
 | 08 | [MPNN Affinity](08-mpnn-affinity.md) | **Complete** (integration; training on HPC) | High | Critical | 01 |
 | 09 | [ADMET Predictor](09-admet-predictor.md) | **Complete** | High | High | 01 |
-| 11 | [GNINA Docking](11-gnina-docking.md) | **Not started** | Moderate | High | 01, structure atlas |
-| 12 | [Pareto Optimization](12-pareto-optimization.md) | **Not started** | Low | High | None (uses existing scores) |
+| 11 | [GNINA Docking](11-gnina-docking.md) | **Complete** | Moderate | High | 01, structure atlas |
+| 12 | [Pareto Optimization](12-pareto-optimization.md) | **Complete** | Low | High | None (uses existing scores) |
 | 13 | [Retrospective Validation](13-retrospective-validation.md) | **Not started** | Moderate | Critical | MPNN, full pipeline |
 
 ## Dependency Graph

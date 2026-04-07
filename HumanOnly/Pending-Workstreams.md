@@ -1,43 +1,29 @@
 # Pending Workstreams — Agent Deployment Guide
 
 **Last updated:** 2026-04-07
-**Author:** Head AI (generation 4)
+**Author:** Head AI (generation 5)
 
-This document contains ready-to-paste prompts for launching the three pending
-workstreams (WS11, WS12, WS13) as modular agents. It also documents parallelism
-rules, dependency ordering, and post-launch verification steps.
+WS11 and WS12 are **complete and merged** (2026-04-07). This document now contains
+the deployment prompt for the one remaining workstream (WS13). It also documents
+the post-launch verification steps and the new SLURM GPU testing requirement.
 
 ---
 
 ## Parallelism Rules
 
 ```
-WS11 (GNINA Docking)  ──┐
-                         ├──  Can run in PARALLEL  ──► then merge both to ML
-WS12 (Pareto Optim.)  ──┘
-                                                        │
-                                                        ▼
-                                               WS13 (Retrospective Validation)
-                                               Must start AFTER WS11 is merged
-                                               (benefits from GNINA docking scores)
+WS11 (GNINA Docking)  ── COMPLETE, merged 2026-04-07
+WS12 (Pareto Optim.)  ── COMPLETE, merged 2026-04-07
+                              │
+                              ▼
+                     WS13 (Retrospective Validation)
+                     Ready to launch. Benefits from GNINA + Pareto.
 ```
 
-### Why this order?
+### Post-Merge Verification (WS11 + WS12)
 
-| Rule | Reason |
-|------|--------|
-| **WS11 ∥ WS12** | Zero file overlap. WS11 creates `chemistry/docking.py` and modifies `ranking/scoring.py`. WS12 creates `ranking/pareto.py` and `evaluation/pareto_comparison.py`. The only shared modify target is `evaluation/figures.py` and `evaluation/comparison.py`, but they add independent functions (docking heatmaps vs Pareto projections) — trivial merge. |
-| **WS13 after WS11** | WS13 re-runs the full pipeline under time-restricted data. If GNINA docking (WS11) is merged first, the retrospective validation automatically includes real docking scores, making the results far more compelling. WS13 also needs to retrain the MPNN on restricted data (GPU job). |
-| **WS13 after WS12** | WS13 benefits from Pareto evaluation (WS12) to compare retrospective results. Not a hard dependency — WS13 can start while WS12 is finishing — but merging WS12 first is cleaner. |
-
-### Conflict Zone
-
-WS11 modifies `ranking/scoring.py` (adds GNINA as tier 0 in the docking cascade).
-WS12 does NOT modify `ranking/scoring.py`. No scoring conflict.
-
-WS11 and WS12 both modify `evaluation/figures.py` and `evaluation/comparison.py`,
-but they add independent functions. Merge WS11 first, then WS12 (or vice versa) —
-either order works with trivial conflict resolution.
+Both workstreams verified with full SLURM GPU test: **618 passed, 0 skipped, 0 failures**
+(job 7587145, L40S GPU, Python 3.12.3 + torch + pyg + sklearn + pymoo + GNINA).
 
 ---
 

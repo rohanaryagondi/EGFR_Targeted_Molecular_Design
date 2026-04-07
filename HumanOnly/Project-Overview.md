@@ -106,11 +106,11 @@ The state-aware pipeline finds molecules the static pipeline can't: type-II inhi
 ## Codebase at a Glance
 
 ```
-84 Python source files across 12 subpackages
-37 pipeline scripts
-548 tests (all passing)
-19 test files
-6 YAML config files
+87 Python source files across 12 subpackages
+40 pipeline scripts
+618 tests (all passing, 0 skips on full GPU run)
+21 test files
+7 YAML config files
 ```
 
 **Technology:** Python 3.10+, Pydantic v2 (all data models), NumPy, pandas, PyYAML, Typer+Rich (CLI). Optional: RDKit (chemistry), PyTorch + PyG (ML), SciPy + scikit-learn (statistics), matplotlib (visualization).
@@ -119,21 +119,24 @@ The state-aware pipeline finds molecules the static pipeline can't: type-II inhi
 
 ---
 
-## 9 Improvement Workstreams (All Complete)
+## 11 Improvement Workstreams (11 Complete, 1 Remaining)
 
 The pipeline was upgraded from SMILES string heuristics to research-grade components:
 
-| # | Workstream | What It Added |
-|---|-----------|---------------|
-| 01 | Chemistry Foundation | RDKit fingerprints, descriptors, validation, SA scoring |
-| 02 | Scoring Integration | Morgan/ECFP4 replacing n-gram Tanimoto, QED+Lipinski |
-| 03 | Statistical Testing | Mann-Whitney U, bootstrap CI, Cohen's d, sensitivity analysis |
-| 04 | Docking Proxy | Lightweight MLP replacing constant-0.5 stub |
-| 05 | Visualization | Score distributions, radar plots, comparison figures |
-| 06 | CI/CD | GitHub Actions: test matrix (3.10-3.12) + ruff linting |
-| 07 | Conditional VAE | Data prep, ChEMBL EGFR data, generation integration |
-| 08 | MPNN Affinity | Affinity predictor adapter, cascading fallback chain |
-| 09 | ADMET Predictor | Safety filter gate, TDC data prep, multi-task adapter |
+| # | Workstream | What It Added | Status |
+|---|-----------|---------------|--------|
+| 01 | Chemistry Foundation | RDKit fingerprints, descriptors, validation, SA scoring | Complete |
+| 02 | Scoring Integration | Morgan/ECFP4 replacing n-gram Tanimoto, QED+Lipinski | Complete |
+| 03 | Statistical Testing | Mann-Whitney U, bootstrap CI, Cohen's d, sensitivity analysis | Complete |
+| 04 | Docking Proxy | Lightweight MLP replacing constant-0.5 stub | Complete |
+| 05 | Visualization | Score distributions, radar plots, comparison figures | Complete |
+| 06 | CI/CD | GitHub Actions: test matrix (3.10-3.12) + ruff linting | Complete |
+| 07 | Conditional VAE | Data prep, ChEMBL EGFR data, generation integration | Complete |
+| 08 | MPNN Affinity | Affinity predictor adapter, cascading fallback chain | Complete |
+| 09 | ADMET Predictor | Safety filter gate, TDC data prep, multi-task adapter | Complete |
+| 11 | GNINA Docking | Physics-based docking as tier 0 in scoring cascade (33 tests) | Complete |
+| 12 | Pareto Optimization | Weight-free hypervolume comparison + Pareto front plots (36 tests) | Complete |
+| 13 | Retrospective Validation | Time-split validation (predict post-2015 drugs from pre-2015 data) | Not started |
 
 ---
 
@@ -148,7 +151,7 @@ pip install -e ".[chemistry]"    # + RDKit
 pip install -e ".[ml]"           # + PyTorch + PyG (for training)
 
 # Run tests
-pytest -v --tb=short             # 548 tests
+pytest -v --tb=short             # 618 tests
 
 # Run full pipeline (no GPU needed)
 python scripts/build_context_dataset.py

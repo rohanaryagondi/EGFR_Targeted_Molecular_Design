@@ -10,10 +10,10 @@ as instructions -- it is your playbook for orchestrating them.
 
 StateBind is a 12-module computational biology pipeline for EGFR-targeted molecular
 design. It tests whether conformational state-aware design outperforms static
-single-structure design. The codebase has 84 Python source files, 548 tests, and 3
-trained neural networks (VAE, MPNN, ADMET). All 9 workstreams are complete, all models
-trained, and the null hypothesis has been formally retained (state-aware does not
-produce superior composite scores, but dramatically expands chemical space).
+single-structure design. The codebase has 87 Python source files, 618 tests, and 3
+trained neural networks (VAE, MPNN, ADMET) plus GNINA physics-based docking. 11 of 12
+workstreams are complete (WS01-09, WS11-12), all models trained, and the null hypothesis
+has been formally retained.
 
 The pipeline has been upgraded from SMILES string heuristics to a research-grade system
 with RDKit chemistry, trained ML models, and formal hypothesis testing.
@@ -35,7 +35,11 @@ agent and require fixes before accepting the deliverable.
 All 3 ML models are trained (2026-04-06 on Bouchet HPC). Section 4 retains the
 training instructions for reference if retraining is needed.
 
-Current test count: 548. Module count: 12 subpackages (including `chemistry/`).
+Current test count: 618. Module count: 12 subpackages (including `chemistry/`).
+
+**Testing policy:** Changes to scoring, ML, docking, or evaluation code require a
+full SLURM GPU test run (618/618 pass, 0 skips). See `docs/ai-guide/testing-and-deps.md`
+for the 3-tier testing policy. The canonical SLURM script is `scripts/run_tests_all.slurm`.
 
 ---
 

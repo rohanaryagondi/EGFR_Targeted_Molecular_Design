@@ -198,11 +198,13 @@ ML training (Section 2) runs in parallel with all workstreams and feeds into Int
 
 | Area | Status | Next Action |
 |------|--------|-------------|
-| Pipeline (Phases 0-7) | Complete (12 modules, 548 tests) | Maintain |
+| Pipeline (Phases 0-7) | Complete (12 modules, 618 tests) | Maintain |
 | MPNN | Trained: RMSE=0.72, R²=0.69, Pearson=0.83 | Integrated into scoring cascade |
 | ADMET | Trained: hERG AUROC=0.77, CYP3A4=0.73 | Informational annotation (not hard filter) |
 | VAE | SELFIES v3 trained (9.5M params, val_recon=2.26, 99.9% valid) | **Complete** |
-| Scoring function | MPNN cascade active (verified) | Complete |
+| Scoring function | 4-tier cascade: GNINA -> MPNN -> proxy -> stub | Complete |
+| GNINA docking | Integrated as tier 0, validated on GPU (binders -7.32 vs non-binders -4.16) | **Complete** (WS11) |
+| Pareto optimization | Hypervolume comparison + Pareto front plots | **Complete** (WS12) |
 | Statistical testing | Mann-Whitney U: p<0.001, d=1.36 (static favored) | Null hypothesis NOT rejected |
 | Null hypothesis | **Not rejected** (static favored on mean composite) | Formally retained with VAE |
-| Workstreams | 9 of 9 complete (548 tests passing) | Complete |
+| Workstreams | 11 of 12 complete (618 tests passing) | WS13 remaining |

@@ -6,7 +6,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 - Unified scoring weights must sum to 1.0 -- enforced by `_validate_weights()` at `ranking/scoring.py:173-181`. Violating this raises `ValueError`.
 - The 4 required weight keys are: `reference_similarity`, `druglikeness`, `docking_proxy`, `state_specificity` -- validated at `ranking/scoring.py:173`.
-- Docking uses 3-tier cascade: MPNN -> DockingProxy MLP -> constant 0.5 stub -- `baselines/scoring.py:202-216` (`_score_docking_stub`). MPNN trained (RMSE=0.72, R²=0.69, Pearson=0.83; checkpoint `artifacts/models/mpnn/best_model.pt`). ADMET trained (hERG AUROC=0.77, CYP3A4=0.73; checkpoint `artifacts/models/admet/best_model.pt`). VAE v3 (SELFIES) trained (9.5M params, 300 epochs, val_recon=2.26, 99.9% valid generation). Checkpoint `artifacts/models/vae/best_model.pt`.
+- Docking uses 4-tier cascade: GNINA -> MPNN -> DockingProxy MLP -> constant 0.5 stub -- `ranking/scoring.py:_score_docking()`. GNINA only attempted when GPU detected (`_gpu_available()` guard). MPNN trained (RMSE=0.72, R²=0.69, Pearson=0.83; checkpoint `artifacts/models/mpnn/best_model.pt`). ADMET trained (hERG AUROC=0.77, CYP3A4=0.73; checkpoint `artifacts/models/admet/best_model.pt`). VAE v3 (SELFIES) trained (9.5M params, 300 epochs, val_recon=2.26, 99.9% valid generation). Checkpoint `artifacts/models/vae/best_model.pt`.
 - Baseline scoring uses DIFFERENT weights (0.4/0.3/0.3) than unified scoring (0.35/0.30/0.20/0.15) -- `baselines/scoring.py:269-273` vs `ranking/scoring.py:86-91`.
 - `state_specificity` gives state-aware pipeline a structural 0.15 weight advantage over static baseline -- this is by design (`ranking/scoring.py:139-170`).
 - Similarity scoring uses Morgan/ECFP4 fingerprints (WS02) with fallback to SMILES 3-gram Tanimoto -- `baselines/scoring.py:78` (`_score_reference_similarity`).
@@ -57,8 +57,26 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 ## Testing
 
-- 548 existing tests must continue to pass (was 359 pre-workstreams). Run: `pytest -v --tb=short`.
+- 618 existing tests must continue to pass (was 548 after WS01-09, now 618 after WS11-12). Run: `pytest -v --tb=short`.
 - Every new module/function needs tests in `tests/`.
+- **Full SLURM GPU test required** when modifying `ranking/scoring.py`, `ml/`, `chemistry/docking.py`, `evaluation/`, or any scoring/docking code. See `docs/ai-guide/testing-and-deps.md` Section "SLURM GPU Testing Policy".
+- GNINA docking tests add ~60 minutes on GPU nodes (each `dock_molecule` call takes 1-2 min). Plan SLURM time limits accordingly (2 hours recommended).
+
+## GNINA Docking
+
+- GNINA binary at `bin/gnina` (v1.1, 293MB, gitignored). Must be manually installed per-environment.
+- GNINA v1.3.2 requires GLIBC 2.29; Bouchet has 2.28 -- use v1.1 only.
+- Prepared receptors at `data/processed/docking/receptors/` (4 states: 1m17, 2gs7, 3w2r, 4zau). Gitignored; regenerate with `scripts/prepare_docking_receptors.py`.
+- PDB 3IKU is NOT EGFR (it's E. coli ParM) despite appearing in some datasets. Use 3W2R for DFGout_aCin.
+- GPU guard in `ranking/scoring.py:_gpu_available()` prevents GNINA from running on login nodes / CI runners. Tests mock this guard.
+- GNINA on GPU adds ~60 minutes to full test suite. Without GPU, 4 docking wrapper tests skip gracefully.
+- Score normalization: `sigmoid(-vina_score / 3)` maps kcal/mol to [0, 1]. More negative Vina = better binding = higher normalized score.
+
+## Pareto Optimization
+
+- `ranking/pareto.py` uses pymoo for exact hypervolume (optional; falls back to numpy 2D exact or Monte Carlo >2D).
+- `ParetoResult` and `ParetoComparison` are dataclasses (matching `ComparativeResult`), not Pydantic models.
+- Reference point defaults to all-zeros (safe for scores in [0, 1]).
 
 ## Model Types
 
@@ -109,7 +127,8 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 - Base: 359 tests (pre-workstream)
 - After WS01/02/03/05/06/07/09: 498 tests
 - After WS04: 518 tests
-- After WS08: 548 tests (current)
+- After WS08: 548 tests
+- After WS11 (GNINA) + WS12 (Pareto) + sklearn fix: 618 tests (current)
 - Target: 500+ (exceeded)
 
 ---

@@ -18,8 +18,8 @@
 
 - **Last session:** 2026-04-07
 - **Branch:** ML (always)
-- **Last updated:** 2026-04-07T16:00:00+00:00
-- **Head AI generation:** 4
+- **Last updated:** 2026-04-07T22:00:00+00:00
+- **Head AI generation:** 5
 
 ---
 
@@ -29,6 +29,9 @@
 
 | Date | Branch | Workstream | Tests Before | Tests After | Conflicts |
 |------|--------|------------|-------------|-------------|-----------|
+| 2026-04-07 | ws12/pareto | WS12: Pareto Optimization | 581 | 618 | None |
+| 2026-04-07 | ws11/gnina | WS11: GNINA Docking | 548 | 581 | None |
+| 2026-04-07 | (ML direct) | sklearn/torch_geometric fix | 548 | 548 | N/A (fix, not new tests) |
 | 2026-03-28 | ws08/mpnn | WS08: MPNN Affinity | 518 | 540 | None |
 | 2026-03-28 | ws04/docking | WS04: Docking Proxy | 498 | 518 | None |
 | 2026-03-27 | ws09/admet | WS09: ADMET Predictor | ~498 | 498 | None (merged with WS02, WS05) |
@@ -115,8 +118,8 @@
 
 | Date | Idea | Workstream Created | Assigned To | Status |
 |------|------|--------------------|-------------|--------|
-| 2026-04-07 | 005: GNINA Docking | WS11 | Modular Agent | Brief complete, not started |
-| 2026-04-07 | 008: Pareto Optimization | WS12 | Modular Agent | Brief complete, not started |
+| 2026-04-07 | 005: GNINA Docking | WS11 | Modular Agent | **Complete, merged to ML** |
+| 2026-04-07 | 008: Pareto Optimization | WS12 | Modular Agent | **Complete, merged to ML** |
 | 2026-04-07 | 009: Time-Split Validation | WS13 | Modular Agent | Brief complete, not started |
 
 ---
@@ -143,54 +146,53 @@
 | 2026-04-05 | Increase SLURM time limits: MPNN 1h→4h, ADMET 1h→6h, ADMET mem 16G→32G | Keep original limits | Datasets are 6-500x larger; original 1h limits would cause timeout failures. |
 | 2026-04-07 | Accept ideas 005, 008, 009; defer 9 others | Accept more ideas (e.g., 001 continuous conditioning) | Null result is driven by ref_similarity bias and arbitrary weights, not by 4-state discretization. The 3 accepts fix scoring (005), evaluation (008), and validation (009) -- the 3 root weaknesses. Deferring 001/006 avoids changing the scoring post-null-result. |
 | 2026-04-07 | Implementation order: 005+008 parallel, then 009 | 009 first (most impactful) | 009 requires retraining with restricted data, which benefits from having GNINA docking (005) available. 008 runs on existing data. Start 005+008 in parallel, 009 once data curation begins. |
+| 2026-04-07 | Fix sklearn unconditional import in clustering.py | Leave as-is (it worked before) | Unconditional import violated the project's optional dependency pattern and caused test collection errors. Wrapped in try/except with HAS_SKLEARN guard, matching ml/__init__.py pattern. |
+| 2026-04-07 | Require SLURM GPU tests for scoring/ML/docking changes | Trust local tests only | GNINA docking activates on GPU nodes and adds ~60 min to test suite. Local tests miss 4 GNINA + 6 ADMET + 1 pymoo tests. Full SLURM run is the only way to verify 618/618 pass. Policy documented in docs/ai-guide/testing-and-deps.md. |
+| 2026-04-07 | Install pymoo + copy GNINA binary to ML branch | Leave as optional skips | Zero-skip test runs are the gold standard. pymoo is pip-installable. GNINA binary (293MB) is gitignored but present at bin/gnina. |
 
 ---
 
 ## Current State
 
 **What is done:**
-- All 9 workstreams complete and merged to ML (548 tests passing)
-- WS10: Training data scarcity fixed (ADMET 55→27,698, VAE 276→8,109, MPNN 1,678→10,466)
-- VAE trained on expanded data (8,109 SMILES, best val loss 2.3246, checkpoint saved)
-- MPNN and ADMET training jobs submitted (SLURM 7285710, 7285711, pending GPU allocation)
-- All integration adapters written: MPNN, ADMET, VAE, Docking Proxy
-- Admin AI session 2 triaged: S013-S014 (P0) implemented, S015-S024 triaged
-- CI workflow now triggers on ML branch (was only `main`)
-- ranking/CRITICAL.md line references all corrected with function name anchors
-- CLAUDE.md restructured by human (concise version with `docs/ai-guide/` references)
-- Vision System scaffolded + 12 ideas proposed (all status: proposed, awaiting review)
+- All 11 workstreams complete and merged to ML (618 tests passing, 0 skips on full GPU run)
+- WS11 (GNINA Docking): 4-tier scoring cascade (GNINA -> MPNN -> proxy -> stub), 33 tests, validated on GPU (binders -7.32 vs non-binders -4.16 kcal/mol)
+- WS12 (Pareto Optimization): hypervolume comparison, Pareto front plots, 36 tests
+- sklearn fix: `structure/clustering.py` now uses optional dependency pattern (was unconditional import)
+- ADMET test fix: model quality tests skip when torch_geometric absent (was failing silently)
+- Full SLURM GPU test: 618 passed, 0 skipped, 0 failures (job 7587145, L40S, 65 min)
+- GNINA v1.1 binary installed at `bin/gnina`, receptors prepared for all 4 states
+- pymoo installed for exact hypervolume computation
+- Testing policy documented in `docs/ai-guide/testing-and-deps.md` (3 tiers, SLURM requirements)
+- All documentation updated (CLAUDE.md, CRITICAL.md, GOALS.md, TODO.md, workstreams/README.md, docs/ai-guide/*, HumanOnly/*)
+- All pushed to GitHub
 
 **What is NOT done:**
-- ~~MPNN and ADMET model training~~ Complete. Checkpoints at `artifacts/models/`.
-- ~~Generate VAE candidates with trained model~~ Complete. 461 state-aware candidates generated.
-- ~~Full pipeline re-run~~ Complete. Null hypothesis retained (static 0.5437 vs state-aware 0.4378).
-- ~~Vision idea review~~ Complete (2026-04-07). 3 accepted, 9 deferred.
-- ~~ruff violations~~ S010 implemented 2026-04-06. CI lint clean.
-- ~~Create workstreams for accepted ideas~~ Complete. Briefs, reports, INTERFACES, deployment prompts all written.
-- ~~Admin suggestions S015-S018, S021, S024~~ Already implemented by previous session (confirmed in suggestions.md).
+- WS13 (Retrospective Validation): brief written, not started. Needs ChEMBL time-split data curation + restricted MPNN retraining.
 
 **Known artifacts on disk:**
 - `data/processed/egfr_affinity.json` -- 10,466 ChEMBL EGFR compounds (pIC50)
 - `data/processed/admet_combined.json` -- 27,698 TDC ADMET molecules (6 endpoints)
 - `data/processed/egfr_smiles_train.json` -- 8,109 VAE training SMILES
+- `data/processed/docking/receptors/` -- 4 state-specific PDBQT + box configs (1m17, 2gs7, 3w2r, 4zau)
 - `artifacts/models/vae/best_model.pt` -- 30MB, trained on 8,109 SMILES, epoch 9
+- `artifacts/models/mpnn/best_model.pt` -- 50MB, RMSE=0.72
+- `artifacts/models/admet/best_model.pt` -- 775KB, hERG AUROC=0.77
+- `bin/gnina` -- 293MB, GNINA v1.1 (gitignored)
 
 ---
 
 ## Next Steps
 
-1. **Launch WS11 + WS12 in parallel** -- both are independent. WS11 needs GNINA
-   installation + receptor prep. WS12 needs pymoo + Pareto computation on existing data.
-   Briefs are at `workstreams/11-gnina-docking.md` and `workstreams/12-pareto-optimization.md`.
-   Deployment prompts are in `HumanOnly/AI-Operations-Manual.md` Section 3.
-
-2. **Launch WS13** after WS11/WS12 are underway -- needs ChEMBL time-split data
+1. **Launch WS13** (Retrospective Validation) -- needs ChEMBL time-split data
    curation + restricted MPNN retraining. Brief at `workstreams/13-retrospective-validation.md`.
 
-3. **After all 3 workstreams complete** -- re-run full comparison with GNINA scores
-   and Pareto evaluation. Update the paper narrative based on results.
+2. **Re-run full comparison** with GNINA scores and Pareto evaluation now that WS11+WS12
+   are merged. The scoring cascade will use GNINA on GPU nodes automatically.
 
-4. **Run Assistant AI** to refresh briefings before any further Visionary sessions.
+3. **Run Assistant AI** to refresh briefings before any further Visionary sessions.
+
+4. **Consider Admin AI audit** -- documentation just updated; good time to verify consistency.
 
 ---
 
