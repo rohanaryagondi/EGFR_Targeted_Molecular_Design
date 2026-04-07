@@ -442,12 +442,19 @@ def main() -> None:
     print("=" * 60)
 
     if result.statistical_tests:
-        any_significant = any(
-            getattr(t, "significant", False) for t in result.statistical_tests
-        )
-        if any_significant:
+        # Check for significant difference (p < 0.05) AND correct direction
+        # (state-aware mean > static mean).  Both conditions are required to
+        # reject H0: "state-aware does NOT produce superior candidates."
+        any_significant = any(t.p_value < 0.05 for t in result.statistical_tests)
+        delta = result.scores.delta_mean
+        state_aware_better = delta > 0
+
+        if any_significant and state_aware_better:
             print("  REJECTED: State-aware pipeline shows statistically significant")
-            print("  advantage on at least one metric (p < 0.05).")
+            print(f"  advantage (p < 0.05, delta mean = {delta:+.4f}).")
+        elif any_significant and not state_aware_better:
+            print("  NOT REJECTED: Statistically significant difference found,")
+            print(f"  but static pipeline scores higher (delta mean = {delta:+.4f}).")
         else:
             print("  NOT REJECTED: No statistically significant difference found")
             print("  between state-aware and static pipelines (p >= 0.05).")

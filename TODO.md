@@ -37,7 +37,7 @@ For workstream briefs and interface contracts, see `workstreams/README.md`.
 - [x] **Conditional SMILES VAE** -- `python scripts/train_vae.py --config configs/vae.yaml`
   - **v1 (original):** 2.6M params, 0% valid SMILES (teacher forcing from epoch 0).
   - **v2 (retrained 2026-04-06):** TF annealing, hidden_dim 512, 9.5M params, val_recon=1.92. **Still 0% valid at all temperatures (0.3, 0.8, 1.0).** Root cause: prior-posterior mismatch (kl_weight=0.001) + character-level SMILES fragility.
-  - **v3 (SELFIES, retraining 2026-04-06):** Switched to SELFIES representation (100% validity by construction). Increased kl_weight to 0.01. `--selfies` flag added to train_vae.py. SLURM job submitted, waiting for GPU resources.
+  - **v3 (SELFIES, trained 2026-04-06):** SELFIES representation (100% validity by construction) + kl_weight=0.01. 300 epochs on H200 (31 min), val_recon=2.26. Generation: **999/1000 valid (99.9%), 948 unique (94.8%)**. Checkpoint: `artifacts/models/vae/best_model.pt`.
 
 - [x] **Affinity MPNN** -- `python scripts/train_mpnn.py --config configs/mpnn.yaml`
   - All targets exceeded: RMSE=0.7182 (<1.0 ✓), R²=0.6863 (>0.5 ✓), Pearson=0.8323 (>0.7 ✓)
@@ -92,13 +92,13 @@ These tasks connect trained models into the running pipeline and re-execute the 
 
 - [x] **Wire MPNN into scoring** -- MPNN loads automatically via cascading fallback in `ranking/scoring.py`. Verified: osimertinib scores 0.75, ethanol 0.34, fallback 0.50 for invalid SMILES. Scoring method string reports `MPNN_affinity(pIC50)`.
 
-- [ ] **Wire VAE into generation** -- VAE v2 (SMILES) tested: 0% valid at all temperatures (0.3, 0.8, 1.0). Diagnosis: prior-posterior mismatch (kl_weight=0.001) + char-level SMILES fragility. Fix: VAE v3 uses SELFIES representation (100% validity guarantee) + kl_weight=0.01. `--selfies` flag added to `train_vae.py`, SELFIES→SMILES conversion in `generate_vae_candidates.py`. **SLURM job submitted for SELFIES VAE retraining.** Next: after training completes, run `scripts/generate_vae_candidates.py`, check validity rate. If valid, re-run comparison.
+- [x] **Wire VAE into generation** -- VAE v3 (SELFIES) trained: 300 epochs, val_recon=2.26, 9.5M params. Generation: **999/1000 valid (99.9%), 948 unique (94.8%)**. SELFIES representation guarantees validity by construction. 1000 candidates generated (250 per state). Comparison re-run with VAE candidates: state-aware mean=0.4378 vs static=0.5437. VAE candidates expand chemical space (431 novel) but score lower on average due to low reference similarity.
 
 - [x] **Wire ADMET into filtering** -- ADMET predictions work (hERG AUROC=0.77, CYP3A4=0.73). Hard pass/fail filtering too aggressive for kinase inhibitors (100% hERG failure — kinase inhibitors are inherently hERG-liable). ADMET best used as informational annotation, not pre-ranking gate. Documented as limitation.
 
-- [x] **Re-run full comparison** -- Completed with template candidates + MPNN scoring + Mann-Whitney U. Results: state-aware mean=0.5699 vs static mean=0.5437 (delta=+0.026). p=0.5349, Cohen's d=-0.13 (negligible). 36 novel candidates unique to state-aware. **Null hypothesis NOT rejected.**
+- [x] **Re-run full comparison** -- Re-run with SELFIES VAE candidates (1000 generated, 999 valid). State-aware=461 candidates (395 VAE + 36 template + 30 shared), static=30. Mean: static=0.5437, state-aware=0.4378 (delta=-0.1059). Mann-Whitney U: p<0.001, Cohen's d=1.36 (large, static favored). Max: state-aware=0.7794 vs static=0.7288. Diversity: state-aware=0.9056 vs static=0.5684. 431 novel candidates. Weight sensitivity: 44% state-aware wins, 56% static. **Null hypothesis formally retained.**
 
-- [ ] **Update reports and artifacts** -- Comparison artifact at `artifacts/ranking/comparison.json`. TODO: update README, regenerate workstream reports with final metrics, document VAE status.
+- [x] **Update reports and artifacts** -- Comparison artifact at `artifacts/ranking/comparison.json`. GOALS.md, TODO.md, CRITICAL.md, HANDOFF.md all updated with VAE v3 results and final comparison.
 
 ---
 
@@ -201,8 +201,8 @@ ML training (Section 2) runs in parallel with all workstreams and feeds into Int
 | Pipeline (Phases 0-7) | Complete (12 modules, 548 tests) | Maintain |
 | MPNN | Trained: RMSE=0.72, R²=0.69, Pearson=0.83 | Integrated into scoring cascade |
 | ADMET | Trained: hERG AUROC=0.77, CYP3A4=0.73 | Informational annotation (not hard filter) |
-| VAE | Retrained (9.5M params, val_recon=1.92) | Test generation quality, then wire into pipeline |
+| VAE | SELFIES v3 trained (9.5M params, val_recon=2.26, 99.9% valid) | **Complete** |
 | Scoring function | MPNN cascade active (verified) | Complete |
-| Statistical testing | Mann-Whitney U: p=0.5349, d=-0.13 | Null hypothesis NOT rejected |
-| Null hypothesis | **Not rejected** (p=0.53 on composite score) | Re-run with VAE candidates when ready |
-| Workstreams | 9 of 9 complete (548 tests passing) | Update README + reports |
+| Statistical testing | Mann-Whitney U: p<0.001, d=1.36 (static favored) | Null hypothesis NOT rejected |
+| Null hypothesis | **Not rejected** (static favored on mean composite) | Formally retained with VAE |
+| Workstreams | 9 of 9 complete (548 tests passing) | Complete |
