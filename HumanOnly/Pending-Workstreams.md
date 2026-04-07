@@ -113,6 +113,38 @@ poses for the first time.
 
 ## Step-by-Step Plan
 
+### Step 0: Worktree Setup (DO THIS FIRST — before anything else)
+
+You MUST work in an isolated git worktree, not on the ML branch directly.
+This prevents your in-progress changes from breaking the main codebase.
+
+```bash
+cd ~/projects/statebind/repo
+
+# Create the worktree and branch
+git worktree add .claude/worktrees/ws11-gnina -b ws11/gnina
+
+# Move into the worktree — ALL subsequent work happens here
+cd .claude/worktrees/ws11-gnina
+
+# Install the package in editable mode inside the worktree
+pip install -e ".[dev]"
+
+# Verify you're in the right place
+pwd        # should end in .claude/worktrees/ws11-gnina
+git branch # should show * ws11/gnina
+```
+
+CRITICAL: Every file path you create or modify must be relative to this
+worktree root (which has the same layout as the repo). Every `git commit`
+and `git push` must happen from inside this worktree. Never `cd` back to
+the main repo to make changes.
+
+If `git worktree add` fails because the branch already exists:
+```bash
+git worktree add .claude/worktrees/ws11-gnina ws11/gnina  # attach existing branch
+```
+
 ### Step 1: Environment Setup
 - Check if GNINA is available: `which gnina` or `gnina --version`
 - If not installed, install via conda: `conda install -c conda-forge gnina`
@@ -293,7 +325,8 @@ after your changes to verify.
 5. Tests required for every new function.
 6. Update your progress report (`reports/workstreams/ws11-report.md`) after every
    major step. This is non-negotiable (CLAUDE.md Rule 10).
-7. Commit your work with descriptive messages. Push to the ws11/gnina branch.
+7. Commit your work with descriptive messages from inside the worktree.
+   Push to the remote branch: `git push origin ws11/gnina`.
 
 ## Definition of Done
 - [ ] GNINA wrapper docks molecules and returns structured DockingResult
@@ -376,6 +409,38 @@ comparison, it does NOT replace it. Keep all existing comparison logic intact.
 10. `artifacts/ranking/comparison.json` — the actual scored data
 
 ## Step-by-Step Plan
+
+### Step 0: Worktree Setup (DO THIS FIRST — before anything else)
+
+You MUST work in an isolated git worktree, not on the ML branch directly.
+This prevents your in-progress changes from breaking the main codebase.
+
+```bash
+cd ~/projects/statebind/repo
+
+# Create the worktree and branch
+git worktree add .claude/worktrees/ws12-pareto -b ws12/pareto
+
+# Move into the worktree — ALL subsequent work happens here
+cd .claude/worktrees/ws12-pareto
+
+# Install the package in editable mode inside the worktree
+pip install -e ".[dev]"
+
+# Verify you're in the right place
+pwd        # should end in .claude/worktrees/ws12-pareto
+git branch # should show * ws12/pareto
+```
+
+CRITICAL: Every file path you create or modify must be relative to this
+worktree root (which has the same layout as the repo). Every `git commit`
+and `git push` must happen from inside this worktree. Never `cd` back to
+the main repo to make changes.
+
+If `git worktree add` fails because the branch already exists:
+```bash
+git worktree add .claude/worktrees/ws12-pareto ws12/pareto  # attach existing branch
+```
 
 ### Step 1: Install pymoo
 ```bash
@@ -580,7 +645,8 @@ state_specificity. Discuss this in your report.
 4. Do NOT replace weighted-sum comparison — Pareto is additive.
 5. Tests required for every new function.
 6. Update `reports/workstreams/ws12-report.md` after every major step.
-7. Commit your work. Push to ws12/pareto branch.
+7. Commit your work from inside the worktree.
+   Push to the remote branch: `git push origin ws12/pareto`.
 8. All scores are [0,1], higher is better. Use maximize=True.
 
 ## Definition of Done
@@ -666,6 +732,38 @@ Key EGFR drug timeline:
 11. `src/statebind/baselines/scoring.py` — reference binder list at lines 59-66
 
 ## Step-by-Step Plan
+
+### Step 0: Worktree Setup (DO THIS FIRST — before anything else)
+
+You MUST work in an isolated git worktree, not on the ML branch directly.
+This prevents your in-progress changes from breaking the main codebase.
+
+```bash
+cd ~/projects/statebind/repo
+
+# Create the worktree and branch
+git worktree add .claude/worktrees/ws13-retro -b ws13/retro
+
+# Move into the worktree — ALL subsequent work happens here
+cd .claude/worktrees/ws13-retro
+
+# Install the package in editable mode inside the worktree
+pip install -e ".[dev]"
+
+# Verify you're in the right place
+pwd        # should end in .claude/worktrees/ws13-retro
+git branch # should show * ws13/retro
+```
+
+CRITICAL: Every file path you create or modify must be relative to this
+worktree root (which has the same layout as the repo). Every `git commit`
+and `git push` must happen from inside this worktree. Never `cd` back to
+the main repo to make changes.
+
+If `git worktree add` fails because the branch already exists:
+```bash
+git worktree add .claude/worktrees/ws13-retro ws13/retro  # attach existing branch
+```
 
 ### Step 1: Create Time-Split Dataset Builder (`scripts/build_timesplit_datasets.py`)
 
@@ -909,7 +1007,8 @@ This is the most important rule for this workstream:
    post-cutoff compounds appear in pre-cutoff training data.
 4. Tests required for every new function.
 5. Update `reports/workstreams/ws13-report.md` after every major step.
-6. Commit your work. Push to ws13/retro branch.
+6. Commit your work from inside the worktree.
+   Push to the remote branch: `git push origin ws13/retro`.
 7. SLURM jobs use `-A pi_mg269` and appropriate GPU partitions.
 
 ## Definition of Done
