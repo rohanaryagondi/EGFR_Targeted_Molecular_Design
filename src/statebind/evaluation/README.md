@@ -133,7 +133,7 @@ Head-to-head comparative analysis of the static baseline pipeline versus the sta
 
 ## Current Status
 
-Complete. Statistical testing (WS03), sensitivity analysis (WS03), and matplotlib visualization (WS05) are all implemented and merged. The module now provides tables, ASCII figures, statistical hypothesis tests, weight sensitivity analysis, and publication-quality PNG plots.
+Complete. Statistical testing (WS03), sensitivity analysis (WS03), and matplotlib visualization (WS05) are all implemented and merged. The module now provides tables, ASCII figures, statistical hypothesis tests, weight sensitivity analysis, and publication-quality PNG plots. Final comparison (with VAE candidates): state-aware mean=0.4378 vs static=0.5437. Mann-Whitney U: p<0.001, Cohen's d=1.36 (large, static favored). 431 novel state-aware candidates. Weight sensitivity: 44% state-aware / 56% static across 100 random configs. Null hypothesis formally retained.
 
 ## Completed Workstreams
 

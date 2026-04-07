@@ -82,16 +82,15 @@ python scripts/train_admet.py          # Multi-task ADMET predictor
 
 | Model | Status | Details |
 |-------|--------|---------|
-| VAE | **Trained** | 8,109 SMILES, early-stopped epoch 29 (best epoch 9), val loss 2.3246, 2,601,141 params. Checkpoint: `artifacts/models/vae/best_model.pt` (30MB) |
-| MPNN | Submitted | SLURM job 7285710, gpu partition, 4h limit, 10,466 compounds |
-| ADMET | Submitted | SLURM job 7285711, gpu partition, 6h limit, 32G mem, 27,698 molecules |
+| VAE | **Trained (v3 SELFIES)** | 9.5M params, 300 epochs on H200, val_recon=2.26, best epoch 297. SELFIES representation (100% validity by construction). Generation: 999/1000 valid (99.9%), 948 unique (94.8%). Checkpoint: `artifacts/models/vae/best_model.pt` |
+| MPNN | **Trained** | RMSE=0.7182, R²=0.6863, Pearson=0.8323. 12.7M params, 10,466 compounds, best epoch 83/150. Trained 217s on H200. Checkpoint: `artifacts/models/mpnn/best_model.pt` (50MB). Active in scoring cascade |
+| ADMET | **Trained** | hERG AUROC=0.7745, CYP3A4 AUROC=0.7323. 187K params, 27,698 molecules (6 TDC endpoints), best epoch 40/150. Trained 197s on L40S. Checkpoint: `artifacts/models/admet/best_model.pt` (775KB). Informational only — hard filtering rejects ALL kinase inhibitors |
 
 ## Integration
 
 - **VAE -> generation:** `generation/vae_integration.py` loads pre-generated VAE candidates
   via `load_vae_candidates(path)` and groups them by state via `build_vae_libraries(candidates)`.
-  VAE generation script (`scripts/generate_vae_candidates.py`) does not exist yet — needs
-  to be created to sample from the trained VAE on GPU and write candidates to JSON.
+  VAE generation script: `scripts/generate_vae_candidates.py` generates candidates by sampling from the prior, auto-detects SELFIES mode from checkpoint config, and converts back to SMILES via `SELFIESTokenizer` in `ml/tokenizer.py`. Usage: `python scripts/generate_vae_candidates.py --n-per-state 250 --temperature 0.8`
 - **MPNN -> ranking:** `ml/affinity_predictor.py` provides `predict_affinity(smiles) -> float`
   in [0, 1]. Normalizes pIC50 via `sigmoid((pIC50 - 5) / 2)`. Falls back to 0.5 stub.
 - **ADMET -> evaluation:** `ml/admet_predictor.py` provides `predict_admet(smiles) -> dict`

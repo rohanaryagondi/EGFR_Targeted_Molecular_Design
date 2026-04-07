@@ -2,8 +2,8 @@
 
 ## Status
 
-- **State:** Complete (code + data prep; model training is separate HPC task)
-- **Last updated:** 2026-03-28T12:00:00+00:00
+- **State:** Complete (code, data prep, model trained and verified)
+- **Last updated:** 2026-04-06T00:00:00+00:00
 - **Session count:** 1
 - **Test count added:** 32
 - **Files created:** 5
@@ -42,7 +42,22 @@ screening to the generation pipeline.
 
 ## Current State
 
-**What is done:** All code and integration. Model training requires HPC.
+**What is done:** All code, integration, and model training complete.
+
+### ADMET Training Results (2026-04-06)
+
+| Metric | Value | Target | Status |
+|--------|-------|--------|--------|
+| hERG AUROC | 0.7745 | > 0.75 | Exceeded |
+| CYP3A4 AUROC | 0.7323 | > 0.70 | Exceeded |
+| Solubility R² | 0.46 | -- | Weak (low data coverage) |
+| Parameters | 187K | -- | -- |
+| Best epoch | 40 / 150 | -- | -- |
+| Training time | 197s on L40S | -- | -- |
+| Training data | 27,698 molecules (6 TDC endpoints) | -- | -- |
+| Checkpoint | `artifacts/models/admet/best_model.pt` (775KB) | -- | -- |
+
+**Key finding:** Hard pass/fail ADMET filtering eliminates ALL kinase inhibitor candidates (100% hERG failure). Kinase inhibitors are inherently hERG-liable. ADMET is best used as **informational annotation**, not a pre-ranking gate. Documented as a project limitation.
 
 ---
 
@@ -67,6 +82,4 @@ screening to the generation pipeline.
 
 ## Handoff Notes
 
-Workstream code is complete. Model training requires HPC -- see `HumanOnly/AI-Operations-Manual.md`
-Section 4. The filter gate works in permissive fallback mode without a checkpoint
-(all candidates pass).
+Workstream is fully complete: integration code written, ADMET model trained on HPC (L40S), classification targets met, scoring verified. Hard ADMET filtering too aggressive for kinase inhibitors — use as informational annotation only.

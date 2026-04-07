@@ -20,7 +20,7 @@ This document defines how the project should be narrated publicly. The goal is t
 >
 > I built this as a modular pipeline in Python. It starts by curating 18 EGFR resistance mutations — T790M, C797S, L858R — with annotations about which conformational states each mutation favors. Then it classifies 16 PDB structures into 4 conformational states, defines state-specific binding pockets, and generates candidate molecules conditioned on each pocket's geometry. Finally, it scores everything with a unified scoring function and compares state-aware candidates to the static baseline on diversity, novelty, and ranking metrics.
 >
-> The pipeline is config-driven, tested (359 tests), and fully reproducible. The state-aware pipeline discovered 49 novel candidates inaccessible to the static approach, with higher chemical diversity. The docking component is currently a stub — binding affinity claims require future integration of Vina or GNINA. I designed it as a real computational experiment, not a demo."
+> The pipeline is config-driven, tested (548 tests), and fully reproducible. The state-aware pipeline discovered 431 novel candidates inaccessible to the static approach, with higher chemical diversity. The docking component is currently a stub — binding affinity claims require future integration of Vina or GNINA. I designed it as a real computational experiment, not a demo."
 
 ---
 
@@ -40,11 +40,11 @@ This document defines how the project should be narrated publicly. The goal is t
 >
 > 4. **Generation module** — generates candidate molecules conditioned on pocket geometry. The static baseline uses one structure and simple analogs. The state-aware pipeline uses 4 structures × 7 strategies (hinge optimization, back-pocket extension, etc.). Same scoring, different generation — this is the controlled variable.
 >
-> 5. **Ranking module** — scores all candidates with an identical unified function (reference similarity, druglikeness, docking proxy stub, state specificity). Compares pipelines on diversity, novelty, score distributions, and top-K composition. Docking is a stub (constant 0.5) — real docking integration is planned future work.
+> 5. **Ranking module** — scores all candidates with an identical unified function (reference similarity, druglikeness, docking proxy, state specificity). Compares pipelines on diversity, novelty, score distributions, and top-K composition. Docking uses a 3-tier cascade: trained MPNN (RMSE=0.72, 12.7M params, 10,466 compounds), DockingProxy MLP fallback, and constant stub. Morgan/ECFP4 is the primary similarity metric. Physics-based docking (Vina/GNINA) is planned future work.
 >
-> **Engineering choices:** src/ layout, Pydantic models, YAML configs, no hard-coded paths. Every module has typed inputs and outputs. Artifacts are serialized to disk between modules, so any module can be re-run independently. 359 tests across 13 modules.
+> **Engineering choices:** src/ layout, Pydantic models, YAML configs, no hard-coded paths. Every module has typed inputs and outputs. Artifacts are serialized to disk between modules, so any module can be re-run independently. 548 tests across 12 subpackages (19 test files, 84 Python files). CI/CD via GitHub Actions. Morgan/ECFP4 fingerprints for similarity. RDKit SA scoring for synthetic accessibility.
 >
-> **What makes this rigorous:** The baseline is built and scored before the state-aware pipeline runs. Both pipelines are scored with the same function. The docking stub is labeled, not hidden. The result — a qualified advantage driven by structural novelty, not by scoring on shared chemistry — is reported with honest limitations."
+> **What makes this rigorous:** The baseline is built and scored before the state-aware pipeline runs. Both pipelines are scored with the same function. The null hypothesis is formally retained — state-aware does not beat static on mean score. The result — chemical space expansion (431 novel candidates, diversity 0.91) rather than score improvement — is reported with honest limitations and statistical testing (Mann-Whitney U, Cohen's d=1.36)."
 
 ---
 

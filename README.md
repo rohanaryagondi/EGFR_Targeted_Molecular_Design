@@ -16,13 +16,15 @@ StateBind is a computational pipeline that answers this question for EGFR, the m
 
 | Metric | Static Baseline | State-Aware | Delta |
 |--------|:-:|:-:|:-:|
-| Unique candidates | 30 | 79 | **+49** |
-| Chemical diversity | 0.526 | 0.561 | **+0.035** |
-| Mean composite score | 0.584 | 0.604 | **+0.020** |
-| Global top-10 share | 5/10 | 5/10 | 0 |
-| Novel candidates | 0 | 49 | **+49** |
+| Unique candidates | 30 | 461 | **+431** |
+| Chemical diversity | 0.5684 | 0.9056 | **+0.3372** |
+| Mean composite score | 0.5437 | 0.4378 | **-0.1059** |
+| Max composite score | 0.7288 | 0.7794 | **+0.0506** |
+| Global top-10 share | 6/10 | 4/10 | -2 |
+| Novel candidates | 0 | 431 | **+431** |
+| Mann-Whitney U | — | p < 0.001 | d = 1.36 (static favored) |
 
-**Verdict:** State-aware design produces 49 chemically novel candidates inaccessible to a static pipeline — back-pocket extensions for DFG-out conformations, P-loop binders, and type-II inhibitor scaffolds — with higher diversity and competitive scores. The advantage is real but moderate. Without real docking validation, binding affinity claims are not supported. See [reports/phase7_comparison.md](reports/phase7_comparison.md) for the full analysis.
+**Verdict:** The null hypothesis is formally retained. The state-aware pipeline generates 431 novel candidates (395 from a SELFIES VAE, 36 from template strategies) with dramatically higher chemical diversity (0.91 vs 0.57) and a higher max score (0.78 vs 0.73). However, the mean composite score favors the static baseline (0.54 vs 0.44, p < 0.001, Cohen's d = 1.36). VAE-generated molecules are valid (99.9%) and chemically diverse but score lower on reference similarity — the 35%-weighted scoring component that inherently penalizes structural novelty. State-awareness expands accessible chemical space without improving mean predicted binding quality. See [artifacts/ranking/comparison.json](artifacts/ranking/comparison.json) for full results.
 
 ---
 
@@ -47,10 +49,8 @@ StateBind is a computational pipeline that answers this question for EGFR, the m
 │                    Generation Module                              │
 │                                                                  │
 │  Static baseline:  1 structure × 1 pocket → 30 candidates       │
-│  State-aware:      4 structures × 4 pockets → 79 candidates     │
-│                    (7 strategies: hinge opt, back-pocket ext,    │
-│                     gatekeeper avoidance, volume filling,        │
-│                     covalent warhead, P-loop interaction, analog) │
+│  State-aware:      4 structures × 4 pockets → 461 candidates    │
+│                   (7 template strategies + SELFIES VAE generation)│
 └──────────────────────────────┬───────────────────────────────────┘
                                ▼
 ┌──────────────────────────────────────────────────────────────────┐
@@ -79,6 +79,20 @@ StateBind is a computational pipeline that answers this question for EGFR, the m
 
 ---
 
+## ML Models
+
+Three neural networks are trained and integrated:
+
+| Model | Architecture | Key Metric | Training Data |
+|-------|-------------|------------|---------------|
+| **MPNN** | Message-passing GNN, 12.7M params | RMSE = 0.72, R² = 0.69, Pearson = 0.83 | 10,466 ChEMBL EGFR compounds |
+| **ADMET** | Multi-task MLP, 187K params | hERG AUROC = 0.77, CYP3A4 AUROC = 0.73 | 27,698 TDC molecules (6 endpoints) |
+| **VAE** | Conditional GRU encoder-decoder, 9.5M params | 99.9% valid, 94.8% unique (SELFIES) | 8,109 EGFR actives |
+
+The MPNN replaces the docking stub via a 3-tier cascade in `ranking/scoring.py`. The VAE generates novel molecules conditioned on conformational state. ADMET provides informational safety annotations.
+
+---
+
 ## Benchmark Setup
 
 **Target:** EGFR kinase domain (4 conformational states: DFGin/out × αC-helix in/out)
@@ -96,7 +110,7 @@ StateBind is a computational pipeline that answers this question for EGFR, the m
 ```
 composite = 0.35 × reference_similarity
           + 0.30 × druglikeness
-          + 0.20 × docking_proxy     ← STUB (constant 0.5)
+          + 0.20 × docking_proxy     ← 3-tier cascade: MPNN (RMSE=0.72) → MLP proxy → 0.5 stub
           + 0.15 × state_specificity  ← 0 for static baseline
 ```
 
@@ -156,27 +170,22 @@ All scripts are deterministic and produce artifacts under `artifacts/`.
 
 ### Novel Chemistry by Strategy
 
-The state-aware pipeline produces 49 candidates absent from the static baseline:
+The state-aware pipeline produces 431 candidates absent from the static baseline:
 
-| Strategy | Novel Candidates | Rationale |
+| Strategy | Novel Candidates | Source |
 |----------|:--:|-----------|
-| Back-pocket extension | 18 | CF3 tails and amide linkers for DFG-out back pocket |
-| Volume filling | 12 | Cyclohexyl/naphthyl groups for large inactive pockets |
-| P-loop interaction | 5 | Sulfonamide groups for folded P-loop in DFGout_aCout |
+| SELFIES VAE generation | 395 | Latent space sampling conditioned on conformational state |
+| Back-pocket extension | 12 | CF3 tails and amide linkers for DFG-out back pocket |
+| Volume filling | 8 | Cyclohexyl/naphthyl groups for large inactive pockets |
 | Hinge optimization | 5 | Pyridyl swaps for improved hinge H-bonds |
+| P-loop interaction | 4 | Sulfonamide groups for folded P-loop in DFGout_aCout |
 | Covalent warhead | 4 | Acrylamide warheads targeting C797 |
-| Gatekeeper avoiding | 3 | Smaller substituents for T790M clearance |
+| Analog | 2 | Halogen/methyl analogs of known inhibitors |
+| Gatekeeper avoiding | 1 | Smaller substituents for T790M clearance |
 
-### Global Top-10 Candidates
+### Global Top-10 Composition
 
-| Rank | Pipeline | Score | Strategy | Target State |
-|:--:|----------|:--:|----------|-------------|
-| 1 | State-aware | 0.796 | P-loop interaction | DFGout_aCout |
-| 2 | State-aware | 0.773 | Back-pocket extension | DFGout_aCin |
-| 3 | State-aware | 0.770 | P-loop interaction | DFGout_aCout |
-| 4 | State-aware | 0.751 | Volume filling | DFGin_aCout |
-| 5 | Static | 0.750 | Reference analog | — |
-| 6–10 | Mixed | 0.740–0.750 | Various | Various |
+In the global top-10 by composite score, the static baseline holds 6 positions and the state-aware pipeline holds 4. The state-aware pipeline achieves the highest max score (0.7794) but the static baseline dominates the top-10 through consistently high reference similarity scores.
 
 ### What the Pipeline Learned
 
@@ -189,40 +198,43 @@ The state-aware pipeline produces 49 candidates absent from the static baseline:
 
 ## Limitations
 
-1. **Docking is a stub.** The docking_proxy returns a constant. Without AutoDock Vina, GNINA, or FEP+, binding affinity claims are unsupported.
-2. **SMILES-level chemistry.** All modifications are string-level. No 3D pose generation or synthetic accessibility scoring.
-3. **Scoring bias.** The state_specificity component (weight 0.15) is structurally zero for the baseline, giving state-aware candidates a built-in advantage on that axis.
-4. **Small benchmark.** 18 mutations, 16 structures, ~80 candidates. Not a large-scale validation.
-5. **No experimental validation.** All results are computational. No IC50, no selectivity assays.
+1. **Docking is an ML proxy.** The docking_proxy uses a trained MPNN (RMSE = 0.72 pIC50 units) with MLP and constant fallbacks. Without physics-based docking (AutoDock Vina, GNINA, or FEP+), pose-level binding claims are unsupported.
+2. **ADMET filtering too aggressive.** Hard pass/fail ADMET filtering eliminates 100% of kinase inhibitor candidates on hERG liability — kinase inhibitors are inherently hERG-liable. ADMET is used as informational annotation, not a pre-ranking gate.
+3. **Scoring penalizes novelty.** The reference_similarity component (weight 0.35) inherently penalizes molecules structurally dissimilar from known inhibitors, creating tension with the VAE's ability to generate novel chemistry.
+4. **Scoring bias.** The state_specificity component (weight 0.15) is structurally zero for the baseline, giving state-aware candidates a built-in advantage on that axis. Despite this, the null hypothesis was not rejected.
+5. **No experimental validation.** All results are computational. No IC50, no selectivity assays, no cellular activity.
 6. **Single kinase family.** Results are specific to EGFR. Generalization to other targets is untested.
 
 ---
 
 ## Future Work
 
-- Replace docking stub with AutoDock Vina or GNINA scoring
-- Add ECFP4/Morgan fingerprint similarity (replacing SMILES n-grams)
-- Integrate synthetic accessibility scoring (SA score, ASKCOS)
-- Expand to additional kinase families (ABL, ALK, BRAF)
+- Replace MPNN docking proxy with physics-based docking (AutoDock Vina or GNINA)
+- Expand to additional kinase families (ABL, ALK, BRAF) to test generalization
 - Add MD-derived transition matrices (replacing literature curation)
 - Validate top candidates with FEP+ binding free energy calculations
+- Implement active learning loop (VAE generates → MPNN scores → retrain cycle)
+- Multi-objective Pareto optimization (replacing weighted linear scoring)
 
 ---
 
 ## Development Workstreams
 
-Six independent improvement workstreams are defined in [`workstreams/`](workstreams/README.md), designed for parallel development by multiple AI agents or contributors.
+Nine independent improvement workstreams are defined in [`workstreams/`](workstreams/README.md). All are complete.
 
-| # | Workstream | Impact | Dependencies |
-|---|-----------|--------|-------------|
-| 01 | Chemistry Foundation (RDKit) | High | None |
-| 02 | Scoring Integration | High | 01 |
-| 03 | Statistical Testing (scipy) | High | None |
-| 04 | Docking Proxy (learned model) | Critical | 01 |
-| 05 | Visualization (matplotlib) | Moderate | 03 |
-| 06 | CI/CD (GitHub Actions) | Moderate | None |
+| # | Workstream | Impact | Status |
+|---|-----------|--------|--------|
+| 01 | Chemistry Foundation (RDKit) | High | Complete |
+| 02 | Scoring Integration | High | Complete |
+| 03 | Statistical Testing (scipy) | High | Complete |
+| 04 | Docking Proxy (learned MLP) | Critical | Complete |
+| 05 | Visualization (matplotlib) | Moderate | Complete |
+| 06 | CI/CD (GitHub Actions) | Moderate | Complete |
+| 07 | Conditional VAE (SELFIES) | High | Complete |
+| 08 | MPNN Affinity | Critical | Complete |
+| 09 | ADMET Predictor | High | Complete |
 
-Workstreams 01, 03, and 06 can start in parallel. See [`workstreams/INTERFACES.md`](workstreams/INTERFACES.md) for cross-workstream contracts. Each `src/statebind/*/README.md` documents the module's API and dependencies. AI-specific guidance is in [`CLAUDE.md`](CLAUDE.md).
+Each `src/statebind/*/README.md` documents the module's API and dependencies. AI-specific guidance is in [`CLAUDE.md`](CLAUDE.md).
 
 ---
 
@@ -261,20 +273,26 @@ artifacts/               # Pipeline outputs (generated, gitignored)
 ## Test Coverage
 
 ```
-548 tests across 19 modules — all passing
-├── test_imports.py          16 tests   Module import verification
-├── test_baselines.py        32 tests   Static baseline pipeline
-├── test_structure.py        31 tests   Structural state atlas
-├── test_context.py          52 tests   Context-to-state prediction
-├── test_dynamics.py         50 tests   World model / dynamics
-├── test_generation.py       40 tests   State-conditioned generation
-├── test_ranking.py          36 tests   Unified ranking pipeline
-├── test_evaluation.py       25 tests   Comparative evaluation
-├── test_processing.py       33 tests   Data processing
-├── test_data.py             24 tests   Data layer
-├── test_utils.py             5 tests   Utilities
-├── test_cli.py               7 tests   CLI interface
-└── test_baselines.py         8 tests   Baseline models
+548 tests across 19 modules — all passing, ruff clean
+├── test_imports.py              Module import verification
+├── test_baselines.py            Static baseline pipeline
+├── test_structure.py            Structural state atlas
+├── test_context.py              Context-to-state prediction
+├── test_dynamics.py             World model / dynamics
+├── test_generation.py           State-conditioned generation
+├── test_ranking.py              Unified ranking pipeline
+├── test_evaluation.py           Comparative evaluation
+├── test_processing.py           Data processing
+├── test_data.py                 Data layer
+├── test_utils.py                Utilities
+├── test_cli.py                  CLI interface
+├── test_chemistry.py            Chemistry / fingerprints / descriptors
+├── test_docking_proxy.py        Docking proxy integration
+├── test_statistics.py           Statistical testing (scipy)
+├── test_plotting.py             Visualization / matplotlib
+├── test_mpnn_integration.py     MPNN affinity model
+├── test_admet_integration.py    ADMET predictor
+└── test_vae_integration.py      Conditional VAE (SELFIES)
 ```
 
 ---

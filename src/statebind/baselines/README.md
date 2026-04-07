@@ -80,26 +80,21 @@ Static single-structure design pipeline (Phase 2) that serves as the baseline th
 
 ## Known Limitations
 
-- **SMILES n-gram similarity:** Uses character 3-gram Tanimoto instead of Morgan/ECFP4 fingerprints. This is a crude textual proxy, not a proper molecular fingerprint.
-- **Docking stub:** `_score_docking_stub` returns a constant 0.5 for all candidates. Not discriminative.
+- **SMILES n-gram similarity:** Fallback only. Primary similarity uses Morgan/ECFP4 fingerprints (radius=2, 2048 bits) via WS02. SMILES 3-gram Tanimoto is used only when RDKit is unavailable.
+- **Docking stub:** Last fallback in the 3-tier scoring cascade (MPNN -> DockingProxy MLP -> constant 0.5 stub). The stub is only reached when neither trained MPNN nor DockingProxy MLP checkpoints are available.
 - **Heuristic property estimation:** MW, HBA, HBD, ring count, and heavy atom count are estimated from SMILES string patterns, not computed from a molecular graph. Accuracy is approximately +/-10-20%.
 - **SMILES validity check:** `_is_valid_smiles` uses heuristic checks (balanced parens/brackets, atom characters present), not a real SMILES parser.
 - **Analog enumeration:** Simple string-level substitutions that may produce invalid or unsynthesizable molecules.
 - **Single-class dataset in practice:** All 17 curated mutations map to DFGin_aCin, so the baseline cannot differentiate across states by design.
 
-## Planned Improvements
+## Completed Improvements
 
-- **Workstream 01 (Chemistry foundation):** Replace SMILES-based heuristics with RDKit-based property calculations and Morgan fingerprint similarity.
-- **Workstream 02 (Scoring integration):** Integrate validated scoring components from external tools.
-- **Workstream 04 (Docking proxy):** Replace the constant docking stub with AutoDock Vina, GNINA, or Smina for real docking scores.
+- **Workstream 01 (Chemistry foundation):** Replaced SMILES-based heuristics with RDKit-based property calculations and Morgan fingerprint similarity.
+- **Workstream 02 (Scoring integration):** WS02 added Morgan/ECFP4 similarity and RDKit-based druglikeness (QED + Lipinski + SA score) into the scoring pipeline.
+- **Workstream 04 (Docking proxy):** WS04 added DockingProxy MLP as tier-2 fallback in the 3-tier docking cascade (MPNN -> MLP -> stub).
 
 ## Current Status
 
-Complete but uses crude approximations. Docking is a stub (constant 0.5). Similarity uses SMILES n-gram Tanimoto instead of Morgan fingerprints. Property estimation is heuristic.
+Complete. All workstreams (WS01, WS02, WS04) are done. Scoring uses Morgan/ECFP4 fingerprints for similarity, RDKit descriptors for druglikeness, and the 3-tier docking cascade (MPNN -> DockingProxy MLP -> constant 0.5 stub). SMILES n-gram similarity and heuristic property estimation serve as fallbacks when RDKit is unavailable.
 
-## Remaining Work for AI Agents
-
-- **WS02** modifies `scoring.py` and `filtering.py` to wire in RDKit chemistry from WS01. Read `workstreams/02-scoring-integration.md`.
-- **WS04** adds a trained MLP docking proxy as fallback. Read `workstreams/04-docking-proxy.md`.
-- **IMPORTANT**: Do NOT modify `scoring.py` until WS01 is complete. WS02 must run before WS04.
-- See `baselines/CRITICAL.md` for non-obvious facts about this module.
+See `baselines/CRITICAL.md` for non-obvious facts about this module.

@@ -18,6 +18,9 @@
 - `build_vae_libraries()` extracts temperature from the first candidate's `notes` field by string splitting on `"temperature="`. Fragile — will return 0.0 if notes format changes.
 - `DEFAULT_STATE_MAPPING` is imported from `ml/vae_dataset.py:41-46` for state validation. If that mapping changes, `vae_integration.py` automatically picks up the change.
 
+- **VAE v3 (SELFIES) trained (2026-04-06):** 9.5M params, 300 epochs on H200, val_recon=2.26. Generation: 999/1000 valid (99.9%), 948 unique (94.8%). Checkpoint: `artifacts/models/vae/best_model.pt`. `generate_vae_candidates.py` auto-detects SELFIES mode from checkpoint `config.representation='selfies'` and converts back to SMILES via `SELFIESTokenizer`.
+- VAE candidates account for 395 of 431 novel state-aware candidates in the final comparison. They score lower on average (mean=0.4378 vs static=0.5437) due to low reference similarity, but dramatically expand chemical space (diversity=0.9056).
+
 ---
 
 > AI agents: when you discover new critical facts about this module, add them here with file:line references.

@@ -6,7 +6,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 - Unified scoring weights must sum to 1.0 -- enforced by `_validate_weights()` at `ranking/scoring.py:173-181`. Violating this raises `ValueError`.
 - The 4 required weight keys are: `reference_similarity`, `druglikeness`, `docking_proxy`, `state_specificity` -- validated at `ranking/scoring.py:173`.
-- Docking uses 3-tier cascade: MPNN -> DockingProxy MLP -> constant 0.5 stub -- `baselines/scoring.py:202-216` (`_score_docking_stub`). MPNN trained (RMSE=0.72, R²=0.69, Pearson=0.83; checkpoint `artifacts/models/mpnn/best_model.pt`). ADMET trained (hERG AUROC=0.77, CYP3A4=0.73; checkpoint `artifacts/models/admet/best_model.pt`). VAE retraining with improved config (TF annealing, larger hidden dim).
+- Docking uses 3-tier cascade: MPNN -> DockingProxy MLP -> constant 0.5 stub -- `baselines/scoring.py:202-216` (`_score_docking_stub`). MPNN trained (RMSE=0.72, R²=0.69, Pearson=0.83; checkpoint `artifacts/models/mpnn/best_model.pt`). ADMET trained (hERG AUROC=0.77, CYP3A4=0.73; checkpoint `artifacts/models/admet/best_model.pt`). VAE v3 (SELFIES) trained (9.5M params, 300 epochs, val_recon=2.26, 99.9% valid generation). Checkpoint `artifacts/models/vae/best_model.pt`.
 - Baseline scoring uses DIFFERENT weights (0.4/0.3/0.3) than unified scoring (0.35/0.30/0.20/0.15) -- `baselines/scoring.py:269-273` vs `ranking/scoring.py:86-91`.
 - `state_specificity` gives state-aware pipeline a structural 0.15 weight advantage over static baseline -- this is by design (`ranking/scoring.py:139-170`).
 - Similarity scoring uses Morgan/ECFP4 fingerprints (WS02) with fallback to SMILES 3-gram Tanimoto -- `baselines/scoring.py:78` (`_score_reference_similarity`).
@@ -52,7 +52,8 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 - `.github/workflows/ci.yml` has 3 jobs: `test` (matrix 3.10/3.11/3.12), `lint` (3.12 only), `test-with-chemistry` (3.12 + `[dev,science,chemistry]`). Triggers on push/PR to both `main` and `ML` branches.
 - The `full` extras group in `pyproject.toml` bundles `[dev,science,structure,chemistry]` but excludes `ml` -- torch-geometric requires CUDA-matched installs incompatible with generic CI runners.
 - CI badge URL: `https://github.com/rohanaryagondi/EGFR_Targeted_Molecular_Design/actions/workflows/ci.yml/badge.svg`.
-- **~40 pre-existing ruff violations exist in `src/`** -- the `test` and `lint` jobs will fail until they are fixed. Affected files: `baselines/candidates.py` (F401 `re`), `baselines/filtering.py` (F401, I001), `baselines/models.py` (F401 `Literal`, I001, N815 `volume_A3`), `baselines/pipeline.py` (F401 `datetime/timezone`, F541 f-string), `baselines/pocket.py` (I001), `baselines/scoring.py` (F401 `re`, I001), `cli.py` (E501 line 9), `generation/filtering.py` (F401 unused imports, I001), `generation/generator.py` (I001, E501 lines 84/131), `ml/graphs.py` (F401 `numpy`, F401 `rdchem`, E501 line 98), plus I001/F401 violations in `context/`, `dynamics/`, `processing/`, `ranking/`, `structure/`. Run `ruff check --fix src/` to auto-fix all fixable violations, then manually resolve any remaining.
+- **All ruff violations fixed** (121 total → 0 remaining). CI lint job passes clean. Ruff config in `pyproject.toml` ignores N803/N806/N815 (scientific convention: `X` for feature matrices, `pIC50`, `volume_A3`) and E402 (lazy imports in `scoring.py`).
+- **Weight sensitivity (100 random Dirichlet weight configs):** 44% state-aware wins, 56% static wins. Null hypothesis formally retained -- robust to scoring weight choices.
 
 ## Testing
 

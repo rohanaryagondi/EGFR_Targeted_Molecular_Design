@@ -94,6 +94,8 @@ All three scoring workstreams (WS02, WS04, WS08) are complete and merged:
   2. **DockingProxy MLP** (WS04) -- `chemistry/docking_proxy.py` lightweight MLP on Morgan fingerprints + descriptors. Requires trained proxy + RDKit.
   3. **Constant 0.5 stub** -- always available, zero discriminative power.
 
+MPNN affinity predictor (WS08) is active in the cascade. Verified: osimertinib scores 0.75, ethanol 0.34, invalid SMILES fall back to 0.5. Scoring method string reports `MPNN_affinity(pIC50)`.
+
 ## Current Status
 
 Complete. All three sequential scoring workstreams (WS02 -> WS04 -> WS08) have been merged. The scoring function now uses Morgan fingerprints for similarity, RDKit descriptors for druglikeness, and a 3-tier cascade for docking. The docking cascade activates the highest-priority available backend at runtime.

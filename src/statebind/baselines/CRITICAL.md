@@ -16,7 +16,8 @@
 - `_score_docking_stub()` at `scoring.py:202-216` is KEPT as the final fallback — do NOT delete it.
 - Docking stub line numbers shifted after WS04 additions. The stub is now around line 202, `_score_docking` is around line 219.
 - `score_candidates()` now uses `_score_docking()` instead of `_score_docking_stub()` directly. The `is_stub` and `method` on `ScoreComponent` are dynamic.
-- WS08 should extend `_score_docking()` to check MPNN first: MPNN → DockingProxy → stub.
+- **All scoring workstreams complete (WS02, WS04, WS08).** Full cascade: MPNN (WS08) → DockingProxy MLP (WS04) → constant 0.5 stub. The stub is now the last-resort fallback only. MPNN is active and verified (osimertinib=0.75, ethanol=0.34). Scoring method reports `MPNN_affinity(pIC50)`.
+- **ADMET model trained (WS09)** but operates in `generation/admet_filter.py`, NOT in baselines scoring. Hard ADMET filtering eliminates ALL kinase inhibitors (100% hERG failure) — use informational only.
 
 ---
 

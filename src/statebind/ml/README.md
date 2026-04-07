@@ -12,7 +12,7 @@ ML infrastructure for StateBind: provides three neural network architectures for
 | `models.py` | Pydantic v2 data models for training configuration (`TrainerConfig`), per-epoch metrics (`TrainingMetrics`), full training history (`TrainingHistory`), and model reproducibility metadata (`ModelCard`). No ML dependencies. |
 | `trainer.py` | Generic PyTorch training loop (`Trainer` class) with gradient clipping, LR scheduling (cosine / plateau / none), early stopping, checkpoint save/load, CSV metric logging, mixed-precision support, and resume-from-checkpoint. |
 | `utils.py` | Training utilities: `get_device()` (auto-detects CUDA/MPS/CPU), `set_seed()` (reproducibility across random/numpy/torch), `save_model()` / `load_model()` (checkpoint I/O with metadata), `count_parameters()`, `EarlyStopper` dataclass. |
-| `tokenizer.py` | Regex-based SMILES tokenizer (`SMILESTokenizer`) that correctly splits multi-character atoms (Cl, Br, Si), bracketed atoms ([nH], [C@@H]), ring closures, bonds, and branches. No ML dependencies. |
+| `tokenizer.py` | Regex-based SMILES tokenizer (`SMILESTokenizer`) that correctly splits multi-character atoms (Cl, Br, Si), bracketed atoms ([nH], [C@@H]), ring closures, bonds, and branches. Also provides `SELFIESTokenizer` for SELFIES-based tokenization used by VAE v3. No ML dependencies. |
 | `vocabulary.py` | Token-to-index vocabulary (`Vocabulary`) with special tokens (pad/sos/eos/unk), encode/decode methods, JSON serialization, and `build_vocabulary()` factory. No ML dependencies. |
 | `graphs.py` | Molecular graph construction from SMILES via RDKit. Produces PyTorch Geometric `Data` objects with atom features (~35-dim: element, degree, charge, hybridization, aromaticity, ring membership, H count) and bond features (~11-dim: bond type, conjugation, ring, stereo). Exports `ATOM_FEATURE_DIM` and `BOND_FEATURE_DIM` constants. |
 | `vae.py` | Conditional SMILES VAE: `VAEConfig` (Pydantic), `SMILESEncoder` (bidirectional GRU with state conditioning), `SMILESDecoder` (GRU with teacher forcing), `ConditionalSMILESVAE` (full encode-sample-decode model with autoregressive `generate()` method), `vae_loss()` (reconstruction CE + weighted KL divergence). |
@@ -167,11 +167,11 @@ Install ML dependencies with: `pip install -e ".[ml]"`
 
 - The MPNN and ADMET models depend on RDKit for SMILES-to-graph conversion; if RDKit is not installed, `smiles_to_graph()` returns `None` and those models cannot be used.
 - Graph featurization uses a fixed vocabulary of 10 elements; less common atoms are mapped to "other".
-- The VAE uses SMILES-level tokenization and GRU encoding, not graph-based — generated SMILES may not always be chemically valid.
+- The VAE v3 uses SELFIES representation (100% validity by construction), resolving earlier SMILES validity concerns.
 - Teacher forcing ratio in the VAE decoder is a fixed hyperparameter (default 0.5), not annealed during training.
 - The ADMET model's default endpoints are generic drug-safety properties, not EGFR-specific.
 - No hyperparameter search infrastructure is provided; configs must be manually tuned.
-- Training data files exist in `data/processed/` (see below) but models have not yet been trained on GPU.
+- All three models trained. See Training Status below.
 
 ## Patterns to Follow
 
@@ -184,15 +184,23 @@ Install ML dependencies with: `pip install -e ".[ml]"`
 
 ## Current Status
 
-Architecture and integration adapters COMPLETE. All 15 source files (13 core + `affinity_predictor.py` + `admet_predictor.py`), 3 training scripts, and 3 YAML configs are written and ready. Training data is prepared and available in `data/processed/`. Models require GPU training before inference adapters produce real predictions (they gracefully fall back to neutral defaults without trained checkpoints).
+Architecture, integration adapters, and model training COMPLETE. All 15 source files (13 core + `affinity_predictor.py` + `admet_predictor.py`), 3 training scripts, and 3 YAML configs are written and ready. All three models are trained with checkpoints at `artifacts/models/{vae,mpnn,admet}/best_model.pt`.
 
-### Training Data (prepared)
+### Training Data
 
 | File | Contents | Source |
 |------|----------|--------|
-| `data/processed/egfr_affinity.json` | 1,678 ChEMBL EGFR compounds with pIC50 values | ChEMBL EGFR bioactivity data |
-| `data/processed/admet_combined.json` | Multi-task ADMET benchmark data (6 endpoints) | Therapeutics Data Commons (TDC) |
-| `data/processed/egfr_smiles_train.json` | SMILES + state labels for VAE training | Curated EGFR ligand set |
+| `data/processed/egfr_affinity.json` | 10,466 ChEMBL EGFR compounds with pIC50 values | ChEMBL EGFR bioactivity data (expanded via WS10) |
+| `data/processed/admet_combined.json` | 27,698 molecules, multi-task ADMET benchmark data (6 endpoints) | Therapeutics Data Commons (TDC) |
+| `data/processed/egfr_smiles_train.json` | 8,109 SMILES + state labels for VAE training | Curated EGFR ligand set |
+
+### Training Status
+
+| Model | Parameters | Key Metrics | Details |
+|-------|-----------|-------------|---------|
+| VAE v3 (SELFIES) | 9.5M | val_recon=2.26 (300 epochs) | SELFIES representation (100% validity by construction). Generation: 999/1000 valid (99.9%), 948 unique (94.8%). |
+| MPNN | 12.7M | RMSE=0.7182, R²=0.6863 | Trained on 10,466 compounds. |
+| ADMET | 187K | hERG AUROC=0.7745, CYP3A4 AUROC=0.7323 | Trained on 27,698 molecules. |
 
 ### Completed Workstreams
 
@@ -200,10 +208,8 @@ Architecture and integration adapters COMPLETE. All 15 source files (13 core + `
 - **WS08** (MPNN Affinity): Created `ml/affinity_predictor.py` -- singleton MPNN wrapper with `predict_affinity(smiles) -> float` and batch prediction. Integrated into the ranking pipeline's 3-tier docking cascade as Priority 1.
 - **WS09** (ADMET Predictor): Created `ml/admet_predictor.py` -- singleton ADMET wrapper with `predict_admet(smiles) -> dict`, batch prediction, and `check_admet_pass()` threshold-based safety filtering. Integrated into `generation/admet_filter.py`.
 
-### Remaining Work
+### All Work Complete
 
-- **Model training** (requires GPU): Run the 3 training scripts to produce checkpoints at `artifacts/models/{vae,mpnn,admet}/best_model.pt`. Until trained, the integration adapters fall back to neutral defaults (affinity: 0.5, ADMET: empty dict / permissive pass).
-- **Do NOT modify these existing files** (they are stable):
-  - `vae.py`, `mpnn.py`, `admet.py`, `trainer.py`, `tokenizer.py`, `vocabulary.py`, `graphs.py`, `utils.py`, all `*_dataset.py` files, `affinity_predictor.py`, `admet_predictor.py`
+All three models are trained with checkpoints at `artifacts/models/{vae,mpnn,admet}/best_model.pt`. Integration adapters produce real predictions. Do NOT modify these stable files: `vae.py`, `mpnn.py`, `admet.py`, `trainer.py`, `tokenizer.py`, `vocabulary.py`, `graphs.py`, `utils.py`, all `*_dataset.py` files, `affinity_predictor.py`, `admet_predictor.py`.
 
 See `ml/CRITICAL.md` for non-obvious facts.

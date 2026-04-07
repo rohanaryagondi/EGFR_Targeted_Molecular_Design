@@ -2,8 +2,8 @@
 
 ## Status
 
-- **State:** Integration complete (awaiting model training)
-- **Last updated:** 2026-03-28T19:30:00+00:00
+- **State:** Complete (integration + model trained and verified)
+- **Last updated:** 2026-04-06T00:00:00+00:00
 - **Session count:** 1
 - **Test count added:** 22
 - **Files created:** 3
@@ -71,21 +71,22 @@ architecture already exists in `ml/mpnn.py`; this workstream creates integration
 - `tests/test_mpnn_integration.py` — 22 tests, all passing ✅
 - Full test suite: 540 passed, 8 skipped ✅
 
-**What is NOT done yet:**
-- Train the MPNN model: `python scripts/train_mpnn.py --config configs/mpnn.yaml`
-  (requires GPU; data is ready at `data/processed/egfr_affinity.json`)
-- Model quality tests (test_rmse_below_threshold, etc.) — skipped until checkpoint exists
+### MPNN Training Results (2026-04-06)
 
-**Blockers:** None for integration code. Training requires GPU.
+| Metric | Value | Target | Status |
+|--------|-------|--------|--------|
+| RMSE | 0.7182 | < 1.0 | Exceeded |
+| R² | 0.6863 | > 0.5 | Exceeded |
+| Pearson r | 0.8323 | > 0.7 | Exceeded |
+| Parameters | 12.7M | -- | -- |
+| Best epoch | 83 / 150 | -- | -- |
+| Training time | 217s on H200 | -- | -- |
+| Training data | 10,466 compounds (ChEMBL EGFR, expanded pagination) | -- | -- |
+| Checkpoint | `artifacts/models/mpnn/best_model.pt` (50MB) | -- | -- |
 
----
+**Verified in scoring cascade:** osimertinib scores 0.75, ethanol scores 0.34, invalid SMILES fall back to 0.5. Scoring method string reports `MPNN_affinity(pIC50)`.
 
-## Next Steps
-
-1. Train MPNN on prepared data (GPU required):
-   `python scripts/train_mpnn.py --config configs/mpnn.yaml`
-2. Verify model quality: RMSE < 1.0, R² > 0.5, Pearson > 0.6
-3. Re-run tests to confirm model-dependent tests pass with checkpoint
+**Blockers:** None. Workstream fully complete.
 
 ---
 
@@ -129,14 +130,4 @@ architecture already exists in `ml/mpnn.py`; this workstream creates integration
 
 ## Handoff Notes
 
-**To resume this workstream:**
-1. Read `CLAUDE.md`
-2. Read `workstreams/08-mpnn-affinity.md`
-3. Read this file
-4. The code is complete — next step is GPU training
-
-**DO NOT:**
-- Run in parallel with WS04 (both touch `ranking/scoring.py`)
-- Change `DEFAULT_WEIGHTS` without updating `SCORING_METHOD`
-- Remove the docking proxy fallback (WS04's contribution)
-- Modify existing files listed in WS08 brief "Files NOT to Touch" section
+Workstream is fully complete: integration code written, MPNN trained on HPC (H200), all targets exceeded, scoring cascade verified end-to-end. 548 tests passing.

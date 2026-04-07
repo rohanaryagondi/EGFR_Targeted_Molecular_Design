@@ -6,16 +6,16 @@ A complete accounting of what StateBind does not do, cannot claim, and where the
 
 ## Scoring Limitations
 
-### Docking is a stub
-The `docking_proxy` component returns a constant 0.5 for every candidate. This means:
-- The comparison **cannot distinguish candidates that actually bind** from those that don't
-- The scoring function measures chemical similarity and drug-likeness, not predicted binding affinity
-- Any claim about "better binding" or "higher affinity" is unsupported
+### Docking uses an MPNN proxy, not physics-based scoring
+The `docking_proxy` component uses a 3-tier cascade: a trained MPNN (RMSE=0.72, R^2=0.69, Pearson=0.83, 12.7M params, trained on 10,466 compounds), a DockingProxy MLP fallback, and a constant 0.5 stub as the final fallback. This means:
+- The MPNN provides informative relative rankings but is still a learned proxy, not a physics simulation
+- The scoring function now incorporates learned binding affinity estimates, but these are **not** equivalent to AutoDock Vina or GNINA outputs
+- Claims about "binding affinity" should be qualified as "MPNN-predicted" not "physics-validated"
 
-**Impact:** The single largest gap in the evaluation. Integrating AutoDock Vina, GNINA, or Smina would make the comparison substantially more informative.
+**Impact:** Substantially improved over the original constant stub, but physics-based docking (Vina, GNINA, or Smina) would still make the comparison more informative and biologically credible.
 
-### SMILES n-gram similarity is crude
-Character 3-gram Tanimoto similarity does not capture molecular topology. Two molecules with similar SMILES strings may have very different 3D shapes, and vice versa. ECFP4/Morgan fingerprints (from RDKit) would provide more accurate similarity measurement.
+### SMILES n-gram similarity is a fallback only
+Morgan/ECFP4 Tanimoto (from RDKit) is now the primary similarity metric (implemented in WS02). SMILES character 3-gram Tanimoto remains as a fallback when RDKit is unavailable. The primary metric captures circular atomic environments and is the cheminformatics standard.
 
 ### state_specificity creates built-in advantage
 The state_specificity component (weight 0.15) rewards candidates unique to their target state. This is structurally zero for the static baseline, giving state-aware candidates an inherent scoring advantage on that axis. The diversity and novelty advantages are independent of this component, but the score delta is partially inflated.
@@ -27,12 +27,13 @@ The state_specificity component (weight 0.15) rewards candidates unique to their
 ### SMILES-level modifications only
 All molecular modifications are string-level operations (e.g., appending "C(F)(F)F" for a CF3 group). There is no:
 - 3D pose generation or force-field energy minimization
-- Synthetic accessibility scoring (SA score, ASKCOS)
 - Reaction-based enumeration (real chemical transformations)
 - Validation that modified SMILES correspond to physically realizable molecules
 
-### No ADMET profiling
-No absorption, distribution, metabolism, excretion, or toxicity predictions beyond crude MW/HBA/HBD filters.
+Note: Synthetic accessibility scoring (RDKit SA score) is now implemented in WS01 and filters unrealizable candidates. A VAE (9.5M params, SELFIES representation) generates valid molecules (999/1000 valid, 948 unique), supplementing SMILES-level modifications.
+
+### ADMET profiling available but hERG filtering may be too aggressive
+ADMET profiling was implemented in WS09 (hERG AUROC=0.7745, CYP3A4 AUROC=0.7323, 187K params, 27,698 molecules). However, the hERG toxicity classifier may be overly conservative, potentially filtering viable candidates. The AUROC of 0.7745 leaves meaningful false-positive rate for hERG liability.
 
 ### Covalent binder design is approximate
 Acrylamide warhead addition (for C797-targeting) is a simple SMILES append, not a geometry-aware covalent docking workflow.
@@ -45,9 +46,9 @@ Acrylamide warhead addition (for C797-targeting) is a simple SMILES append, not 
 - 18 mutations (7 clinically key)
 - 16 PDB structures across 4 states
 - 9 reference inhibitors
-- ~80 total candidates
+- 461 state-aware candidates, 30 static candidates (491 total)
 
-This is insufficient for formal statistical testing. No confidence intervals, bootstrap tests, or power analysis.
+Statistical testing has been implemented (WS03): Mann-Whitney U (p<0.001), bootstrap CI, Cohen's d=1.36. The null hypothesis is formally retained (static has higher mean score).
 
 ### Single kinase family
 Results are specific to EGFR. Other kinases with different conformational landscapes (e.g., ABL has a more prominent DFG-out population) may behave differently. Generalization is untested.
@@ -82,13 +83,14 @@ The pipeline is not benchmarked against established tools (REINVENT, DeepDock, D
 
 ## What Would Resolve These Limitations
 
-| Limitation | Resolution | Effort |
+| Limitation | Resolution | Status |
 |-----------|-----------|--------|
-| Docking stub | Integrate AutoDock Vina via subprocess | Medium |
-| SMILES similarity | Add RDKit ECFP4/Morgan fingerprints | Low |
-| Synthetic accessibility | Add RDKit SA score | Low |
-| Small benchmark | Automate PDB/COSMIC data acquisition | High |
-| Single kinase | Extend to ABL, ALK, BRAF | High |
-| MD transitions | Use existing EGFR MD trajectory data | High |
-| Statistical testing | Add scipy Mann-Whitney U, bootstrap CI | Low |
-| No CI/CD | Add GitHub Actions pytest workflow | Low |
+| Docking stub | MPNN proxy trained (RMSE=0.72) in 3-tier cascade (WS08) | **[RESOLVED]** — physics-based docking still needed |
+| SMILES similarity | Morgan/ECFP4 Tanimoto is primary metric (WS02) | **[RESOLVED]** |
+| Synthetic accessibility | RDKit SA score integrated (WS01) | **[RESOLVED]** |
+| ADMET profiling | hERG + CYP3A4 classifiers trained (WS09) | **[RESOLVED]** — hERG may be too aggressive |
+| Statistical testing | Mann-Whitney U, bootstrap CI, Cohen's d (WS03) | **[RESOLVED]** |
+| No CI/CD | GitHub Actions pytest workflow (WS06) | **[RESOLVED]** |
+| Small benchmark | Automate PDB/COSMIC data acquisition | Remaining |
+| Single kinase | Extend to ABL, ALK, BRAF | Remaining |
+| MD transitions | Use existing EGFR MD trajectory data | Remaining |

@@ -106,7 +106,7 @@ Phase 6 of StateBind: generates candidate molecules conditioned on each EGFR con
 
 ## Current Status
 
-Complete. Rule-based generation (7 strategies), VAE integration (WS07), and ADMET safety filtering (WS09) are all implemented and merged. Diversity computation uses Morgan fingerprints when RDKit is available (WS02), with SMILES n-gram Tanimoto fallback.
+Complete. Rule-based generation (7 strategies), VAE integration (WS07), and ADMET safety filtering (WS09) are all implemented and merged. Diversity computation uses Morgan fingerprints when RDKit is available (WS02), with SMILES n-gram Tanimoto fallback. VAE v3 (SELFIES) generation tested: 999/1000 valid (99.9%), 948 unique (94.8%). VAE candidates account for 395 of 431 novel state-aware candidates in the final comparison. Candidates generated via `scripts/generate_vae_candidates.py`.
 
 ## Completed Workstreams
 
