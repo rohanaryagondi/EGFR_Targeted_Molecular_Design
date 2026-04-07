@@ -67,6 +67,14 @@ class DataPaths:
     def processed_ligands_dir(self) -> Path:
         return self.processed_dir / "ligands"
 
+    @property
+    def docking_receptors_dir(self) -> Path:
+        return self.processed_dir / "docking" / "receptors"
+
+    @property
+    def docking_results_dir(self) -> Path:
+        return self.root / "artifacts" / "docking"
+
     # ── Specific file paths ─────────────────────────────────────────────
 
     @property
@@ -103,6 +111,8 @@ class DataPaths:
             self.processed_context_dir,
             self.processed_structures_dir,
             self.processed_ligands_dir,
+            self.docking_receptors_dir,
+            self.docking_results_dir,
         ]
         for d in dirs:
             d.mkdir(parents=True, exist_ok=True)
@@ -122,6 +132,8 @@ class DataPaths:
             self.processed_context_dir,
             self.processed_structures_dir,
             self.processed_ligands_dir,
+            self.docking_receptors_dir,
+            self.docking_results_dir,
         ]
 
     def __repr__(self) -> str:
