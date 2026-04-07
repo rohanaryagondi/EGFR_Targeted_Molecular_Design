@@ -6,7 +6,7 @@ StateBind is a computational pipeline for designing drug candidates against EGFR
 
 > **Does knowing which conformational state a kinase occupies help you design better molecules than treating it as a single static structure?**
 
-The answer so far: **yes, with caveats.** State-aware design produces 49 chemically novel candidates that a static pipeline can't access, with higher chemical diversity — but the advantage is moderate and unvalidated without real docking or experimental data.
+The answer so far: **it's complicated.** State-aware design produces 431 novel candidates with dramatically higher chemical diversity (0.91 vs 0.57), but scores lower on average because the scoring function penalizes molecules dissimilar from known inhibitors. The null hypothesis is formally retained — state-aware does not produce statistically superior composite scores, though it massively expands accessible chemical space.
 
 ---
 
@@ -54,9 +54,9 @@ Phase 5: World model
    State transition dynamics (Markov model, contrastive embeddings)
          |
 Phase 6: State-conditioned generation
-   4 states x 7 strategies -> 79 candidates
+   4 states x 7 strategies + VAE generation -> 461 candidates
    Strategies: hinge optimization, back-pocket extension, gatekeeper
-   avoidance, volume filling, covalent warhead, P-loop interaction, analogs
+   avoidance, volume filling, covalent warhead, P-loop interaction, analogs, VAE
          |
 Phase 7: Unified ranking + comparison
    Both pipelines scored by THE SAME function
@@ -69,33 +69,37 @@ The key fairness guarantee: both pipelines are scored identically. The only axis
 
 ## The ML Stack
 
-Three neural networks are written but need GPU training:
+Three neural networks, all trained on Yale Bouchet HPC (2026-04-06):
 
-| Model | Purpose | Input | Output | Training Time |
-|-------|---------|-------|--------|--------------|
-| **Conditional SMILES VAE** | Generate novel molecules conditioned on conformational state | Tokenized SMILES + state one-hot | Novel SMILES per state | 2-4 hours |
-| **Affinity MPNN** | Predict binding affinity (replaces constant-0.5 docking stub) | Molecular graph | pIC50 value | 1-2 hours |
-| **Multi-task ADMET** | Predict drug safety (hERG, CYP3A4, solubility, etc.) | Molecular graph | 6 ADMET scores | 2-3 hours |
+| Model | Purpose | Key Metrics | Params |
+|-------|---------|------------|--------|
+| **VAE v3 (SELFIES)** | Generate novel molecules conditioned on conformational state | 99.9% valid, 94.8% unique | 9.5M |
+| **Affinity MPNN** | Predict binding affinity (top of 3-tier scoring cascade) | RMSE=0.72, R²=0.69, Pearson=0.83 | 12.7M |
+| **Multi-task ADMET** | Predict drug safety (hERG, CYP3A4, solubility, etc.) | hERG AUROC=0.77, CYP3A4=0.73 | 187K |
 
-Training data is prepared:
-- ChEMBL EGFR compounds (1,678 with pIC50 values)
-- TDC ADMET benchmark datasets
-- SMILES training set for VAE
+Training data:
+- ChEMBL EGFR compounds (10,466 with pIC50 values for MPNN)
+- TDC ADMET benchmark datasets (27,698 molecules, 6 endpoints)
+- ChEMBL EGFR actives (8,109 train / 2,027 val SMILES→SELFIES for VAE)
 
 ---
 
-## Key Results (Current, Pre-Training)
+## Key Results (Final, Post-Training)
 
 | Metric | Static | State-Aware | Delta |
 |--------|:------:|:-----------:|:-----:|
-| Unique candidates | 30 | 79 | +49 |
-| Chemical diversity | 0.526 | 0.561 | +0.035 |
-| Mean composite score | 0.584 | 0.604 | +0.020 |
-| Novel candidates | 0 | 49 | +49 |
+| Candidates | 30 | 461 | +431 |
+| Mean composite score | 0.5437 | 0.4378 | -0.1059 |
+| Max composite score | 0.7288 | 0.7794 | +0.0506 |
+| Chemical diversity | 0.5684 | 0.9056 | +0.3372 |
+| Novel candidates | 0 | 431 | +431 |
+| Mann-Whitney U p-value | -- | <0.001 | -- |
+| Cohen's d | -- | 1.36 (static favored) | -- |
+| Weight sensitivity | 56% wins | 44% wins | -- |
 
-The state-aware pipeline finds molecules the static pipeline can't: type-II inhibitors for DFG-out conformations, P-loop binders for the fully inactive state, and back-pocket extensions using CF3 tails and amide linkers.
+**Null hypothesis formally retained.** The state-aware pipeline dramatically expands chemical space (431 novel candidates, diversity 0.91) and achieves the highest individual score (0.78 vs 0.73). However, the mean score is significantly lower because VAE-generated molecules have low reference similarity (35% of score weight). The scoring function inherently penalizes novel molecules dissimilar from known inhibitors — a meaningful finding about the tension between novelty and similarity in drug design scoring.
 
-**But:** The docking component is a stub (constant 0.5), so 20% of the scoring function has zero discriminative power. The real comparison happens after MPNN training.
+The state-aware pipeline finds molecules the static pipeline can't: type-II inhibitors for DFG-out conformations, P-loop binders for the fully inactive state, back-pocket extensions, and 395 VAE-generated novel scaffolds.
 
 ---
 

@@ -1,99 +1,74 @@
 # Project Briefing
 
-Last updated: 2026-03-30
+Last updated: 2026-04-07
 
 ---
 
 ## Status at a Glance
 
-All code is written. All 9 workstreams are complete. 548 tests pass. The pipeline runs end-to-end with stub/proxy scoring. **The critical path is now GPU training of 3 ML models**, followed by a full pipeline re-run with real scores and statistical hypothesis testing.
+**Project is feature-complete.** All code written, all 9 workstreams complete, all 3 ML models trained, 548 tests pass, ruff clean, full comparison run, null hypothesis formally retained. Pushed to GitHub ML branch.
 
 ---
 
 ## What's Done
 
-- **Core pipeline (Phases 1-7):** Static baseline (30 candidates) and state-aware pipeline (79 candidates) both built and scored by the same unified function
+- **Core pipeline (Phases 1-7):** Static baseline (30 candidates) and state-aware pipeline (461 candidates: 395 VAE + 36 template + 30 shared) both scored by the same unified function
 - **9 workstreams complete:** Chemistry foundation, scoring integration, statistical testing, docking proxy, visualization, CI/CD, conditional VAE, MPNN affinity, ADMET predictor
-- **ML integration code:** All 3 adapters written (VAE -> generation, MPNN -> ranking, ADMET -> evaluation). Cascading docking fallback assembled: MPNN -> DockingProxy MLP -> stub
-- **Training data prepared:** ChEMBL EGFR (1,678 compounds), TDC ADMET benchmarks, VAE SMILES training set
-- **548 tests across 19 files**, all passing
+- **All 3 ML models trained:**
+  - MPNN: RMSE=0.7182, R²=0.6863, Pearson=0.8323 (12.7M params, 10,466 compounds)
+  - ADMET: hERG AUROC=0.7745, CYP3A4 AUROC=0.7323 (187K params, 27,698 molecules)
+  - VAE v3 (SELFIES): 99.9% valid, 94.8% unique (9.5M params, 300 epochs)
+- **MPNN scoring cascade active:** MPNN → DockingProxy MLP → constant 0.5 stub. Verified: osimertinib=0.75, ethanol=0.34
+- **Full comparison run:** State-aware mean=0.4378 vs static=0.5437. Mann-Whitney U: p<0.001, d=1.36 (static favored). **Null hypothesis formally retained.** 431 novel candidates, diversity 0.9056 vs 0.5684
+- **548 tests across 19 files**, all passing. Ruff clean (121→0)
 - **Vision System:** 12 strategic improvement ideas proposed by Visionary AI (not yet reviewed by Head AI)
 - **Admin AI:** First audit complete, 12 suggestions triaged (10 implemented, 1 deferred, 1 wont-fix)
-- **Documentation:** All files updated to reflect post-workstream reality
+- **Documentation:** Comprehensive refresh completed 2026-04-07 (20 files updated)
 
 ---
 
-## What's Pending
+## What's Pending (Stretch Goals Only)
 
-### 1. ML Model Training (Critical Path)
+All core work is complete. Remaining items are stretch goals:
 
-Three models need GPU training. All code, configs, and data are ready.
-
-```bash
-# On your HPC cluster:
-git checkout ML
-pip install -e ".[ml]"
-
-python scripts/train_vae.py --config configs/vae.yaml      # 2-4 hours
-python scripts/train_mpnn.py --config configs/mpnn.yaml     # 1-2 hours
-python scripts/train_admet.py --config configs/admet.yaml   # 2-3 hours
-```
-
-**Success criteria:**
-- VAE: validity >= 50%, uniqueness >= 80%, reconstruction loss < 2.0
-- MPNN: RMSE < 1.0 pIC50, R-squared > 0.5, Pearson r > 0.7
-- ADMET: hERG AUROC > 0.75, CYP3A4 AUROC > 0.70
-
-After training, copy checkpoints back (do NOT git commit .pt files):
-```bash
-rsync -av artifacts/models/ /path/to/local/repo/artifacts/models/
-```
-
-### 2. Ruff Violations (~40 files)
-
-CI/CD pipeline (GitHub Actions) will fail until fixed. Mostly auto-fixable:
-```bash
-ruff check --fix src/
-ruff check src/          # Check for remaining manual fixes
-```
-
-Violations: F401 (unused imports), I001 (import sorting), E501 (line length), F541 (f-strings), N815 (naming).
-
-### 3. Full Pipeline Re-Run
-
-After models are trained:
-```bash
-python scripts/rerank_candidates.py                      # Re-score with real MPNN
-python scripts/compare_baseline_vs_state_aware.py        # Head-to-head comparison
-python scripts/report_comparative_results.py             # Generate reports
-```
-
-This is where the null hypothesis gets tested. If p < 0.05 on Mann-Whitney U for score distributions, the state-aware advantage is statistically significant.
-
-### 4. Vision Idea Review
+### 1. Vision Idea Review
 
 12 ideas proposed by Visionary AI, not yet reviewed. Run Head AI with:
 > Read all idea files in `vision/ideas/` that have `Status: proposed`. For each idea, decide whether to accept or defer.
 
 Ideas span: continuous conditioning, 3D pocket diffusion, kinome selectivity, ensemble uncertainty, GNINA docking, learned similarity, retrosynthetic feasibility, Pareto optimization, time-split validation, self-supervised pretraining, water thermodynamics, RL molecular optimization.
 
----
+### 2. Real Docking Validation
 
-## Recommended Order of Operations
+MPNN provides learned affinity predictions but is not physics-based docking. AutoDock Vina or GNINA would provide pose-level validation.
 
-```
-1. Fix ruff violations          (30 min, unblocks CI)
-2. Train ML models on HPC       (6-9 hours GPU time, can run overnight)
-3. Re-run pipeline with models  (30 min)
-4. Review statistical results   (is p < 0.05?)
-5. Review Vision ideas          (use Head AI)
-6. Create new workstreams       (from accepted ideas)
-```
+### 3. Active Learning Loop
 
-Steps 1 and 2 can happen in parallel. Step 3 requires step 2. Steps 4-6 are sequential.
+VAE generates → MPNN scores → top candidates retrain MPNN → updated scores guide next VAE round.
+
+### 4. Multi-Target Expansion
+
+Replicate for ABL, ALK, BRAF to test generalizability beyond EGFR.
 
 ---
 
 ## Null Hypothesis Status
 
-**Not rejected.** The state-aware pipeline shows +0.020 mean score and +0.035 diversity advantage, but without real docking scores (20% of the scoring function is a stub) and without formal statistical testing, these differences lack significance. Training the MPNN is what unlocks a real test.
+**Formally retained (2026-04-06).** Two comparisons run:
+
+**Comparison 1 (templates only):** State-aware mean=0.5699 vs static=0.5437 (delta=+0.026). Mann-Whitney U: p=0.5349. Not significant.
+
+**Comparison 2 (templates + VAE, definitive):**
+
+| Metric | State-Aware | Static | Delta |
+|--------|:-----------:|:------:|:-----:|
+| Candidates | 461 | 30 | +431 |
+| Mean composite score | 0.4378 | 0.5437 | -0.1059 |
+| Max composite score | 0.7794 | 0.7288 | +0.0506 |
+| Diversity | 0.9056 | 0.5684 | +0.3372 |
+| Mann-Whitney U p | <0.001 | -- | -- |
+| Cohen's d | 1.36 (static favored) | -- | -- |
+| Novel candidates | 431 | 0 | +431 |
+| Weight sensitivity | 44% state wins | 56% static wins | -- |
+
+**Interpretation:** State-aware dramatically expands chemical space (431 novel, 0.91 diversity) and achieves a higher max score (0.78 vs 0.73). But the mean score is significantly lower because VAE candidates have low reference similarity (35% of score weight). The scoring function inherently penalizes genuinely novel molecules. Neither pipeline dominates across weight configurations (44/56 split).

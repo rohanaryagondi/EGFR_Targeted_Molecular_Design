@@ -4,45 +4,23 @@ Things only you (the human) can do, or where your judgment is required. Ordered 
 
 ---
 
-## 1. GPU Training (Highest Priority)
+## 1. ~~GPU Training~~ DONE
 
-The 3 ML models are code-complete but untrained. Training requires CUDA. AI agents can't do this — it needs your HPC cluster.
+All 3 ML models trained on Bouchet HPC (2026-04-06):
 
-**What to do:**
-```bash
-git checkout ML
-pip install -e ".[ml]"
+| Model | Key Metrics | Training |
+|-------|------------|----------|
+| **MPNN** | RMSE=0.7182, R²=0.6863, Pearson=0.8323 | 217s on H200, 12.7M params, 10,466 compounds |
+| **ADMET** | hERG AUROC=0.7745, CYP3A4 AUROC=0.7323 | 197s on L40S, 187K params, 27,698 molecules |
+| **VAE v3** | 99.9% valid (SELFIES), 94.8% unique | 31 min on H200, 9.5M params, 300 epochs |
 
-# Verify GPU is available
-python -c "import torch; print(torch.cuda.is_available())"  # Must print True
-
-# Train (can run all three sequentially or in parallel on separate GPUs)
-python scripts/train_vae.py --config configs/vae.yaml      # 2-4 hours
-python scripts/train_mpnn.py --config configs/mpnn.yaml     # 1-2 hours
-python scripts/train_admet.py --config configs/admet.yaml   # 2-3 hours
-```
-
-**What to watch for:**
-- VAE: KL collapse (all generated molecules identical) — reduce `kl_weight` in `configs/vae.yaml` from 0.01 to 0.005
-- MPNN: Overfitting (train loss drops, val loss rises) — increase `dropout` from 0.1 to 0.2
-- ADMET: One task dominating loss — adjust `task_weights` in `configs/admet.yaml`
-
-**Checkpoints go to:** `artifacts/models/{vae,mpnn,admet}/best_model.pt` — do NOT commit these to git.
+Checkpoints at `artifacts/models/{vae,mpnn,admet}/best_model.pt`.
 
 ---
 
-## 2. Fix CI/CD (Ruff Violations)
+## 2. ~~Fix CI/CD (Ruff Violations)~~ DONE
 
-~40 pre-existing ruff violations across `src/` guarantee CI failure on every push. Mostly auto-fixable.
-
-**What to do:**
-```bash
-ruff check --fix src/     # Auto-fix I001, F401, most E501
-ruff check src/           # See what's left (manual fixes needed)
-pytest -v --tb=short      # Verify nothing broke
-```
-
-**Risk:** Removing "unused" imports (F401) could break things if they're re-exported. Check each removal.
+All 121 ruff violations fixed (2026-04-06). CI lint passes clean. Ruff config in `pyproject.toml` ignores N803/N806/N815 (scientific convention) and E402 (lazy imports in `scoring.py`).
 
 ---
 
@@ -70,7 +48,7 @@ The Visionary AI proposed 12 strategic improvements. They need your judgment on 
 
 ## 4. Real Docking Validation
 
-The docking_proxy component (20% of scoring weight) is currently either a stub (constant 0.5) or a lightweight MLP proxy. Neither is real docking.
+The docking component (20% of scoring weight) uses a 3-tier cascade: MPNN (trained, active) → DockingProxy MLP → constant 0.5 stub. The MPNN provides learned affinity predictions but is still a proxy — not physics-based docking.
 
 **Options:**
 - **AutoDock Vina** — Open source, well-established, moderate accuracy. Requires prepared receptor + ligand PDB files.
@@ -102,22 +80,24 @@ Issues that are "working as designed" but limit scientific claims:
 | All 17 mutations map to DFGin_aCin (active state) | Context model evaluation is trivially 100% accurate | Hard — need multi-state mutation data |
 | `state_specificity` gives state-aware a built-in 0.15 weight advantage | Fair comparison is debatable | Easy — can run ablation with weight = 0 |
 | SMILES-level chemistry (string manipulation) | No 3D pose verification | Moderate — needs 3D conformer generation |
-| 18 mutations, ~80 candidates | Too small for strong statistical claims | Moderate — expand mutation set or generation |
+| 18 mutations, 461 candidates (395 VAE-generated) | VAE candidates expand space but dilute mean score | See null hypothesis discussion |
 | Single kinase family (EGFR only) | Can't claim generalizability | Hard — full pipeline rebuild for new targets |
 
 ---
 
 ## 7. Publication Readiness
 
-**What's needed for a paper:**
-1. Trained ML models with metrics meeting targets (see Section 1)
-2. Real docking scores (at minimum MPNN, ideally GNINA/Vina)
-3. Statistical significance on at least one primary metric (p < 0.05)
-4. Ablation study: what happens when you remove state_specificity from scoring?
-5. At least a brief comparison to one existing tool (e.g., ReinventSMILES, GENTRL)
+**Already achieved (portfolio-ready):**
+- [x] All 3 ML models trained with metrics meeting/exceeding targets
+- [x] Clean CI passing (548 tests, ruff clean)
+- [x] README updated with real results
+- [x] Statistical testing complete (Mann-Whitney U, bootstrap CI, Cohen's d, weight sensitivity)
+- [x] Clear limitations section
 
-**What's needed for a portfolio piece (lower bar):**
-1. Trained ML models
-2. Clean CI passing
-3. Updated README with real (non-stub) results
-4. Clear limitations section (already exists)
+**Still needed for a paper:**
+1. Real docking scores (GNINA/Vina) — MPNN is a learned proxy, not physics-based
+2. Ablation study: what happens when you remove state_specificity from scoring?
+3. Comparison to at least one existing tool (e.g., ReinventSMILES, GENTRL)
+4. Address the scoring function bias: reference similarity (35% weight) inherently penalizes novel VAE candidates
+
+**Key result to frame:** Null hypothesis retained — state-aware design does not produce statistically superior composite scores (p<0.001, static favored, d=1.36). However, it dramatically expands chemical space (431 novel candidates, diversity 0.9056 vs 0.5684). The tension between novelty and similarity-based scoring is itself a publishable finding.

@@ -4,6 +4,45 @@ Timestamped history of major project events. Newest first.
 
 ---
 
+## 2026-04-07
+
+**Comprehensive documentation refresh**
+All 25 documentation files updated to reflect final milestone state. 20 files in main repo + 5 HumanOnly files. All numbers now reflect: VAE v3 99.9% valid, MPNN cascade active, ADMET informational, 548 tests, null hypothesis retained, 431 novel candidates. Committed and pushed to origin ML.
+
+---
+
+## 2026-04-06
+
+**VAE v3 (SELFIES) trained -- 99.9% valid generation**
+After two failed SMILES-based attempts (v1: 0% valid due to teacher forcing bug; v2: 0% valid due to prior-posterior mismatch), switched to SELFIES representation which guarantees validity by construction. Trained 300 epochs on H200 (31 min). Generation: 999/1000 valid, 948 unique. Mean MW=341, 79.5% drug-like.
+
+**Full comparison re-run with VAE candidates**
+State-aware: 461 candidates (395 VAE + 36 template + 30 shared). Static: 30. Mann-Whitney U: p<0.001, d=1.36 (large, static favored). Max score: state-aware=0.7794 vs static=0.7288. Diversity: 0.9056 vs 0.5684. 431 novel candidates. Weight sensitivity: 44%/56%. Null hypothesis formally retained.
+
+**Comparison script bug fixed**
+Null hypothesis display always showed "NOT REJECTED" because `getattr(t, "significant", False)` always returned False (`StatisticalTest` dataclass has no `significant` field). Fixed to check `t.p_value < 0.05` AND `result.scores.delta_mean > 0`.
+
+**All ruff violations fixed (121→0)**
+CI lint now passes clean. Config updated to ignore N803/N806/N815 (scientific convention) and E402 (lazy imports).
+
+**Git push to origin ML**
+All commits pushed via SSH after adding ed25519 key. Fixed SSH config permissions (chmod 600) and added GitHub host key.
+
+---
+
+## 2026-04-05
+
+**MPNN trained -- all targets exceeded**
+RMSE=0.7182 (<1.0), R²=0.6863 (>0.5), Pearson=0.8323 (>0.7). 12.7M params, 10,466 compounds, best epoch 83/150. Trained in 217s on H200. Integrated into scoring cascade and verified (osimertinib=0.75, ethanol=0.34).
+
+**ADMET trained -- classification targets met**
+hERG AUROC=0.7745 (>0.75), CYP3A4 AUROC=0.7323 (>0.70). 187K params, 27,698 molecules, best epoch 40/150. Trained in 197s on L40S. Key finding: hard ADMET filtering eliminates ALL kinase inhibitor candidates (100% hERG failure). ADMET used as informational annotation, not pre-ranking gate.
+
+**VAE v1 and v2 attempted (both 0% valid)**
+v1 (2.6M params): 0% valid SMILES. Teacher forcing issue. v2 (9.5M params, improved config): still 0% valid at all temperatures. Root cause identified: prior-posterior mismatch + character-level SMILES fragility.
+
+---
+
 ## 2026-03-30
 
 **Documentation overhaul (Admin AI triage)**

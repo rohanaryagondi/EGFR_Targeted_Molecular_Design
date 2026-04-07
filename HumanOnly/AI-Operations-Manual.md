@@ -11,11 +11,12 @@ as instructions -- it is your playbook for orchestrating them.
 StateBind is a 12-module computational biology pipeline for EGFR-targeted molecular
 design. It tests whether conformational state-aware design outperforms static
 single-structure design. The codebase has 84 Python source files, 548 tests, and 3
-neural network architectures (VAE, MPNN, ADMET) that are written but not yet trained.
+trained neural networks (VAE, MPNN, ADMET). All 9 workstreams are complete, all models
+trained, and the null hypothesis has been formally retained (state-aware does not
+produce superior composite scores, but dramatically expands chemical space).
 
-There are 9 independent workstreams that upgrade the pipeline from its current state
-(SMILES string heuristics, a constant-0.5 docking stub, no statistical testing) to a
-research-grade system (RDKit chemistry, trained ML models, formal hypothesis testing).
+The pipeline has been upgraded from SMILES string heuristics to a research-grade system
+with RDKit chemistry, trained ML models, and formal hypothesis testing.
 
 You will use two types of AI agent:
 
@@ -31,12 +32,10 @@ pytest -v --tb=short
 This is non-negotiable. If tests fail, the work is not done. Send failures back to the
 agent and require fixes before accepting the deliverable.
 
-The ML models (VAE, MPNN, ADMET) have their architectures, configs, and training scripts
-written. They are NOT trained. Training requires a GPU and happens on your HPC cluster,
-not inside an AI coding session. Section 4 covers this.
+All 3 ML models are trained (2026-04-06 on Bouchet HPC). Section 4 retains the
+training instructions for reference if retraining is needed.
 
-Current test count: 359. Target after all workstreams: 500+.
-Current module count: 12 subpackages. Target after WS01: 13 (adds `chemistry/`).
+Current test count: 548. Module count: 12 subpackages (including `chemistry/`).
 
 ---
 
