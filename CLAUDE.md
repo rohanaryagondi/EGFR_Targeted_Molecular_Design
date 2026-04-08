@@ -130,4 +130,4 @@ repo/
 | `docs/ai-guide/pipeline-and-config.md` | Config system, data flow per phase, execution order, debug guide |
 | `docs/ai-guide/testing-and-deps.md` | Testing patterns, optional dependency handling, dependency groups |
 | `docs/ai-guide/workstreams.md` | Workstream index, parallel groups, conflict zones, worktree naming |
-| `docs/ai-guide/operations.md` | Merge procedure, documentation system, vision system, admin system |
+| `docs/ai-guide/operations.md` | Merge procedure, **post-merge doc audit checklist**, documentation system, vision system, admin system |
