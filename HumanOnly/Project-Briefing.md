@@ -1,49 +1,45 @@
 # Project Briefing
 
-Last updated: 2026-04-07
+Last updated: 2026-04-08
 
 ---
 
 ## Status at a Glance
 
-**Project is feature-complete.** All code written, all 9 workstreams complete, all 3 ML models trained, 548 tests pass, ruff clean, full comparison run, null hypothesis formally retained. Pushed to GitHub ML branch.
+**Project is complete.** All 12 workstreams finished and merged, all 3 ML models trained, 646 tests pass (640 on login node + 6 GPU-only), ruff clean, full comparison run, null hypothesis formally retained, retrospective validation confirms 10x enrichment. Pushed to GitHub ML branch.
 
 ---
 
 ## What's Done
 
 - **Core pipeline (Phases 1-7):** Static baseline (30 candidates) and state-aware pipeline (461 candidates: 395 VAE + 36 template + 30 shared) both scored by the same unified function
-- **9 workstreams complete:** Chemistry foundation, scoring integration, statistical testing, docking proxy, visualization, CI/CD, conditional VAE, MPNN affinity, ADMET predictor
+- **All 12 workstreams complete:**
+  - WS01-09: Chemistry foundation, scoring integration, statistical testing, docking proxy, visualization, CI/CD, conditional VAE, MPNN affinity, ADMET predictor
+  - WS11: GNINA physics-based docking (tier 0 in 4-tier scoring cascade, 33 tests)
+  - WS12: Pareto multi-objective optimization (weight-free hypervolume comparison, 36 tests)
+  - WS13: Retrospective time-split validation (predict post-2015 drugs from pre-2015 data, 28 tests)
 - **All 3 ML models trained:**
   - MPNN: RMSE=0.7182, R²=0.6863, Pearson=0.8323 (12.7M params, 10,466 compounds)
   - ADMET: hERG AUROC=0.7745, CYP3A4 AUROC=0.7323 (187K params, 27,698 molecules)
   - VAE v3 (SELFIES): 99.9% valid, 94.8% unique (9.5M params, 300 epochs)
-- **MPNN scoring cascade active:** MPNN → DockingProxy MLP → constant 0.5 stub. Verified: osimertinib=0.75, ethanol=0.34
+- **4-tier docking cascade:** GNINA → MPNN → DockingProxy MLP → constant 0.5 stub. GNINA provides real physics-based Vina + CNN scores with GPU guard.
 - **Full comparison run:** State-aware mean=0.4378 vs static=0.5437. Mann-Whitney U: p<0.001, d=1.36 (static favored). **Null hypothesis formally retained.** 431 novel candidates, diversity 0.9056 vs 0.5684
-- **548 tests across 19 files**, all passing. Ruff clean (121→0)
-- **Vision System:** 12 ideas proposed, **3 accepted** (005 GNINA, 008 Pareto, 009 Time-Split), 9 deferred
+- **Retrospective validation:** State-aware EF@10 = 4.95 (pre-2010) and 7.72 (pre-2015) vs static 0.47/0.79 — 10x enrichment over static baseline. Models retrained on time-split data with verified no-leakage.
+- **Pareto analysis:** Weight-free hypervolume comparison alongside weighted-sum scoring. Pareto front plots (2D projections + parallel coordinates).
+- **646 tests across 22 files**, all passing (640 on login node + 6 GPU-skipped). Ruff clean.
+- **Vision System:** 12 ideas proposed, 3 accepted and completed (005 GNINA, 008 Pareto, 009 Time-Split), 9 deferred
 - **Admin AI:** Two audits complete, 24 suggestions triaged (all resolved)
-- **Documentation:** Comprehensive refresh completed 2026-04-07 (20 files updated)
+- **Documentation:** Comprehensive audit completed 2026-04-08 (all stale references fixed)
 
 ---
 
-## What's Pending
+## What's Remaining
 
-### Vision Phase: 3 Accepted Workstreams
-
-| WS | Idea | Priority | Why |
-|----|------|----------|-----|
-| **11** | GNINA Physics-Informed Docking | Start first | Real docking scores + binding poses for 20% of scoring weight |
-| **12** | Pareto Multi-Objective Optimization | Parallel with WS11 | Weight-free hypervolume comparison eliminates arbitrary weight problem |
-| **13** | Retrospective Time-Split Validation | After WS11/WS12 | Predict future drugs from historical data -- strongest computational validation |
-
-Deploy WS11 + WS12 in parallel, WS13 after they're underway. See AI-Operations-Manual.md Sections 3 and 7 (Wave 8).
-
-### Deferred Ideas (9 total, revisit post-paper)
+### Deferred Vision Ideas (9 total, revisit post-paper)
 
 001 (continuous conditioning), 002 (3D diffusion), 003 (kinome selectivity), 004 (ensemble uncertainty), 006 (learned similarity), 007 (retrosynthesis), 010 (pre-training), 011 (water thermodynamics), 012 (RL optimization). Full rationale in `reports/head-ai-log.md`.
 
-### Remaining Stretch Goals
+### Stretch Goals
 
 - Active learning loop (VAE → MPNN → retrain cycle)
 - Multi-target expansion (ABL, ALK, BRAF)

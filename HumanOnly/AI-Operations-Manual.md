@@ -10,9 +10,9 @@ as instructions -- it is your playbook for orchestrating them.
 
 StateBind is a 12-module computational biology pipeline for EGFR-targeted molecular
 design. It tests whether conformational state-aware design outperforms static
-single-structure design. The codebase has 87 Python source files, 618 tests, and 3
-trained neural networks (VAE, MPNN, ADMET) plus GNINA physics-based docking. 11 of 12
-workstreams are complete (WS01-09, WS11-12), all models trained, and the null hypothesis
+single-structure design. The codebase has 91 Python source files, 646 tests, and 3
+trained neural networks (VAE, MPNN, ADMET) plus GNINA physics-based docking. All 12
+workstreams are complete (WS01-09, WS11-13), all models trained, and the null hypothesis
 has been formally retained.
 
 The pipeline has been upgraded from SMILES string heuristics to a research-grade system
@@ -35,10 +35,10 @@ agent and require fixes before accepting the deliverable.
 All 3 ML models are trained (2026-04-06 on Bouchet HPC). Section 4 retains the
 training instructions for reference if retraining is needed.
 
-Current test count: 618. Module count: 12 subpackages (including `chemistry/`).
+Current test count: 646. Module count: 12 subpackages (including `chemistry/`).
 
 **Testing policy:** Changes to scoring, ML, docking, or evaluation code require a
-full SLURM GPU test run (618/618 pass, 0 skips). See `docs/ai-guide/testing-and-deps.md`
+full SLURM GPU test run (646/646 pass, 0 skips). See `docs/ai-guide/testing-and-deps.md`
 for the 3-tier testing policy. The canonical SLURM script is `scripts/run_tests_all.slurm`.
 
 ---
@@ -632,7 +632,7 @@ should already exclude them. If it does not, add `artifacts/models/**/*.pt` to `
 
 ### After Full Integration
 
-- [ ] All 9 workstreams complete and verified
+- [ ] All 12 workstreams complete and verified
 - [ ] All 3 models trained with metrics meeting targets
 - [ ] `scripts/compare_baseline_vs_state_aware.py` runs end-to-end without errors
 - [ ] Statistical test produces a p-value (regardless of result)
@@ -764,7 +764,7 @@ All three maintain running documentation:
 Run the Vision System at these milestones:
 
 - **After all Group A workstreams complete** (WS01/03/06/07) -- initial vision
-- **After all 9 workstreams complete** -- post-workstream vision
+- **After all 12 workstreams complete** -- post-workstream vision
 - **After ML models are trained** -- post-training vision
 - **After full integration and final comparison** -- publication-readiness vision
 - **Any time the project feels stuck** -- strategic reset
@@ -778,7 +778,7 @@ Launch in any session (no worktree needed -- the Assistant only writes to `visio
 **Prompt:**
 > Read `vision/briefings/INSTRUCTIONS.md` completely -- this is your playbook. It lists
 > every file you must read and every briefing you must produce. Read ALL files listed
-> in the instructions (CLAUDE.md, GOALS.md, TODO.md, CRITICAL.md, all 9 workstream
+> in the instructions (CLAUDE.md, GOALS.md, TODO.md, CRITICAL.md, all 12 workstream
 > reports in reports/workstreams/, reports/head-ai-log.md, workstreams/README.md,
 > workstreams/INTERFACES.md, pyproject.toml, and the key source files listed). Then
 > write or update all 5 briefing files in vision/briefings/. Be honest about

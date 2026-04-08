@@ -106,11 +106,11 @@ The state-aware pipeline finds molecules the static pipeline can't: type-II inhi
 ## Codebase at a Glance
 
 ```
-87 Python source files across 12 subpackages
-40 pipeline scripts
-618 tests (all passing, 0 skips on full GPU run)
-21 test files
-7 YAML config files
+91 Python source files across 12 subpackages
+49 pipeline scripts
+646 tests (all passing, 6 GPU-skips on login node)
+22 test files
+12 YAML config files
 ```
 
 **Technology:** Python 3.10+, Pydantic v2 (all data models), NumPy, pandas, PyYAML, Typer+Rich (CLI). Optional: RDKit (chemistry), PyTorch + PyG (ML), SciPy + scikit-learn (statistics), matplotlib (visualization).
@@ -119,7 +119,7 @@ The state-aware pipeline finds molecules the static pipeline can't: type-II inhi
 
 ---
 
-## 11 Improvement Workstreams (11 Complete, 1 Remaining)
+## 12 Improvement Workstreams (All Complete)
 
 The pipeline was upgraded from SMILES string heuristics to research-grade components:
 
@@ -136,7 +136,7 @@ The pipeline was upgraded from SMILES string heuristics to research-grade compon
 | 09 | ADMET Predictor | Safety filter gate, TDC data prep, multi-task adapter | Complete |
 | 11 | GNINA Docking | Physics-based docking as tier 0 in scoring cascade (33 tests) | Complete |
 | 12 | Pareto Optimization | Weight-free hypervolume comparison + Pareto front plots (36 tests) | Complete |
-| 13 | Retrospective Validation | Time-split validation (predict post-2015 drugs from pre-2015 data) | Not started |
+| 13 | Retrospective Validation | Time-split validation at 2010/2015 cutoffs, 10x enrichment over static (28 tests) | Complete |
 
 ---
 
@@ -151,7 +151,7 @@ pip install -e ".[chemistry]"    # + RDKit
 pip install -e ".[ml]"           # + PyTorch + PyG (for training)
 
 # Run tests
-pytest -v --tb=short             # 618 tests
+pytest -v --tb=short             # 646 tests
 
 # Run full pipeline (no GPU needed)
 python scripts/build_context_dataset.py

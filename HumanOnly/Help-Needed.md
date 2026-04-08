@@ -24,38 +24,23 @@ All 121 ruff violations fixed (2026-04-06). CI lint passes clean. Ruff config in
 
 ---
 
-## 3. Review 12 Vision Ideas
+## 3. ~~Review 12 Vision Ideas~~ DONE
 
-The Visionary AI proposed 12 strategic improvements. They need your judgment on priorities. You can either review them yourself or delegate to the Head AI.
+All 12 Visionary ideas reviewed. 3 accepted and completed as workstreams:
+- **005 → WS11:** GNINA physics-based docking (merged 2026-04-07)
+- **008 → WS12:** Pareto multi-objective optimization (merged 2026-04-07)
+- **009 → WS13:** Retrospective time-split validation (merged 2026-04-08)
 
-**Ideas (in `vision/ideas/`):**
-1. Continuous conformational conditioning (replace discrete 4-state with continuous)
-2. 3D pocket-aware diffusion model
-3. Kinome-wide selectivity panel
-4. Ensemble uncertainty quantification
-5. GNINA neural docking integration
-6. Learned molecular similarity (contrastive)
-7. Retrosynthetic feasibility scoring
-8. Pareto multi-objective optimization
-9. Time-split validation protocol
-10. Self-supervised molecular pretraining
-11. Explicit water thermodynamics
-12. RL-guided molecular optimization
-
-**Quick recommendation:** Ideas 5 (GNINA docking), 7 (retrosynthetic feasibility), and 9 (time-split validation) have the highest impact-to-effort ratio. Ideas 1 (continuous conditioning) and 8 (Pareto optimization) are the most scientifically interesting.
+9 deferred (revisit post-paper): 001, 002, 003, 004, 006, 007, 010, 011, 012.
 
 ---
 
-## 4. Real Docking Validation
+## 4. ~~Real Docking Validation~~ DONE (WS11)
 
-The docking component (20% of scoring weight) uses a 3-tier cascade: MPNN (trained, active) → DockingProxy MLP → constant 0.5 stub. The MPNN provides learned affinity predictions but is still a proxy — not physics-based docking.
+GNINA physics-based docking integrated as tier 0 of the 4-tier scoring cascade:
+GNINA → MPNN → DockingProxy MLP → constant 0.5 stub.
 
-**Options:**
-- **AutoDock Vina** — Open source, well-established, moderate accuracy. Requires prepared receptor + ligand PDB files.
-- **GNINA** — Neural network-augmented docking, better than Vina for CNNscore. Open source.
-- **Glide/FEP+** — Schrodinger commercial software. Gold standard but expensive.
-
-**What you'd need:** Prepared EGFR receptor structures (4 states) in PDBQT format. The 16 PDB structures are already cataloged in the structure atlas.
+GNINA provides real Vina scores + CNN scores with 3D binding poses. Receptors prepared for all 4 conformational states. GPU guard prevents CPU docking. Validation: binders -7.32 vs non-binders -4.16 kcal/mol (33 tests).
 
 ---
 
@@ -89,15 +74,16 @@ Issues that are "working as designed" but limit scientific claims:
 
 **Already achieved (portfolio-ready):**
 - [x] All 3 ML models trained with metrics meeting/exceeding targets
-- [x] Clean CI passing (548 tests, ruff clean)
+- [x] Clean CI passing (646 tests, ruff clean)
 - [x] README updated with real results
 - [x] Statistical testing complete (Mann-Whitney U, bootstrap CI, Cohen's d, weight sensitivity)
 - [x] Clear limitations section
 
 **Still needed for a paper:**
-1. Real docking scores (GNINA/Vina) — MPNN is a learned proxy, not physics-based
-2. Ablation study: what happens when you remove state_specificity from scoring?
-3. Comparison to at least one existing tool (e.g., ReinventSMILES, GENTRL)
-4. Address the scoring function bias: reference similarity (35% weight) inherently penalizes novel VAE candidates
+1. ~~Real docking scores~~ DONE (WS11: GNINA integrated)
+2. ~~Retrospective validation~~ DONE (WS13: 10x enrichment over static, time-split at 2010/2015)
+3. Ablation study: what happens when you remove state_specificity from scoring?
+4. Comparison to at least one existing tool (e.g., ReinventSMILES, GENTRL)
+5. Address the scoring function bias: reference similarity (35% weight) inherently penalizes novel VAE candidates
 
 **Key result to frame:** Null hypothesis retained — state-aware design does not produce statistically superior composite scores (p<0.001, static favored, d=1.36). However, it dramatically expands chemical space (431 novel candidates, diversity 0.9056 vs 0.5684). The tension between novelty and similarity-based scoring is itself a publishable finding.

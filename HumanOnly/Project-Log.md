@@ -4,6 +4,22 @@ Timestamped history of major project events. Newest first.
 
 ---
 
+## 2026-04-08
+
+**WS13 (Retrospective Validation) merged, comprehensive doc audit**
+
+Head AI Generation 6 reviewed and merged WS13:
+
+- **WS13 (Retrospective Validation):** Time-split validation at 2010 and 2015 cutoffs. Retrains MPNN and VAE on pre-cutoff data, generates candidates, and measures enrichment of known future drugs. State-aware EF@10 = 4.95 (pre-2010) and 7.72 (pre-2015) vs static 0.47/0.79 — 10x enrichment. 28 new tests, all passing. Robust leakage prevention with `verify_no_leakage()` + 6 dedicated tests. Agent had not committed — Head AI committed and merged.
+
+**Test count:** 618 → 646 (+28 retrospective tests). Total: 640 pass on login node + 6 GPU-skipped.
+
+**All 12 workstreams now complete.** WS01-09 (core upgrades), WS11 (GNINA docking), WS12 (Pareto optimization), WS13 (retrospective validation).
+
+**Comprehensive documentation audit:** Fixed 20+ stale file:line references in CRITICAL.md and docs/ai-guide/. Updated all project docs (CLAUDE.md, GOALS.md, TODO.md, workstreams/README.md, all HumanOnly files) to reflect 12/12 workstreams, 646 tests, and WS13 results.
+
+---
+
 ## 2026-04-07 (night)
 
 **WS11 + WS12 merged, sklearn fix, 618 tests passing**
