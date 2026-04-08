@@ -1,0 +1,14 @@
+{
+  "cutoff_year": 2010,
+  "source": "/home/rag88/projects/statebind/repo/.claude/worktrees/ws13-retro/data/processed/timesplit_2010_train.json",
+  "generated_at": "2026-04-08T00:57:32.291909+00:00",
+  "n_train": 2379,
+  "n_val": 595,
+  "state_distribution": {
+    "DFGout_aCin": 369,
+    "DFGout_aCout": 371,
+    "DFGin_aCin": 1886,
+    "DFGin_aCout": 348
+  },
+  "notes": "VAE training data restricted to pre-2010 compounds. State assignments use structural heuristics."
+}

@@ -209,6 +209,83 @@ def pareto_summary_ascii(result: ComparativeResult) -> str:
     return "\n".join(lines)
 
 
+def retrospective_enrichment_ascii(result: ComparativeResult) -> str:
+    """ASCII bar chart of enrichment factors per cutoff and pipeline."""
+    from statebind.evaluation.retrospective import RetrospectiveComparison
+
+    lines = ["## Retrospective Enrichment Factors", ""]
+
+    retro = getattr(result, "retrospective", None)
+    if not isinstance(retro, RetrospectiveComparison):
+        lines.append("  No retrospective validation has been run.")
+        return "\n".join(lines)
+
+    for cutoff in retro.cutoffs:
+        cutoff_results = [
+            r for r in retro.results if r.cutoff_year == cutoff
+        ]
+        if not cutoff_results:
+            continue
+
+        lines.append(f"  Cutoff {cutoff}:")
+
+        for k in [10, 50]:
+            max_ef = max(
+                (r.enrichment_factors.get(k, 0.0) for r in cutoff_results),
+                default=1.0,
+            )
+            max_ef = max(max_ef, 1.0)  # At least 1.0 for scale
+
+            for r in cutoff_results:
+                label = "Static   " if r.pipeline == "static" else "State-aw."
+                ef = r.enrichment_factors.get(k, 0.0)
+                lines.append(
+                    f"    {label} EF@{k:<3d} {_bar(ef, max_ef, 25)} {ef:.2f}"
+                )
+            lines.append("")
+
+    return "\n".join(lines)
+
+
+def retrospective_summary_ascii(result: ComparativeResult) -> str:
+    """ASCII table summarizing retrospective validation results."""
+    from statebind.evaluation.retrospective import RetrospectiveComparison
+
+    lines = ["## Retrospective Validation Summary", ""]
+
+    retro = getattr(result, "retrospective", None)
+    if not isinstance(retro, RetrospectiveComparison):
+        lines.append("  No retrospective validation has been run.")
+        return "\n".join(lines)
+
+    header = (
+        f"  {'Cutoff':<8} {'Pipeline':<14} {'EF@10':>7} {'EF@50':>7} "
+        f"{'Max Sim':>8} {'Novelty':>8} {'Found':>8}"
+    )
+    lines.append(header)
+    lines.append("  " + "\u2500" * (len(header) - 2))
+
+    for r in retro.results:
+        found = sum(1 for rank in r.future_drug_ranks.values() if rank is not None)
+        total = r.n_future_drugs
+        lines.append(
+            f"  {r.cutoff_year:<8} {r.pipeline:<14} "
+            f"{r.enrichment_factor_10:>7.2f} {r.enrichment_factor_50:>7.2f} "
+            f"{r.max_similarity_to_future:>8.3f} "
+            f"{r.novelty_vs_training:>8.2f} "
+            f"{found:>3}/{total:<3}"
+        )
+
+    if retro.summary:
+        lines.append("")
+        # Include just the last line (overall assessment) from summary
+        summary_lines = retro.summary.strip().split("\n")
+        if summary_lines:
+            lines.append(f"  {summary_lines[-1].strip()}")
+
+    return "\n".join(lines)
+
+
 def plot_pareto_projections(
     pareto: object,
     save_dir: str | Path | None = None,
@@ -375,6 +452,11 @@ def generate_all_figures(
     # WS12: Pareto analysis figure
     if getattr(result, "pareto", None) is not None:
         figures["pareto_summary"] = pareto_summary_ascii(result)
+
+    # WS13: Retrospective validation figures
+    if getattr(result, "retrospective", None) is not None:
+        figures["retrospective_enrichment"] = retrospective_enrichment_ascii(result)
+        figures["retrospective_summary"] = retrospective_summary_ascii(result)
 
     if output_dir is not None:
         output_dir = Path(output_dir)

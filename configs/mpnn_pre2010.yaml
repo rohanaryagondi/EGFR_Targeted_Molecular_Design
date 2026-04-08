@@ -1,0 +1,41 @@
+# MPNN config for retrospective validation: pre-2010 cutoff
+# Trained only on EGFR compounds published before 2010.
+
+model:
+  atom_feature_dim: 35
+  bond_feature_dim: 11
+  hidden_dim: 128
+  n_message_passing_layers: 3
+  dropout: 0.1
+  readout: mean_max
+
+training:
+  epochs: 150
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  lr_scheduler: cosine
+  patience: 20
+  gradient_clip: 1.0
+  device: auto
+  checkpoint_dir: artifacts/models/mpnn_pre2010/
+  log_dir: artifacts/logs/mpnn_pre2010/
+  seed: 42
+  num_workers: 4
+  mixed_precision: false
+
+data:
+  data_path: data/processed/timesplit_2010_train.json
+  smiles_column: smiles
+  target_column: pIC50
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+
+evaluation:
+  metrics:
+    - rmse
+    - mae
+    - r2
+    - pearson
+  output_path: artifacts/evaluation/mpnn_pre2010_metrics.json

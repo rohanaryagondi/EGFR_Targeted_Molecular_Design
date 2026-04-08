@@ -20,6 +20,11 @@ CLI argument (convention, not enforced by framework). Configs are loaded via
 | `configs/vae.yaml` | VAE hyperparameters: vocab_size=150, embed_dim=128, hidden_dim=256, latent_dim=64, KL annealing (20 epoch warmup) | `scripts/train_vae.py` |
 | `configs/mpnn.yaml` | MPNN hyperparameters: hidden_dim=128, 3 message-passing layers, mean_max readout | `scripts/train_mpnn.py` |
 | `configs/admet.yaml` | ADMET hyperparameters: GIN backbone, 6 tasks, task weights (hERG=1.5x) | `scripts/train_admet.py` |
+| `configs/retrospective.yaml` | Retrospective validation: cutoff years, enrichment K values, similarity thresholds, reference binders | `scripts/run_retrospective_validation.py` |
+| `configs/mpnn_pre2010.yaml` | MPNN retrained on pre-2010 data | `scripts/train_mpnn.py` |
+| `configs/mpnn_pre2015.yaml` | MPNN retrained on pre-2015 data | `scripts/train_mpnn.py` |
+| `configs/vae_pre2010.yaml` | VAE retrained on pre-2010 data (SELFIES) | `scripts/train_vae.py` |
+| `configs/vae_pre2015.yaml` | VAE retrained on pre-2015 data (SELFIES) | `scripts/train_vae.py` |
 
 ### Config Convention
 
@@ -46,6 +51,8 @@ Logs: `artifacts/logs/{name}/`.
 | 6 - Generation | `scripts/generate_state_conditioned_candidates.py`, `scripts/filter_generated_candidates.py` | `artifacts/structure/`, `artifacts/context/` | `artifacts/generation/candidates.json`, `artifacts/generation/filtered.json` |
 | 7a - Ranking | `scripts/rerank_candidates.py` | `artifacts/baselines/`, `artifacts/generation/` | `artifacts/ranking/merged.json` |
 | 7b - Evaluation | `scripts/compare_baseline_vs_state_aware.py`, `scripts/report_comparative_results.py`, `scripts/generate_final_summary.py` | `artifacts/ranking/merged.json` | `artifacts/evaluation/comparison.json`, `reports/*.md` |
+| Retro - Time-split data | `scripts/build_timesplit_datasets.py`, `scripts/build_timesplit_vae_data.py` | ChEMBL EGFR data + `configs/retrospective.yaml` | `data/processed/timesplit_{cutoff}_train.json`, `data/processed/egfr_smiles_pre{cutoff}_*.json` |
+| Retro - Validation | `scripts/run_retrospective_validation.py` | Time-split data + `configs/retrospective.yaml` + pre-cutoff model checkpoints | `artifacts/evaluation/retrained/retrospective_{cutoff}_retrained.json` |
 
 ### Execution Order (abbreviated)
 

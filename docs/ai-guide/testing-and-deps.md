@@ -45,7 +45,7 @@ def test_vae_training():
 
 ## Test Count
 
-If you add tests, the total count must be >= 618. Never delete or skip existing
+If you add tests, the total count must be >= 646. Never delete or skip existing
 tests without explicit justification.
 
 ---
@@ -60,7 +60,7 @@ tests without explicit justification.
 |------|---------|------|------|----------------|
 | **Quick local** | `pytest -v --tb=short` | Every code change, before any commit | ~30s | Core logic, no optional deps |
 | **Full local** | `pip install -e ".[dev,science]" && pytest -v --tb=short` | After adding tests or changing imports | ~30s | + sklearn/scipy/matplotlib tests |
-| **Full SLURM GPU** | Submit `scripts/run_tests_all.slurm` | See trigger list below | ~65 min | ALL 618 tests pass, 0 skips, 0 failures |
+| **Full SLURM GPU** | Submit `scripts/run_tests_all.slurm` | See trigger list below | ~65 min | ALL 646 tests pass, 0 skips, 0 failures |
 
 ### When Full SLURM GPU Tests Are Required
 
@@ -103,8 +103,9 @@ but limited). Add `--requeue` for scavenge to handle preemption.
 
 ### What "All Tests Pass" Means
 
-The gold standard is **618 passed, 0 skipped, 0 failures** on a GPU node with all
-dependencies installed. This was verified on 2026-04-07 (SLURM job 7587145, L40S GPU).
+The gold standard is **646 passed, 0 skipped, 0 failures** on a GPU node with all
+dependencies installed. Previously 618 (verified 2026-04-07, SLURM job 7587145, L40S GPU).
+WS13 added 28 retrospective validation tests (verified 2026-04-08, SLURM job 7599288).
 
 **Acceptable skips:** Only if an external binary is genuinely unavailable (e.g., GNINA
 not installed on a particular node). Missing pip packages (torch, sklearn, pymoo,

@@ -1,0 +1,39 @@
+{
+  "cutoff_year": 2010,
+  "source": "chembl_api",
+  "n_train": 2974,
+  "n_held_out": 5,
+  "held_out_drugs": [
+    {
+      "name": "afatinib",
+      "smiles": "CN(C)C/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC1CCOC1",
+      "approved_year": 2013
+    },
+    {
+      "name": "osimertinib",
+      "smiles": "COc1cc(N(C)CCN(C)C)c(NC(=O)/C=C/CN(C)C)cc1Nc1nccc(-c2cn(C)c3ccccc23)n1",
+      "approved_year": 2015
+    },
+    {
+      "name": "dacomitinib",
+      "smiles": "CN(C)C/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC1CCCC1",
+      "approved_year": 2018
+    },
+    {
+      "name": "lazertinib",
+      "smiles": "C=CC(=O)Nc1cccc(Nc2nccc(-c3cn(C)c4ccccc34)n2)c1OC",
+      "approved_year": 2021
+    },
+    {
+      "name": "mobocertinib",
+      "smiles": "C=CC(=O)Nc1cc(Nc2ncc(-c3cccnc3)c(-c3ccsc3)n2)c(OC)cc1N(C)CCN(C)C",
+      "approved_year": 2021
+    }
+  ],
+  "pre_cutoff_reference_binders": [
+    "COCCOc1cc2ncnc(Nc3cccc(C#C)c3)c2cc1OCCOC",
+    "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCCN1CCOCC1"
+  ],
+  "generated_at": "2026-04-07T22:24:41.541494+00:00",
+  "notes": "Time-split EGFR dataset for retrospective validation. Training data restricted to compounds published <= 2010. Future drugs excluded from training set."
+}

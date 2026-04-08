@@ -8,7 +8,7 @@ are in `docs/ai-guide/` -- read them when working on the relevant area.
 ```
 Package:   statebind (installed from src/statebind/)
 Python:    >=3.10
-Tests:     pytest -v --tb=short   (618 passing)
+Tests:     pytest -v --tb=short   (646 passing)
 Lint:      ruff check src/
 Install:   pip install -e ".[dev]"
 ML deps:   pip install -e ".[ml]"
@@ -31,7 +31,7 @@ project compares a static baseline (1M17, one pocket) against a state-aware pipe
 3. **Pydantic v2 models.** All cross-module data structures are `BaseModel` subclasses.
 4. **Config-driven.** No hard-coded thresholds/parameters. Use YAML configs in `configs/`.
 5. **No hard-coded paths.** Use `statebind.data.paths.DataPaths` for path resolution.
-6. **Tests required.** Every new function needs tests. 618+ tests must pass. Run pytest before commits. See `docs/ai-guide/testing-and-deps.md` for full testing policy including SLURM GPU test requirements.
+6. **Tests required.** Every new function needs tests. 646+ tests must pass. Run pytest before commits. See `docs/ai-guide/testing-and-deps.md` for full testing policy including SLURM GPU test requirements.
 7. **Artifacts on disk.** Modules communicate via JSON in `artifacts/`, never in-memory.
 8. **Backward compatibility.** Optional deps (RDKit, scipy, torch) always have fallback paths.
    Core deps: numpy, pandas, pyyaml, pydantic, typer, rich.
@@ -73,7 +73,7 @@ data/ + utils/ + chemistry/   Shared infrastructure
 | `ml/` | 3 neural nets + training + integration | `vae.py`, `mpnn.py`, `admet.py`, `trainer.py` |
 | `generation/` | State-conditioned generation + filtering | `generator.py`, `filtering.py` |
 | `ranking/` | Unified scoring, Pareto optimization | `scoring.py`, `pareto.py` |
-| `evaluation/` | Comparison, statistics, figures, Pareto, docking analysis | `comparison.py`, `figures.py`, `pareto_comparison.py`, `docking_analysis.py` |
+| `evaluation/` | Comparison, statistics, figures, Pareto, docking analysis, retrospective | `comparison.py`, `figures.py`, `pareto_comparison.py`, `docking_analysis.py`, `retrospective.py` |
 
 ## File Organization
 
@@ -81,10 +81,10 @@ data/ + utils/ + chemistry/   Shared infrastructure
 repo/
 |-- CLAUDE.md, CRITICAL.md       AI guides (this file + non-obvious facts)
 |-- pyproject.toml                Package definition
-|-- src/statebind/                84 .py files across 12 subpackages
-|-- tests/                        21 test files, 618 tests
-|-- configs/                      7 YAML: default, structure, context, vae, mpnn, admet, docking
-|-- scripts/                      37 pipeline scripts
+|-- src/statebind/                91 .py files across 12 subpackages
+|-- tests/                        22 test files, 646 tests
+|-- configs/                      12 YAML: default, structure, context, vae, mpnn, admet, docking, retrospective, mpnn_pre2010, mpnn_pre2015, vae_pre2010, vae_pre2015
+|-- scripts/                      49 pipeline scripts
 |-- data/raw/, data/processed/    Input and processed datasets
 |-- artifacts/                    Pipeline outputs (JSON artifacts)
 |-- reports/                      Generated reports

@@ -86,6 +86,36 @@ python scripts/train_admet.py          # Multi-task ADMET predictor
 | MPNN | **Trained** | RMSE=0.7182, R²=0.6863, Pearson=0.8323. 12.7M params, 10,466 compounds, best epoch 83/150. Trained 217s on H200. Checkpoint: `artifacts/models/mpnn/best_model.pt` (50MB). Active in scoring cascade |
 | ADMET | **Trained** | hERG AUROC=0.7745, CYP3A4 AUROC=0.7323. 187K params, 27,698 molecules (6 TDC endpoints), best epoch 40/150. Trained 197s on L40S. Checkpoint: `artifacts/models/admet/best_model.pt` (775KB). Informational only — hard filtering rejects ALL kinase inhibitors |
 
+## Pre-Cutoff Models (WS13 Retrospective Validation)
+
+Retrained MPNN and VAE models on time-restricted pre-cutoff data for retrospective validation.
+
+### Pre-Cutoff MPNN
+
+| Cutoff | N_train | Best Epoch | Test RMSE | Test R² | Test Pearson | Checkpoint |
+|--------|---------|------------|-----------|---------|--------------|------------|
+| 2010 | 2,379 | 79/150 | 0.701 | 0.717 | 0.854 | `artifacts/models/mpnn_pre2010/best_model.pt` |
+| 2015 | 3,881 | 15/150 | 0.760 | 0.690 | 0.832 | `artifacts/models/mpnn_pre2015/best_model.pt` |
+
+Same architecture as main MPNN (hidden_dim=128, 3 MP layers, mean_max readout). Configs: `configs/mpnn_pre2010.yaml`, `configs/mpnn_pre2015.yaml`.
+
+### Pre-Cutoff VAE (SELFIES)
+
+| Cutoff | N_train | Best Epoch | Unique Valid Candidates | Checkpoint |
+|--------|---------|------------|------------------------|------------|
+| 2010 | 2,379 | 298/300 | 987 (100% valid) | `artifacts/models/vae_pre2010/best_model.pt` |
+| 2015 | 3,881 | 299/300 | 968 (100% valid) | `artifacts/models/vae_pre2015/best_model.pt` |
+
+Same architecture as main VAE. SELFIES mode is essential for small training sets — SMILES mode produced 0-7.9% valid molecules. Configs: `configs/vae_pre2010.yaml`, `configs/vae_pre2015.yaml`.
+
+Training commands:
+```bash
+python scripts/train_mpnn.py --config configs/mpnn_pre2010.yaml   # Pre-2010 MPNN
+python scripts/train_mpnn.py --config configs/mpnn_pre2015.yaml   # Pre-2015 MPNN
+python scripts/train_vae.py --config configs/vae_pre2010.yaml --selfies  # Pre-2010 VAE
+python scripts/train_vae.py --config configs/vae_pre2015.yaml --selfies  # Pre-2015 VAE
+```
+
 ## Integration
 
 - **VAE -> generation:** `generation/vae_integration.py` loads pre-generated VAE candidates

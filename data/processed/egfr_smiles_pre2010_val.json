@@ -1,0 +1,2382 @@
+[
+  {
+    "smiles": "CCCCCOc1ccc(Nc2c(C#N)cnc3cc(OCC)c(NC(=O)/C=C/CN(C)C)cc23)cc1Cl",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cc(NC(=O)c4ccccc4)c(F)cc3F)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc2c(Nc3cccc(Br)c3)ncnc2n1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CNN1C(=O)c2c(c3c4cccc(O)c4n(C4OC(CO)C(O)C(O)C4O)c3c3[nH]c4c(O)cccc4c23)C1=O",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CNc1ccc2cncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(O)c(O)c1)C(=O)c1ccc(O)c(O)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#Cc1cnc2ccc(-c3ccc(CN4CCOCC4)cc3)cc2c1N[C@@H]1C[C@H]1c1ccccc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "O=C(OCC1CCCCC1)c1cc(NCc2cc(O)ccc2O)ccc1O",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(NNc3ccc(F)c(Cl)c3)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C/c1ccc(O)c(O)c1)C(=O)Nc1ccccc1Cl",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1cc2c(Cc3cccc(C)c3)ncnc2cc1OCCCN1CCC(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "c1ccc(CNc2ncnc3ccncc23)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ccc2c(Nc3cccc(C(F)(F)F)c3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Oc1ccc(NCc2cc(O)ccc2O)cc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CN(CCOc1cccc2ncnc(Nc3ccc(OCc4ccccn4)c(Cl)c3)c12)C(=O)CO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccccc1CO/N=C/c1c(N)ncnc1Nc1ccc2c(cnn2Cc2cccc(F)c2)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OC[C@@H](O)CN1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCN(CC)[C@@](C)(CCc1ncnc2cc(OC)c(OC)cc12)Cc1ccccc1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "O=C1CSC(N/N=C/c2ccc([N+](=O)[O-])cc2)=N1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Fc1cccc(Cn2ncc3cc(Nc4ncnn5ccc(COC[C@@H]6COCCN6)c45)ccc32)c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1nc(Nc2ccc(-c3nc4ccccc4s3)c(OC)c2)c2cc[nH]c2n1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1ccc2ncc(C#N)c(N[C@@H]3C[C@H]3c3ccccc3)c2c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(OCc4ccccc4)cc3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CNC(=N)SCCCn1c(=O)c2c(c1=O)n1c3ccccc3cc1c1cccc3ccn2c31",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "C#CCNC/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)c(C#N)cnc2cc1OCC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)CCN(C)c1c(Br)cccc1Nc1ncnc2ccncc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cccc(-c2cn(C3CCNC3)c3ncnc(N)c23)c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Clc1cc(Nc2ncnc3[nH]nc(OCCCN4CCOCC4)c23)ccc1OCc1ccccn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Brc1cccc(Nc2ncnc3c2sc2ncccc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCn1cnc2c(Nc3cccc(Cl)c3)nc(N[C@@H]3CCCC[C@@H]3N)nc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN1CCN(/N=C/c2c(N)ncnc2Nc2ccc3c(cnn3Cc3cccc(F)c3)c2)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccc(Br)c(O)c1)nn2C1CCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Brc1cccc(Nc2ncnc3ccncc23)c1NCCN1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(Nc1cccc(C(F)(F)F)c1)Nc1ncnc2nn3ccccc3c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(O)c(O)c1)C(=O)NCCCCNC(=O)/C(C#N)=C/c1ccc(O)c(O)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1cccc2ncnc(Nc3cccc(Br)c3)c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ccn2ncnc(Nc3ccc4c(cnn4Cc4ccccn4)c3)c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3ccc(F)c(Cl)c3)c2cc1NC(=O)/C=C/C(C)N1CCOCC1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Nc1ccc2ncnc(NCc3ccccc3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(N3CCc4ccccc43)c2cc1OC",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Sc1ncnc(Oc3cccc(Cl)c3F)c1NC2",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1.Cc1ccc(S(=O)(=O)O)cc1.Cc1ccc(S(=O)(=O)O)cc1.O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1CN1CCC[C@H]1C(N)=O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CNc1cc2c(Nc3ccccc3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCCCCCCCCOC(=O)COc1cc(O)c2c(=O)cc(-c3ccccc3)oc2c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "N#Cc1cnc2ccc(NCc3c[nH]cn3)cc2c1Nc1ccc(F)c(Cl)c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Cc1ccc(Oc2ccc(Nc3ncnc4cccc(O[C@H](C)C(=O)N(C)C)c34)cc2C)cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(O)c(O)c1)C(=O)N1CCc2ccccc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccc3ncccc3c1)nn2C1CCCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3cccc(SC)c3)c2cc1OC",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CN(C)CCCNC(=O)/C=C/C(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)N(C)c1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1cc2ncnc(NCc3cccc(C(F)(F)F)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(O)CCNc1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2cc(F)c(O)cc2F)c2c(N)ncnc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Cc1[nH]c2ncnc(Nc3cccc(C(F)(F)F)c3)c2c1C",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NCCCNC(=O)c1cccc(Nc2nccc(-c3cccnc3)n2)c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccn3ccnc3c1)nn2C1CCCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "ClCCNc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cc(C2CCN(CCCF)CC2)cc2[nH]c(-c3c(NCCn4cc(Cl)cn4)cc[nH]c3=O)nc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ccc2cncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CNC(=O)c1c([Se][Se]c2c(C(=O)NC)c3ccccc3n2C)n(C)c2ccccc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cl.O=C(CCN1CCOCC1)c1ccc(OCc2ccccc2)cc1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CN1CCC(Nc2ncc3ncnc(Nc4ccc(F)c(Cl)c4)c3n2)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1ncn2CC(=O)c1ccccn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(-c2nn(C(C)C)c3ncnc(N)c23)ccc1NC(=O)OC(C)(C)C",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(N[C@@H]3C[C@H]3c3ccccc3)c2cc1OCc1ccccc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Nc1nc(Nc2cccc(Br)c2)c2cc(Cc3ccc(Cl)cc3Cl)[nH]c2n1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)CCCCCNc1c(Br)cccc1Nc1ncnc2ccncc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(O[C@H](C)c4ccccc4)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1ccc(NC(=O)c2ccc(N(CCCl)CCCl)cc2)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CSc1ccc(CCCCCn2cc(CCN)c3cc(OCCc4ccc(O)cc4)ccc32)cc1.Cl",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CN(C)CCCC(=O)Nc1ccc2nccc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CONC(=O)c1cc(NCc2cc(O)ccc2O)ccc1O",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1ccc(C#CC(C)(C)N)cc1C(=O)c1ccc(Nc2ccc(F)cc2F)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cc(C(=O)N2CCOCC2)[nH]c1/C=C1\\C(=O)Nc2ncnc(Nc3ccc(F)c(Cl)c3)c21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(N2CCC(N3CCN(S(C)(=O)=O)CC3)CC2)ccc1Nc1nccc(-c2c(-c3cccc(C(=O)Nc4c(F)cccc4F)c3)nc3ccccn23)n1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Oc1ncnc(Nc3ccc(Br)cc3)c1NC2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc(NC(=O)Nc2nc3nc(NCCCN4CCN(C)CC4)ncc3cc2-c2c(Cl)cccc2Cl)cc1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3ccc(-c4nc5ccccc5s4)cc3O)ncnc2cc1OCCCN1CCN(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(O)c(O)c1)C(=O)NCCCCCCCCNC(=O)/C(C#N)=C/c1ccc(O)c(O)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1ncc(-c2nn(C(C)C)c3ncnc(N)c23)c(OC)n1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O[C@@H]1CNCCN(Cc2ccn3ncnc(Nc4ccc5c(cnn5Cc5cccc(F)c5)c4)c23)C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOC(=O)c1ccc(-c2cn(-c3ccccc3)c3ncnc(N)c23)cc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Nc1cc2sc3c(Nc4cccc(Br)c4)ncnc3c2cc1F",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(-c3c[nH]c4cc(F)c(Cl)cc34)c2cc1OCCCN1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN1CCN(CCCNc2ncc3cc(-c4c(Cl)cccc4Cl)c(NC(=O)NCc4ccccc4)nc3n2)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Sc1ncnc(Nc3ccc(F)c(Cl)c3)c1NC2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(OCc4ccccc4)c(Cl)c3)c2cc1NC(=O)/C=C/CN1CCSCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(Nc1cccc(Nc2cc(Nc3cccc(C(F)(F)F)c3)ncn2)c1)C1CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "FC(F)(F)c1cccc(Nc2ncnc3[nH]c4c(c23)CCCC4)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Clc1ccc2c(Nc3ccc(-c4nc5ccccc5s4)c(Cl)c3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Clc1cccc(Nc2[nH]nc3ncnc(Nc4ccccc4)c23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C[C@H](Nc1[nH]cnc2c3ccccc3nc1-2)c1ccccc1.Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "OCCCNc1cncc(-c2cncc(Nc3cccc(Cl)c3)n2)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3ccc(-n4ccnc4)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(O)c(O)c1)C(=O)Nc1ccccc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "C[C@H](c1ccccc1)n1ncc2cc(Nc3ncnn4ccc(COC[C@@H]5CNCCO5)c34)ccc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1ccc2c(c1)CNc1c(Nc3ccc(F)c(Cl)c3)ncnc1O2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCN(CC)CC(O)CNc1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1CN(C)[C@@H](C)C(N)=O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1cc2c(Cc3cccc(Br)c3)ncnc2cc1OCCCN1CCC(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#CC(C#N)=Cc1ccc(O)c(O)c1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Fc1cccc(COc2ccc(Nc3ncnn4ccc(CN5CCCNCC5)c34)cc2Cl)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CN1CCN(CCCNc2ncc3cc(-c4c(Cl)cccc4Cl)c(=O)n(C)c3n2)CC1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Br)c3)c2c(OC)c1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc(-c2cn(-c3ccccc3)c3ncnc(N)c23)cc1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CCCCCCCCCCCCCCCCOC(=O)COc1cc(O)c2c(=O)cc(-c3ccccc3)oc2c1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CN(C(=O)N(CCCl)N=O)c1ccc2ncnc(Nc3cccc(Cl)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cccc(-c2cn(C3CC(CO)C3)c3ncnc(N)c23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1ncn2CC(=O)c1ccccc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(CN(Cc2ccc(F)cc2)C(=S)Nc2ccccc2)c1O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC1(N)CCN(Cc2ccn3ncnc(Nc4ccc5c(cnn5Cc5cccc(F)c5)c4)c23)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccc(F)c(O)c2)c2c(N)ncnc21",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CCOC(=O)c1cc2c(Nc3ccc4c(cnn4Cc4ccccc4)c3)ncnn2c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Cc1cncc(Cn2ncc3cc(Nc4ncnn5ccc(CN6CCC(N)CC6)c45)ccc32)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "C=C=CCOc1cc2c(Nc3cccc(Cl)c3)ncnc2cc1O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)c(C#N)cnc2cc1OCC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc2ncnc(Nc3cccc(Br)c3)c2n1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccc3c(c2)OCCO3)c2c(N)ncnc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(Nc1ccccc1Cl)c1ccc(N(CCCl)CCCl)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccc3c(C=O)c[nH]c3c2)c2c(N)ncnc21",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CNC(=O)c1cc(NCc2cc(O)ccc2O)ccc1O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NC(=S)N1N=C(c2ccc(Cl)c(Cl)c2)CC1c1ccc(O)cc1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Clc1ncc2ncnc(Nc3ccccc3)c2n1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(Cn4ccnc4)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Cc1ccc2cc(-c3nn(C(C)C)c4ncnc(N)c34)ccc2n1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Sc1ncnc(Oc3cccc(Br)c3)c1NC2",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1ccccc1Cc1nc2ccc(-c3nn([C@H]4CC[C@H](N5CCNCC5)CC4)c4ncnc(N)c34)cc2[nH]1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CN1CCC(Oc2cccc3ncnc(Nc4ccc(OCc5cnccn5)c(Cl)c4)c23)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(O)c1cc(/N=C/c2cc(O)ccc2O)ccc1O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc(N2Cc3cnc(Nc4ccccc4)nc3N([C@H]3CC[C@H](O)C3)C2=O)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(N(C)c3ccc(Cl)cc3)c2cc1OC.Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(OCc4ccccc4)c(Cl)c3)c2cc1NC(=O)/C=C/c1ccccc1N(C)C",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Nc1ncnc(NCc3ccc(F)c(Cl)c3)c1NC2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN1CCN(c2cc3c(Nc4cccc(Br)c4)ncnc3cn2)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc2c(Nc3cccc(Br)c3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cn1c(SSc2c(C(=O)Nc3ccccc3C(=O)O)c3ccccc3n2C)c(C(=O)Nc2ccccc2C(=O)O)c2ccccc21",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1cc(/C=C(\\C#N)c2ccccn2)ccc1O",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(OCc4ccccn4)c(C)c3)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3ccncc23)c1NCCCn1ccnc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3cnc(NCCCN4CCOCC4)cc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncnc(Nc3cccc(-c4csc(C)n4)c3)c2cc1OCC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ccccc1Nc1ncnc2cc(Br)ncc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cn1c(SSc2c(C(=O)Nc3ccccc3)c3cccnc3n2C)c(C(=O)Nc2ccccc2)c2cccnc21",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Cl)c3F)c2cc1CN1CC[C@H](C(N)=O)C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1cc2c(Nc3cccc(Br)c3)c(C#N)cnc2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)c1ccccc1Nc1ncnc2cc(N)ncc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3ccc(C)cc3)c2cc1OC",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Nc1ccc2c(Nc3cccc(F)c3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Br)c3)c2cc1OC.Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3ccc(Sc4ncc(-c5ccccc5)s4)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(O)c(O)c1)C(=O)NCC1CCCC(CNC(=O)/C(C#N)=C/c2ccc(O)c(O)c2)C1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CCN(CC)CCCNC(=O)/C=C/C(=O)Nc1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncnc(Nc3cccc(Br)c3)c2cc1OCC.Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(O)c(O)c1)C(=O)NCCCN1CCN(CCCNC(=O)/C(C#N)=C/c2ccc(O)c(O)c2)CC1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCC(O)CN(CCO)CCO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "FC(F)C(F)(F)Oc1cccc(Nc2nccc(-c3c[nH]c4ccccc34)n2)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CNCCOc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccc3ncccc3c2)c2c(N)ncnc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#Cc1cnc2c(Cl)cc(NCc3cn(C4CCN(C5CCC5)CC4)nn3)cc2c1Nc1ccc(F)c(Cl)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COC(=O)c1c(OCCCN(C)C)c2ccccc2c2oc3c(c12)C(=O)c1ccccc1C3=O",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CNc1cc2ncnc(Nc3cccc(C)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(=O)Nc1ccc2c(Nc3cccc(Br)c3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1nc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OCCCN1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(C#CCCN1CCOCC1)Nc1ccc2ncnc(Nc3ccc(F)c(Cl)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCN(CC)CCCNc1ncc2cc(-c3c(Cl)cccc3Cl)c(=O)n(C)c2n1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CS(=O)(=O)Nc1ccc2c(c1)CNc1c(Nc3cccc(Br)c3)ncnc1O2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Clc1cccc(Nc2ncnc3[nH]c(-c4ccccc4)c(-c4ccccc4)c23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CS(=O)(=O)Nc1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCNc1cc2sc3c(Nc4cccc(Br)c4)ncnc3c2cc1F.CCO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COCCOCc1ccn2ncnc(Nc3ccc4c(cnn4Cc4cccc(F)c4)c3)c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Cl)c3)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNCc1ccc(-c2cc3c(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)ncnc3s2)s1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCCCN(CCCC)C(=O)c1ccc(N(CCCl)CCCl)cc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1ccc2c(c1)CNc1c(NCc3ccccc3)ncnc1O2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cn1c(SSc2c(C(=O)Nc3ccccc3)c3ccc(O)cc3n2C)c(C(=O)Nc2ccccc2)c2ccc(O)cc21",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Fc1ccc(Nc2ncnc3nc(NCCN4CCOCC4)sc23)cc1Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1cc2ncnc(NCc3ccccc3[N+](=O)[O-])c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCC(C)n1nc(-c2ccc(C)c(O)c2)c2c(N)ncnc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccc3cnccc3c2)c2c(N)ncnc21",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CN(C)/N=N/c1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=c1c(O)c(-c2ccc(O)c(O)c2)oc2cc(O)cc(O)c12",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Fc1cccc(Cn2ncc3cc(Nc4ncnn5ccc(COCC6CCNCC6)c45)ccc32)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Fc1cccc(COc2ccc(Nc3ncnc4sc(-c5ccco5)cc34)cc2Cl)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(N[C@@H]3C[C@H]3c3ccccc3)c2cc1OCCCc1cccnc1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Cn1ccc2cc(-c3nn(C4CCCC4)c4ncnc(N)c34)ccc21",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CC(C)N(CC#CC(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1)C(C)C",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cccc(-c2cn(C3CCN(CCO)CC3)c3ncnc(N)c23)c1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3ccc4c(cnn4Cc4ccccc4)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "C/N=N/Nc1ccc2ncnc(Nc3cccc(Cl)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(/C=C/C(=O)Nc1cc2c(Nc3cccc(Br)c3)ncnc2cn1)NCCCn1ccnc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(=O)Nc1cc2ncnc(Nc3cccc(Br)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(-c2nn(C(C)C)c3ncnc(N)c23)ccc1NC(C)CO",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3cc(NCCCn4ccnc4)ncc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Brc1cccc(Nc2ncnc3ccccc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ccc2c(Nc3ccccc3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ccc2ccc(-c3nn(C(C)C)c4ncnc(N)c34)cc2n1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(-c4nc5ccccc5s4)c(O)c3)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)/C=C/C(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(/C=C(\\C)[N+](=O)[O-])ccc1OS(=O)(=O)c1ccc(C(=O)O)cc1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cc(Cl)c(Cl)cc3F)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1cc2c(Nc3cccc(Br)c3)ncnc2cc1SCCCN(CC)CC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(CN(Cc2ccc(F)cc2)C(=O)Nc2ccccc2)c1O",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CC(C)c1ccc(COC(=O)c2cc(NCc3cc(O)ccc3O)ccc2O)cc1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CC(COC(=O)c1cc(NCc2cc(O)ccc2O)ccc1O)Cc1ccccc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(N[C@H](C)c3ccc(Cl)cc3)c2cc1OCCCCCCC(=O)NO",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Cc1ccccc1Cc1cc2c(N(C)c3cccc(Br)c3)nc(N)nc2n1C",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "O=C(O)CCc1c(SSc2[nH]c3ccccc3c2CCC(=O)O)[nH]c2ccccc12",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccccc1)cn2C1CCC(O)C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COCC(=O)NC/C=C/c1ccc2ncnc(Nc3ccc(Oc4ccc(C)nc4)c(C)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cccc(-c2cn(C3CCN(CC(N)=O)CC3)c3ncnc(N)c23)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Cn1c(SSc2c(CCCC(=O)O)c3ccccc3n2C)c(CCCC(=O)O)c2ccccc21",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Clc1cccc(Nc2nc[nH]c3nnc(Nc4cccc(Cl)c4)c2-3)c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COCCOc1cc2ncnc(-c3c[nH]c4cc(F)c(Cl)cc34)c2cc1OCCOC",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Cc1cc(C(=O)O)[nH]c1/C=C1\\C(=O)Nc2ncnc(Nc3ccc(F)c(Cl)c3)c21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)C(CCCN1CCOCC1)c1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC1=C(C(=O)Nc2cccc([N+](=O)[O-])c2)C(c2ccc(O)cc2O)NC(Nc2ccc(S(=O)(=O)Nc3nc(C)cc(C)n3)cc2)=N1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2[nH]cnc3nnc(Nc4cccc(Cl)c4)c2-3)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CN(C)CCc1ccc(Nc2nc3ncnc(Nc4ccc(F)c(Cl)c4)c3s2)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCn1nc(-c2ccc(OC)c(O)c2)c2c(N)ncnc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1cc2ncnc(Nc3cccc(F)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCN(c1ccccc1)c1ncnc2cc(OC)c(OC)cc12.Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc2c(c1)CNc1c(Nc3cccc(-c4ccccc4)c3)ncnc1O2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(NC3CC3c3ccccc3)c2cc1OC(C)=O",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CN[C@H]1C[C@@H]2O[C@](C)([C@H]1OC)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)[C@H](O)NC4=O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCc1c(C(=O)NCCCn2ccnc2)cn2ncnc(Nc3ccc4c(cnn4Cc4ccccc4)c3)c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC(=O)CN1CCC(n2cc(-c3cccc(O)c3)c3c(N)ncnc32)C1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccc(F)c(O)c1)nn2CC1CCNCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cc(Nc2ccnc(Nc3cccc(-c4nc5ccccc5s4)c3)n2)n[nH]1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(OC)cc(-c2cc3cnc(N)nc3nc2NC(=O)NC(C)(C)C)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1CN1CC[C@@H](C(N)=O)C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(/C=C(\\C#N)C(N)=O)cc(CSc2cccc3ccccc23)c1O",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CCCN(CC#CC(=O)Nc1ccc2ncc(C#N)c(Nc3cccc(Br)c3)c2c1)CCC",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CCC1=C2C(Nc3ccc4c(cnn4Cc4ccccc4)c3)=NC=NC2N=C1NC(=O)OC[C@@H]1COCCN1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CN(C)CCCC(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CNCCOc1n[nH]c2ncnc(Nc3ccc(OCc4ccccn4)c(Cl)c3)c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cc(C(=O)N2CCOCC2)[nH]c1/C=C1\\C(=O)Nc2ncnc(Nc3ccc4c(cnn4Cc4ccccc4)c3)c21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(/C=C(\\C#N)C(N)=O)cc(CSCc2ccccc2Cl)c1O",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Cc1ncc([N+](=O)[O-])n1CCOC(=O)/C=C/c1ccc(C(C)C)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC1CCN(CCOc2n[nH]c3ncnc(Nc4ccc(OCc5ccccn5)c(Cl)c4)c23)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Clc1cccc(Nc2[nH]nc3ncnc(Nc4cccc(Br)c4)c23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccccc1)cn2C1CCNC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCC1CCN(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCCCCCNC(=O)c1cc(NCc2cc(O)ccc2O)ccc1O",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3nnc4ccccc4n3)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc4c(ccn4S(=O)(=O)c4ccccc4)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "C[C@@H](NC(=O)c1ccc(S(=O)(=O)Oc2ccc(/C=C/[N+](=O)[O-])cc2)cc1)C(=O)N[C@H](C)C(=O)NCCN",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "O=C(C#CCN1CCOCC1)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(O[C@@H]4CCc5ccccc54)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1cc2c(Cc3ccc(F)c(Cl)c3)ncnc2cc1OCCOCCCCO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)N1CCC[C@H]1C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3F)ncnc2cc1OCCOC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)C/C=C/C(=O)N1CCc2c(sc3ncnc(NCCO)c23)C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)C/C=C/C(=O)Nc1ccc2ncnc(Nc3ccc(Br)cc3F)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3ccc(Br)cc3F)ncnc2cc1OC[C@H]1CCCN(C)C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN1CCc2cc(Nc3nccc(-c4c(-c5cccc(NC(=O)Cc6ccccc6)c5)nc5sccn45)n3)ccc2C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCn1c(=O)c(-c2c(Cl)cccc2Cl)cc2cnc(Nc3ccncc3)nc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=C=CCCCCOc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCCCCCCCCCCCCCCCNC(=O)COc1cc(O)c2c(=O)cc(-c3ccccc3)oc2c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1ccc2ncnc(Nc3ccccc3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3ccc(-c4nc5ccccc5s4)c(C)c3)ncnc2cc1OCCCN1CCN(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ccc2sc3c(Nc4cccc(C(F)(F)F)c4)ncnc3c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Oc1ncnc(Oc3cccc(Cl)c3F)c1NC2",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "O=C(O)c1ccc(NN2C(=O)c3c(c4c5cccc(O)c5n(C5OC(CO)C(O)C(O)C5O)c4c4[nH]c5c(O)cccc5c34)C2=O)cc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CCNC(=O)Nc1nc2nc(N)ncc2cc1-c1c(Cl)cccc1Cl",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "C=C=CCCCOc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CNC(=S)N(C)[C@H]1C[C@@H]2O[C@](C)([C@H]1OC)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CN(C)CCc1ccc(-c2cc3ncnc(Nc4ccc5[nH]ccc5c4)c3s2)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3ccc(Cl)cc3F)ncnc2cc1OCCCN1CCCC1.Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(-c4nc5ccccc5s4)cc3C)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(CCCOc1ccc2ncnc(Nc3ccc(OCc4ccccc4)cc3)c2c1)CCS(C)(=O)=O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1cc2ncnc(NCc3ccc(C(F)(F)F)cc3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=S(=O)(CO)Nc1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(O[C@H]1CN[C@H](C#Cc2cc3ncnc(Nc4ccc5c(ccn5CCc5ccccc5)c4)c3s2)C1)N1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CO/N=C/c1c(N)ncnc1Nc1ccc2c(c1)CCN2Cc1cccc(F)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCC(=O)NO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(O)Cn1ncc2cc3c(Nc4cccc(Br)c4)ncnc3cc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Brc1cccc(Nc2ncnc3cc4[nH]cc(CN5CCOCC5)c4cc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1c(-c2ccccc2)[nH]c2ncnc(Nc3cccc(Cl)c3)c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CO[C@H]1[C@@H](N(C)C(=O)CN)C[C@@H]2O[C@@]1(C)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NS(=O)(=O)c1ccc(Nc2nc3ncnc(Nc4cccc(Br)c4)c3s2)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCCCCCCCCCCCCCCCCCNC(=O)COc1cc(O)c2c(=O)cc(-c3ccccc3)oc2c1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Cc1cccc(C)c1-c1cc2cnc(N)nc2nc1NC(=O)NC(C)(C)C",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1ccc(CNc2ncnc3ccccc23)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ccc(-c2[nH]nc3ncnc(Nc4cccc(Cl)c4)c23)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1nc(Nc2cccc(Br)c2)c2cc(NCCN3CCOCC3)ncc2n1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCN1CCCCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cl.NCCNC(=O)c1ccc(S(=O)(=O)Oc2ccc(/C=C/[N+](=O)[O-])cc2)cc1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Oc1cc2c(cc1O)[C@@H]1c3ccc(O)c(O)c3OC[C@]1(O)C2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NC(=O)C1CCN(Cc2ccn3ncnc(Nc4ccc5c(cnn5Cc5cccc(F)c5)c4)c23)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)(C)CCOC(=O)c1cc(NCc2cc(O)ccc2O)ccc1O",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "C[C@@H](Oc1cccc2ncnc(Nc3ccc4c(cnn4Cc4nccs4)c3)c12)C(=O)N1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC[C@H]1CCCN1C/C=C/C(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=S(=O)(CCOCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1)c1ccccc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(O)c(O)c1)C(N)=O",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COCCN(Cc1cc2c(Nc3cccc(Cl)c3F)ncnc2cc1OC)[C@@H](C)C(N)=O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CONC(=O)CCc1c(SSc2[nH]c3ccccc3c2CCC(=O)NOC)[nH]c2ccccc12",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CN1CCN(CCCNc2ncc3cc(-c4c(Cl)cccc4Cl)c(NC(=O)NC(C)(C)C)nc3n2)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Sc1nc(C)nc(Nc3ccc4ccccc4c3)c1NC2",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CC(C)c1cc(/C=C2\\C(=O)Nc3ccccc32)cc(C(C)C)c1O",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CCOc1cc(/C=C(\\C#N)C(N)=O)cc(CSc2ccccc2)c1O",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C/c1ccc(O)c(O)c1)C(=O)NC1CCCCC1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "C#Cc1cccc(Nc2ncnc3c2NCc2cc(OC)c(OC)cc2O3)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOC(=O)C1CCN(CCC(=O)c2ccc(OCc3ccccc3)cc2)CC1.Cl",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1ccccc1C(=O)Nc1cccc(Nc2nccc(-c3cccnc3)n2)c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CN1CCN(CCCNc2cc3ncnc(Nc4cccc(Br)c4)c3cn2)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3ccc(/N=N/N(C)C)cc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NC[C@H](Cc1cccc(F)c1)NC(=O)c1cc(Br)c(-c2ccnc3[nH]ccc23)s1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccc(F)c(O)c1)nn2[C@@H]1CCOC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(NCCCCOc1ccc2ncnc(Nc3ccc(OCc4ccccc4)cc3)c2c1)C(F)(F)F",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3cc(NCCCN4CCN(C)CC4)ncc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNCc1cc(-c2cc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3s2)cs1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncnc(C#C[C@](C)(Cc3ccccc3)N3CCC(C(=O)O)CC3)c2cc1OCC",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3c(F)cc(Cl)cc3F)ncnc2cc1OCC1CCN(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCNc1ccc2c(Nc3cccc(Br)c3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Brc1cccc(Nc2ncnc3ccncc23)c1NCCc1c[nH]cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2cc(C=O)co2)c2c(N)ncnc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1cc(O)ccc1O)C(N)=O",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1cc(N2CCC(CCS(C)(=O)=O)CC2)c(C)cc1Nc1nccc(-c2c(-c3cccc(C(=O)Nc4c(F)cccc4F)c3)nc3ccccn23)n1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Cl)c1NC(=O)c1cnc(NC(=O)C2CC2)s1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(C#CCCc3ccccc3)c2cc1OC",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "OB(O)/C=C/COc1ccc2ncnc(Nc3cccc(Cl)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2cccc(C#N)c2)c2c(N)ncnc21",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "OCCN(CCO)CCCNc1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=[N+]([O-])c1ccc2c(Nc3cccc(I)c3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3cc(NCCc4c[nH]cn4)ncc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ccc(Nc2ncnn3c(C)ccc23)cc1O",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Sc1ncnc(Nc3cccc(Br)c3)c1NC2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNc1nc(-c2ccc3ncnc(Nc4ccc5c(cnn5Cc5ccccc5)c4)c3c2)cs1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3cccc(Br)c3)c2cc1OC",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1ccc2ncnc(Nc3ccc(C(C)(C)C)cc3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(-c2nn(C(C)C)c3ncnc(N)c23)ccc1F",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNCCCCOc1ccc2ncnc(Nc3ccc(S(=O)(=O)c4ccccc4)cc3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(CCO)c1c(Br)cccc1Nc1ncnc2ccncc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cc(F)cc(C(F)(F)F)c3)c2cc1OC.Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(O)C1CCN(Cc2ccn3ncnc(Nc4ccc5c(cnn5Cc5cccc(F)c5)c4)c23)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3ncc(CC(=O)Nc4cccc(F)c4)s3)ncnc2cc1OCCCN1CCC(CO)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C[C@@H](c1ccccc1)n1ncc2cc(Nc3ncnn4ccc(COC[C@@H]5CNCCO5)c34)ccc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc(Br)cc(-c2nn(C(C)C)c3ncnc(N)c23)c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3cccc(Br)c3)c2cc1NC(=O)/C=C/CN1CCOCC1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "C=C(CN(C)C)C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)c(C#N)cnc2cc1OCC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccccc1)cn2-c1ccccc1CNCCO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cc(Nc2ncc(C(=O)Nc3c(C)cccc3Cl)s2)nc(C)n1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CC(C)(C)n1nc(-c2ccc(Cl)cc2)c2c(N)ncnc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(NC3CC3c3ccccc3)c2cc1OC",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "O=C(O)/C=C/c1cc(CO)ccc1CO",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CCCCCCCCCCCCCCOC(=O)COc1cc(O)c2c(=O)cc(-c3ccccc3)oc2c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1ccc2nc(-c3ccc(Nc4ncnc5cc(OCCCN6CCN(C)CC6)c(OC)cc45)cc3)sc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cccc(-c2cn(C3CCN(CCN(C)CCO)CC3)c3ncnc(N)c23)c1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1ccc(-c2nn(C(C)C)c3ncnc(N)c23)cc1OC",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Nc1cccc2c(Nc3cccc(Br)c3)ncnc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C[C@H](NC(=O)c1ccc(S(=O)(=O)Oc2ccc(/C=C/[N+](=O)[O-])cc2)cc1)C(=O)N[C@@H](C)C(=O)NCCN.Cl",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "c1ccc(CNc2ncnc3cnccc23)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=[N+]([O-])c1cccc(Nc2nccc(-c3cccnc3)n2)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc(CCc2cc3c(Nc4cccc(Br)c4)nc(N)nc3[nH]2)cc1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccc(Cl)c(O)c1)nn2[C@H]1CCOC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(Oc4ccncc4)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc(Nc2ncc3cc(-c4c(Cl)cccc4Cl)c(=O)n(C)c3n2)cc1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CO[C@H]1[C@@H](N(C)C(=O)c2cnccn2)C[C@@H]2O[C@@]1(C)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CC(C)(C)c1cc(/C=C2\\C(=O)Nc3ccccc32)cc(C(C)(C)C)c1O",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Cc1cc(C)c(C)c(-c2cc3cnc(NCCCN4CCN(C)CC4)nc3nc2NC(=O)NC(C)(C)C)c1C",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "NC(=S)N1N=C(c2ccc(Br)c(Br)c2)CC1c1ccc(Cl)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(/C=C(\\C#N)C(N)=O)cc(CSc2nc3ccccc3o2)c1O",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CCN1CCN(C(=O)c2cc(C)c(/C=C3\\C(=O)Nc4ncnc(Nc5ccc(F)c(Cl)c5)c43)[nH]2)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccn2c(-c3ccnc(Nc4ccc(N5CCC(N6CCCCC6)CC5)cc4OC)n3)c(-c3ccc(OC)c(C(=O)Nc4c(F)cccc4F)c3)nc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(N[C@@H](C)c3ccccc3)c2cc1OCCCCCCC(=O)NO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCc1ccc(/C=C2\\C(=O)Nc3ccccc32)s1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNCc1ccc(-c2cc3c(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)ncnc3s2)[nH]1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(NCc3ccc(F)cc3)c2cc1OCCCCCCC(=O)NO",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CCOC(=O)/C=C/C(=O)Nc1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cc2c(Nc3ccc(F)c(Cl)c3)ncnn2c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COC(=O)c1ccc(C(=O)N(C)[C@H]2C[C@@H]3O[C@](C)([C@H]2OC)n2c4ccccc4c4c5c(c6c7ccccc7n3c6c42)C(=O)NC5)cc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(NCc3ccccc3)c2cc1OC",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Brc1cccc(Nc2ncnc3cc4c(cc23)OCO4)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccc(O)cc1)cn2C1CCCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(C#Cc4ccccc4)c3)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2nn3ccccc3c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NCC1CCN(Cc2ccn3ncnc(Nc4ccc5c(cnn5Cc5cccc(F)c5)c4)c23)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC(=O)CCCC(=O)Nc1cccc(C#Cc2cncnc2Nc2ccc(OCc3cccc(F)c3)c(Cl)c2)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc(N2CCC(N3CCCCC3)CC2)cc1Nc1nccc(-c2c(-c3cccc(C(=O)Nc4c(F)cccc4F)c3)nc3ccccn23)n1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccc(O)c(F)c2)c2c(N)ncnc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Sc1ncnc(Sc3cccc(Cl)c3)c1NC2",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Oc1cccc(Nc2ncnc3[nH]c4c(c23)CCCC4)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(O)c1ccc(S(=O)(=O)Oc2ccc(/C=C/[N+](=O)[O-])cc2)cc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2nccc(Nc3ccc(F)c(Cl)c3)c2cc1NC(=O)/C=C/CN1CCOCC1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1nc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OCCCN1CCN(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC(=O)C1CCN(Cc2ccn3ncnc(Nc4ccc5c(cnn5Cc5cccc(F)c5)c4)c23)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Oc1c(Cl)cc(Cl)cc1CN(Cc1ccc(F)cc1)C(=S)Nc1ccccc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(=O)/C=C/C(=O)Cc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(C#CCN1CCCCC1)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Nc1ncnc(O)c1C2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNCc1ccc(-c2cc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3s2)o1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)O/N=C/c1c(N)ncnc1Nc1ccc2c(cnn2Cc2cccc(F)c2)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc(-c2nn(C3CCCC3)c3ncnc(N)c23)cc1OC",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CCO.CNc1ccc2sc3c(Nc4cccc(Br)c4)ncnc3c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cl.Nc1ccc2c(c1)sc1c(Nc3cccc(Br)c3)ncnc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)NC1=CC=C2N=CN=C(Nc3cccc(C(F)(F)F)c3)C21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CO[C@H]1[C@@H](N(C)C(=O)c2cccc([N+](=O)[O-])c2)C[C@@H]2O[C@@]1(C)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1cc(O)ccc1O)C(=O)O",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3ccc(Br)cc3F)ncnc2cc1OCCC1CCNCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Cl)c3)c2cc1B(O)O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(F)c(Cl)c3)c2cc1OCC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(Nc1ccccc1)c1cc2ccc(O)c(O)c2cn1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CO[C@H]1[C@@H](N(C)C(=O)c2ccc(Cl)cc2)C[C@@H]2O[C@@]1(C)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "C[C@@H](Nc1[nH]cnc2c3ccccc3nc1-2)c1ccccc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3[nH]c4c(c23)CCCC4)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(OC)c2c(c1)Oc1ncnc(Nc3cccc(Br)c3)c1NC2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC(=O)CC1C(S)=Nc2ccccc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3cnc(N)nc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NNC(=O)c1c(N)ncnc1Nc1ccc(OCc2ccccc2)c(Cl)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(OCc4ccccc4)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)CCO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ccc(/C=N/NC2=NC(=O)CS2)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(c1ccccc1)c1ncnc2ccc(N/N=N/Cc3ccccn3)cc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(/C=C/C(=O)NCCCN1CCOCC1)Cc1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2nccc(Nc3ccc(F)c(Cl)c3)c2cc1NC(=O)/C=C/C(C)N(C)C",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Nc1cccc(Nc2ncnc3cc(N)ncc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(=O)NCc1cccc(C#Cc2cncnc2Nc2ccc(OCc3cccc(F)c3)c(Cl)c2)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)N1CCc2c(sc3ncnc(N[C@H](C)c4ccccc4)c23)C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(N2CCC(N3CCCCC3)CC2)ccc1Nc1nccc(-c2c(-c3cccc(C(=O)Nc4ccc(Cl)cc4F)c3)nc3ccccn23)n1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CCCCN(Cc1cccc(Br)c1O)C(=S)Nc1ccccc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccn3ccnc3c2)c2c(N)ncnc21",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CC(=O)N1N=C(c2ccc(C)c(C)c2)CC1c1ccc(Cl)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cccc(CNc2[nH]nc3ncnc(Nc4cccc(Cl)c4)c23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cl.Cl.NC1CCc2c(c3cc(OCCc4ccc(O)cc4)ccc3n2CCCCCc2ccccn2)C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)CCCCCNc1cc2ncnc(Nc3cccc(Br)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(NC(=S)Nc1ccc(O)c(-c2nc3ccccc3s2)c1)c1ccc([N+](=O)[O-])cc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc(/C=C(\\C#N)S(=O)(=O)/C(C#N)=C/c2cc(O)c(O)c(OC)c2)cc(O)c1O",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "O=C(O[C@H]1CN[C@H](C#Cc2cc3ncnc(Nc4ccc(Cc5ccccc5)cc4)c3s2)C1)N1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCN(CC)C/C=C/C(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3ccc(N)cc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Fc1ccc(Nc2ncnc3ccc(C#Cc4cccs4)cc23)cc1Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCCN1CCCCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NC1CCN(Cc2ccn3ncnc(Nc4ccc5c(cnn5Cc5ccncc5)c4)c23)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cccc(Nc2[nH]nc3ncnc(Nc4cccc(Cl)c4)c23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3ccc(OCc4ccccn4)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(NCc3ccc(F)c(F)c3)c2cc1OCCCCCCC(=O)NO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ncc([N+](=O)[O-])n1CCOC(=O)/C=C/c1ccc(Cl)cc1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CN(C)CC#CC(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC[C@H]1Oc2cc3ncnc(Nc4cccc(Cl)c4)c3cc2O[C@@H]1COC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2cnc3[nH]ccc3c2)c2c(N)ncnc21",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1ccc(Nc2ncnc3cc(OC)c(OC)cc23)cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccc3occc(=O)c3c2)c2c(N)ncnc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "C/N=N/Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)Cc1ccc(-c2cc3c(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)ncnc3s2)[nH]1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=[N+]([O-])c1cc2c(Nc3cccc(Br)c3)ncnc2cc1Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)C(CCCN1CCOCC1)c1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1c(Cl)cccc1Nc1ncnc2ccncc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C#CCCCOc1cc2c(Nc3cccc(Cl)c3)ncnc2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Cl)c3F)c2cc1CN1CCCC[C@@H]1C(N)=O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C(=O)N(CCCl)N=O)c1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CO[C@H]1[C@@H](N(C)C(C)=O)C[C@@H]2O[C@@]1(C)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C#CCOc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C1CN(Cc2ccn3ncnc(Nc4ccc5c(cnn5Cc5cccc(F)c5)c4)c23)CCN1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccc3occc(=O)c3c1)nn2C1CCCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(O)c2c(=O)c(-c3cccc(Cl)c3)coc2c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Nc1nc(Nc2ccc(C(F)(F)F)c(F)c2)c2cc(Cc3ccc(Cl)cc3Cl)[nH]c2n1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Nc1cc2ncnc(NCc3ccc(Br)cc3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(CC(O)C(O)C(O)C(O)CO)c1cc2ncnc(Nc3cccc(Br)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCN(CC)c1ccc(Nc2cc3c(cc2Nc2ccc(N(CC)CC)cc2)C(=O)NC3=O)cc1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Brc1cccc(Nc2ncnc3cc(NCCCCN4CCOCC4)ncc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCNC(=O)O[C@H]1CN[C@@H](C#Cc2cc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3s2)C1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccccc1Cc1nc2ccc(-c3nn([C@H]4CC[C@H](N5CCN(C(C)=O)CC5)CC4)c4ncnc(N)c34)cc2[nH]1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CCN(CC)CCCCNc1ncc2cc(-c3c(Cl)cccc3Cl)c(NC(=O)Nc3ccccc3)nc2n1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3ccccc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(OC(C)C)c2c(Nc3ccc(F)c(Cl)c3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Sc1ncnc(Sc3cccc(Br)c3)c1NC2",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "O=C(NCc1ccccc1)c1ccc(N(CCCl)CCCl)cc1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "NCCCCOCc1ccn2ncnc(Nc3ccc4c(cnn4Cc4cccc(F)c4)c3)c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCCCC(=O)NO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=[N+]([O-])c1cc(NCc2cc(O)ccc2O)ccc1O",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc(NC(=O)/C=C/CN2CCOCC2)cc2c(Nc3cccc(Br)c3)ccnc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cn1c(=O)c(-c2c(Cl)cccc2Cl)cc2cnc(Nc3ccc(F)cc3)nc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Br)c3)c2cc1N",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3ccc(Cl)c(Cl)c3)ncnc2cc1OCc1c(-c2c(Cl)cccc2Cl)noc1C",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC[C@@H]1CCCN1C/C=C\\C(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1[nH]c(/C=C2\\C(=O)Nc3ccc(S(N)(=O)=O)cc32)c(C)c1CCC(=O)O",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc(Nc2ncnc3[nH]nc(OCCN4CCC(O)CC4)c23)ccc1OCc1cccc(F)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ncc([N+](=O)[O-])n1CCOC(=O)/C=C/c1ccccc1F",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OC1CCN(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(O[C@H]1CN[C@H](C#Cc2cc3ncnc(Nc4ccc(OCc5cscn5)c(Cl)c4)c3s2)C1)N1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc(-c2nn(C3CCC3)c3ncnc(N)c23)cc1OC",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1nc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OCCOC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3ccc(OCc4ccccc4)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCCC(Cc1coc2nc(N)nc(N)c12)c1ccccc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1ccc2ncnc(Nc3ccc(F)c(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN[C@H]1C[C@@H]2O[C@](C)([C@H]1OC)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4=O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC[C@@H]1CCCN1C/C=C/C(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(cc1OC)Sc1nc(C)nc(Nc3ccc(F)c(Cl)c3)c1NC2",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(OCc4ccccc4OC)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)C",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC(=O)c1cc(NCc2cc(O)ccc2O)ccc1O",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "C#Cc1cc(Nc2ncnc3cc(OC)c(OC)cc23)ccc1F",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNCCCCOc1ccc2ncnc(Nc3ccc4c(cnn4Cc4cccc(F)c4)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncc(C#N)c(Nc3ccc(OCc4ccccc4)c(Cl)c3)c2cc1NC(=O)/C=C/CN(C)NC[C@H](O)[C@@H](O)[C@H](O)[C@H](O)CO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccc3cc[nH]c3c2)c2c(N)ncnc21",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1ccc2ncnc(Nc3ccc(OCc4ccccc4)cc3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC[C@@H]1CCCN1/N=C/c1c(N)ncnc1Nc1ccc2c(cnn2Cc2cccc(F)c2)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2cc3cc(C=O)ccc3s2)c2c(N)ncnc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "CC(=O)N1N=C(c2ccc(C)c(C)c2)CC1c1ccccc1Cl",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "c1ccc2ncncc2c1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Cl)c3F)c2cc1CN(C)[C@H](C)C(=O)N(C)C",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(O)CNc1c(Br)cccc1Nc1ncnc2ccncc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)CC(CNNC(N)=O)C(=O)c1ccc(OCc2ccccc2)cc1.Cl",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(C(F)(F)F)c3)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1cc2ncnc(Nc3cccc(Br)c3)c2[nH]1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=C(CN(C)C)C(=O)c1ccccc1.Cl",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Cc1ccc(C2=NN(C(N)=S)C(c3ccc(O)cc3)C2)cc1C",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CCCCN(Cc1cccc(C)c1O)C(=S)Nc1ccccc1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3ccc(Cl)cc3F)ncnc2cc1OCCN(C)c1ccncc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2cc(O)cc(Br)c2)c2c(N)ncnc21",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "CC(C)n1nc(-c2ccc3c(N)n[nH]c3c2)c2c(N)ncnc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3cccc([N+](=O)[O-])c3)c2cc1OC",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COCCN(C)C/C=C/C(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1ccc(Cl)c(O)c1)nn2CC1CCCN1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1cc2c(Nc3cccc(Br)c3)ncnc2cc1OCCCN1CCN(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(C#CCCN1CCOCC1)Nc1cc2c(Nc3ccc(F)c(Br)c3)ncnc2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(-n2ncc3c(NCc4ccc5c(c4)OCO5)ncnc32)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1ccccc1Nc1ncnc2cc(N)ncc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ccc2c(c1)CNc1c(Nc3ccc(F)c(Cl)c3)ncnc1O2",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ccc(C2=NN(C(N)=S)C(c3ccc(Br)cc3)C2)cc1C",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "OCC#Cc1ccc2ncnc(Nc3ccc(F)c(Cl)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(NCCc3ccccc3)c2cc1OCCCCCCC(=O)NO",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Nc1cc(Br)ccc1NC(=O)COc1ccc2ncnc(Nc3ccc(F)c(Cl)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(C)CCCCNc1cc2ncnc(Nc3cccc(Br)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cn1c(SSc2c(C(=O)c3ccco3)c3ccccc3n2C)c(C(=O)c2ccco2)c2ccccc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(/C=C(\\C#N)C(N)=O)cc(CSc2ccccc2NC(C)=O)c1O",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Fc1ccc2ncnc(Nc3cccc(Br)c3)c2n1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=[N+]([O-])c1cccc2ncnc(NCc3ccccc3)c12",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1cc(-c2nn(C(C)C)c3ncnc(N)c23)cc(OC)c1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C1NC(=O)c2cc(Nc3ccc(F)cc3)c(Nc3ccc(F)cc3)cc21",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Cc1cc(C)c(C(=O)/C(C#N)=C/c2ccc(O)c(O)c2)c(C)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3ccc(C(C)C)cc3)c2cc1OC",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CN1CCN(NCCCNc2cc3c(Nc4cccc(Br)c4)ncnc3cn2)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCCCCCNC(=O)COc1cc(O)c2c(=O)cc(-c3ccccc3)oc2c1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "COc1ccc2ncnc(Nc3ccc(F)c(Cl)c3)c2c1OC1CCN(C)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCN1CCN(c2ccc(Nc3nccc(-c4c(-c5cccc(NC(=O)c6c(F)cccc6F)c5)nc5sccn45)n3)cc2)CC1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1ccc(OC)c(Cc2cc3c(Nc4cccc(Br)c4)nc(N)nc3[nH]2)c1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "Nc1cccc(-c2[nH]nc3ncnc(Nc4cccc(Cl)c4)c23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CS(=O)(=O)CCNCc1ccc(-c2cc3c(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)ncnc3s2)o1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2c(Nc3ccc(Cl)cc3F)ncnc2cc1OCC1CCN(C)CC1.Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Cl)c3F)c2cc1CN(C)[C@@H](CO)C(N)=O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3c2sc2ccc(N)cc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(CCCN1Cc2cc3c(Nc4cccc(Br)c4)ncnc3cc21)N1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ccc(Oc2ccc(Nc3ncnc4[nH]nc(OCCN5CCC(O)CC5)c34)cc2C)cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CNc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Brc1cccc(Nc2ncnc3cc4nccnc4cc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(Nc1ccccc1)N(Cc1ccc(O)cc1)Cc1cccc(Br)c1O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc(Nc2c(C#N)cnc3cc(-c4ccc(CN5CCN(C)CC5)cn4)sc23)c(Cl)cc1Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCN(CC)CC#CC(=O)Nc1ccc2ncnc(Nc3ccc(F)c(Cl)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC(=O)CCc1c(SSc2[nH]c3ccccc3c2CCC(=O)OC)[nH]c2ccccc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(Cl)c3F)c2cc1CN(C)[C@@H](C)C(N)=O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3cc(NCCCCN(C)C)ncc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1ccc2ncc(C#N)c(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(Nc3cccc(NC(=O)c4ccccc4)c3F)c2cc1OC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cn1c(SSc2c(C(N)=O)c3ccccc3n2C)c(C(N)=O)c2ccccc21",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Nc1ccc(Nc2ncnc3cc(N)ncc23)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(COC(=O)c1cc(NCc2cc(O)ccc2O)ccc1O)CC(C)(C)C",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "Cc1ccc(F)c(C(=O)n2nc(Nc3ccc(S(N)(=O)=O)cc3)nc2C)c1F",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "Fc1cccc(Cn2ncc3cc(Nc4ncnn5ccc(CN6CCNCC6)c45)ccc32)c1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "O=C(NO)c1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1cc2ncnc(Nc3cccc(Cl)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(C=O)cc1)C(=O)O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(OC/C=C/c1ccccc1)c1cc(NCc2cc(O)ccc2O)ccc1O",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncnc(N[C@@H](C)c3ccc(Cl)cc3)c2cc1OCCCCCCC(=O)NO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C[C@@H](CN(C)C(=O)CO)Oc1cccc2ncnc(Nc3ccc(OCc4ccccn4)c(Cl)c3)c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC(=O)c1ccc(C(=O)c2c(SSc3c(C(=O)c4ccc(C(=O)OC)cc4)c4ccccc4n3C)n(C)c3ccccc23)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ccn2ncnc(Nc3ccc4c(cnn4Cc4cccc(F)c4)c3)c12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NS(=O)(=O)c1ccc(Nc2nc3ncnc(Nc4ccccc4)c3s2)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1cc2ncc(C#N)c(Nc3cccc(N)c3)c2cc1OC",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "C[C@@H](CN)n1nc(-c2ccc(F)c(O)c2)c2c(N)ncnc21",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "O=C(/C=C/c1ccc(OCCOc2ccc3ncnc(Nc4ccc(F)c(Cl)c4)c3c2)cc1)NO",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1cccc(Nc2ncnc3cnc(N(C)C)cc23)c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CNC(=O)c1nn(C)c2c1C(C)(C)Cc1cnc(Nc3ccc(N4CCN(C)CC4)cc3)nc1-2",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "CNc1ncc2ncnc(Nc3cccc(Br)c3)c2n1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C1CSC(NN=C2CCCCCC2)=N1",
+    "state": "DFGout_aCout"
+  },
+  {
+    "smiles": "COc1cc(Nc2ncnc3[nH]cnc23)ccc1-c1nc2ccccc2s1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CCOc1cc2ncnc(Nc3cccc(-c4cncnc4)c3)c2cc1OCC",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc2c(NCc3ccccc3)ncnc2c1",
+    "state": "DFGin_aCout"
+  },
+  {
+    "smiles": "OCCN(CCO)CCCNc1cc2ncnc(Nc3cccc(Br)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(=O)/C=C/C(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "C=CC(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)c(C#N)cnc2cc1OCCCN1CCOCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(=O)N1CCN(Cc2ccn3ncnc(Nc4ccc5c(cnn5Cc5cccc(F)c5)c4)c23)CC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CN(CCN/N=N/c1ccc2ncnc(Nc3cccc(Cl)c3)c2c1)CCNS(=O)(=O)c1cccc2c(N(C)C)cccc12",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "N#C/C(=C\\c1ccc(O)c(O)c1)C(=O)c1cccs1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "NS(=O)(=O)c1ccc(Nc2nc3ncnc(Nc4c(F)cccc4F)c3s2)cc1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Nc1ncnc2c1c(-c1cnc3ccccc3c1)nn2C1CCCC1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "OCC(O)C(O)C(O)C(O)CNc1cc2ncnc(Nc3cccc(Br)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COc1ccc2ncnc(Nc3cc(OC)c(OC)c(OC)c3)c2c1.Cl",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cc1ccc(N(C)C(=O)c2ccccc2)cc1Nc1nccc(-c2cccnc2)n1",
+    "state": "DFGout_aCin"
+  },
+  {
+    "smiles": "O=[N+]([O-])c1ccc2c(Nc3cccc(F)c3)ncnc2c1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "COC(=O)Cc1cc(NCc2cc(O)ccc2O)ccc1O",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "Cn1c(SSc2c(C(=O)Nc3ccccc3)c3cc([N+](=O)[O-])ccc3n2C)c(C(=O)Nc2ccccc2)c2cc([N+](=O)[O-])ccc21",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "O=C(O)CCNc1cc2ncnc(Nc3cccc(Br)c3)c2cn1",
+    "state": "DFGin_aCin"
+  },
+  {
+    "smiles": "CC(=O)N1N=C(c2ccc(C)c(C)c2)CC1c1ccc(C)cc1",
+    "state": "DFGin_aCin"
+  }
+]

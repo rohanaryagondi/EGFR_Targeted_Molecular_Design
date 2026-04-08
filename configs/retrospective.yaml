@@ -1,0 +1,45 @@
+# Retrospective Time-Split Validation Configuration
+#
+# Validates the pipeline retrospectively: train models on pre-cutoff EGFR data,
+# test whether the pipeline identifies molecules resembling drugs approved after
+# the cutoff. This is computational validation without wet lab work.
+#
+# See workstreams/13-retrospective-validation.md for details.
+
+retrospective:
+  cutoffs: [2010, 2015]
+  enrichment_k_values: [10, 50, 100]
+  similarity_threshold: 0.4         # Tanimoto threshold for "hit" definition
+  similarity_radius: 2              # Morgan fingerprint radius (ECFP4)
+  similarity_nbits: 2048            # Morgan fingerprint bit-vector length
+
+  # Reference binders available before each cutoff (by drug name).
+  # The code resolves names to SMILES via EGFR_DRUG_APPROVALS lookup.
+  reference_binders:
+    pre_2010:
+      - erlotinib
+      - gefitinib
+    pre_2015:
+      - erlotinib
+      - gefitinib
+      - afatinib
+      - osimertinib
+
+  restrict_structures: false        # If true, restrict PDB structures by deposition year
+  restrict_vae_training: true       # Retrain VAE on pre-cutoff SMILES only
+  restrict_mpnn_training: true      # Retrain MPNN on pre-cutoff data only
+
+data:
+  output_dir: data/processed/
+  chembl_target: CHEMBL203          # EGFR
+  chembl_pchembl_gte: 3             # Minimum pchembl_value
+  chembl_max_pages: 40              # Max API pagination pages (500 records each)
+
+training:
+  mpnn_config: configs/mpnn.yaml
+  mpnn_checkpoint_dir: artifacts/models/mpnn/
+  seed: 42
+
+evaluation:
+  output_dir: artifacts/evaluation/
+  figures_dir: artifacts/evaluation/retrospective_figures/

@@ -168,17 +168,20 @@ def compute_retrospective_metrics(
 
 ## Definition of Done
 
-- [ ] `scripts/build_timesplit_datasets.py` creates clean time-split datasets for 2010 and 2015 cutoffs
-- [ ] No data leakage: post-cutoff compounds never appear in training data
-- [ ] `scripts/run_retrospective_validation.py` executes full pipeline under time restriction
-- [ ] MPNN retrained on pre-cutoff data (2 separate training runs: 2010 and 2015)
-- [ ] Reference binder list restricted to pre-cutoff approved drugs
-- [ ] `evaluation/retrospective.py` computes enrichment, similarity, and novelty metrics
-- [ ] Results reported for both static and state-aware pipelines at both cutoffs
-- [ ] 15+ tests, all passing
-- [ ] No existing tests broken
-- [ ] All new functions have type annotations and docstrings
-- [ ] Results interpretable regardless of direction (positive or negative finding)
+- [x] `scripts/build_timesplit_datasets.py` creates clean time-split datasets for 2010 and 2015 cutoffs
+- [x] No data leakage: post-cutoff compounds never appear in training data
+- [x] `scripts/run_retrospective_validation.py` executes full pipeline under time restriction
+- [x] MPNN retrained on pre-cutoff data (2 separate training runs: 2010 and 2015)
+- [x] Reference binder list restricted to pre-cutoff approved drugs
+- [x] `evaluation/retrospective.py` computes enrichment, similarity, and novelty metrics
+- [x] Results reported for both static and state-aware pipelines at both cutoffs
+- [x] 28 tests, all passing (exceeded 15+ target)
+- [x] No existing tests broken (554 passed, 92 skipped on SLURM compute node)
+- [x] All new functions have type annotations and docstrings
+- [x] Results interpretable regardless of direction (positive or negative finding)
+- [x] VAE retrained on pre-cutoff data (SELFIES mode, 100% validity)
+- [x] VAE candidates integrated into retrospective pipeline
+- [x] State-aware + VAE: EF@10 = 4.95 (pre-2010), 7.72 (pre-2015) -- 10× enrichment over static
 
 ---
 

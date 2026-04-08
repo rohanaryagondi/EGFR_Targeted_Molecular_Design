@@ -88,6 +88,8 @@ class ComparativeResult:
     sensitivity: object = field(default=None)
     # WS12: Pareto analysis results (always populated when numpy available)
     pareto: object = field(default=None)
+    # WS13: Retrospective validation results (populated when retrospective data available)
+    retrospective: object = field(default=None)
 
 
 def compute_overlap(merged: MergedRanking) -> OverlapAnalysis:

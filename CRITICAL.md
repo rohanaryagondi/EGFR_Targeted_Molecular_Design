@@ -57,7 +57,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 ## Testing
 
-- 618 existing tests must continue to pass (was 548 after WS01-09, now 618 after WS11-12). Run: `pytest -v --tb=short`.
+- 646 existing tests must continue to pass (was 618 after WS11-12, now 646 after WS13). Run: `pytest -v --tb=short`.
 - Every new module/function needs tests in `tests/`.
 - **Full SLURM GPU test required** when modifying `ranking/scoring.py`, `ml/`, `chemistry/docking.py`, `evaluation/`, or any scoring/docking code. See `docs/ai-guide/testing-and-deps.md` Section "SLURM GPU Testing Policy".
 - GNINA docking tests add ~60 minutes on GPU nodes (each `dock_molecule` call takes 1-2 min). Plan SLURM time limits accordingly (2 hours recommended).
@@ -128,8 +128,22 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 - After WS01/02/03/05/06/07/09: 498 tests
 - After WS04: 518 tests
 - After WS08: 548 tests
-- After WS11 (GNINA) + WS12 (Pareto) + sklearn fix: 618 tests (current)
+- After WS11 (GNINA) + WS12 (Pareto) + sklearn fix: 618 tests
+- After WS13 (Retrospective Validation): 646 tests (current)
 - Target: 500+ (exceeded)
+
+## Retrospective Validation (WS13)
+
+- `evaluation/retrospective.py` provides time-split validation metrics: enrichment factor, similarity to future drugs, novelty, leakage verification. Uses `EGFR_DRUG_APPROVALS` constant (7 drugs with SMILES, approval years, generations).
+- **Pre-cutoff MPNN models** retrained on time-restricted data: `artifacts/models/mpnn_pre2010/best_model.pt` (R²=0.717, Pearson=0.854, 2,974 compounds) and `artifacts/models/mpnn_pre2015/best_model.pt` (R²=0.690, Pearson=0.832, 4,852 compounds). Configs: `configs/mpnn_pre2010.yaml`, `configs/mpnn_pre2015.yaml`.
+- **Pre-cutoff VAE models** (SELFIES mode, 100% validity): `artifacts/models/vae_pre2010/best_model.pt` (987 unique candidates, best epoch 298) and `artifacts/models/vae_pre2015/best_model.pt` (968 unique candidates, best epoch 299). Configs: `configs/vae_pre2010.yaml`, `configs/vae_pre2015.yaml`.
+- **Key result:** State-aware + VAE achieves EF@10 = 4.95 (pre-2010) and 7.72 (pre-2015) vs static EF@10 = 0.47/0.79. This is 10× enrichment over static baseline — the strongest validation result in the project.
+- `scripts/run_retrospective_validation.py` supports `--use-retrained-mpnn` and `--use-retrained-vae` flags. MPNN checkpoint swapping uses backup/restore pattern with `reset_singleton()` to avoid modifying `ranking/scoring.py`.
+- `scripts/build_timesplit_datasets.py` uses 3-tier ChEMBL data fetch (local file → API → curated fallback) with `document_year` filtering and leakage verification.
+- `scripts/build_timesplit_vae_data.py` converts MPNN time-split data to VAE format with structural heuristic state assignment.
+- SELFIES mode is essential for pre-cutoff VAE: SMILES mode produced 0-7.9% valid molecules vs 100% with SELFIES on small training sets.
+- `comparison.py:91` has `retrospective: object = field(default=None)` on `ComparativeResult` — non-breaking addition.
+- `figures.py` has `retrospective_enrichment_ascii()` and `retrospective_summary_ascii()` registered in `generate_all_figures()`.
 
 ---
 

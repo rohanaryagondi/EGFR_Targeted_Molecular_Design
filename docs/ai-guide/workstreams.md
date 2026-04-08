@@ -26,7 +26,7 @@ work autonomously.
 | 09 | ADMET Predictor | High | High | 01 | **Complete** |
 | 11 | GNINA Docking | Moderate | High | 01, structure atlas | **Complete** |
 | 12 | Pareto Optimization | Low | High | None | **Complete** |
-| 13 | Retrospective Validation | Moderate | Critical | MPNN, full pipeline | Not started |
+| 13 | Retrospective Validation | Moderate | Critical | MPNN, full pipeline | **Complete** |
 
 ## Four Parallel Groups
 
