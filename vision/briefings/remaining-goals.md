@@ -1,177 +1,253 @@
 # Remaining Goals: Gap Analysis
 
-**Last updated:** 2026-04-07T00:00:00+00:00
-**Briefing session:** 2 (final update)
+**Last updated:** 2026-04-07T20:00:00+00:00
+**Briefing session:** 3
+
+---
+
+## Changes Since Last Briefing (Session 2)
+
+- **3 former gaps now addressed:**
+  - "No physics-based docking" -> WS11 implemented GNINA (validated on GPU, tier 0 in cascade)
+  - "No multi-objective optimization" -> WS12 implemented Pareto (hypervolume comparison)
+  - "No external validation" -> WS13 implemented retrospective time-split validation
+- **Remaining gaps reduced from 10 to 7** (plus 2 new minor limitations)
+- **Retrospective validation fundamentally changes the narrative:** State-aware pipeline
+  achieves 10x enrichment for identifying future approved drugs despite losing on mean
+  score. This reframes what "remaining goals" means for the project.
+- **All previously planned goals are met.** The gaps below are directions for future work,
+  not unfinished requirements.
 
 ---
 
 ## The Central Question
 
 StateBind exists to answer: does conformational state-aware design outperform static
-single-structure design? As of today, **the project has answered this question: the
-null hypothesis is formally retained.** The static baseline achieved higher mean scores
-(0.5437 vs 0.4378, p<0.001, Cohen's d=1.36 favoring static). However, the state-aware
-pipeline produced far more candidates (461 vs 30), greater diversity (0.9056 vs 0.5684),
-higher max score (0.7794 vs 0.7288), and 431 novel molecules.
+single-structure design? The answer is now **nuanced rather than binary:**
+
+**On mean unified score:** No. The static baseline wins (0.5437 vs 0.4378, p<0.001,
+Cohen's d=1.36). The null hypothesis is formally retained.
+
+**On prospective drug identification:** Yes, dramatically. The state-aware pipeline
+achieves 10x enrichment for identifying future approved drugs in retrospective
+time-split validation (EF@10 = 4.95/7.72 vs 0.47/0.79).
+
+**On chemical exploration:** Yes. The state-aware pipeline produces 15x more candidates
+(461 vs 30), 59% higher chemical diversity (0.9056 vs 0.5684), and 431 novel molecules.
+
+The project has answered its central question -- and the answer depends on which metric
+you prioritize.
 
 ---
 
 ## Goal-by-Goal Status
 
-### Targets MET
-
-| Goal | Target | Current | Notes |
-|------|--------|---------|-------|
-| Test count | 450+ | 548 | Exceeded by 98. Progression: 359 → 548 across 9 workstreams + post-training |
-| Similarity method | Morgan/ECFP4 | Morgan/ECFP4 Tanimoto (radius=2, 2048 bits) | Fallback to n-gram when RDKit unavailable |
-| Drug-likeness method | RDKit QED + Lipinski + SA | QED(0.5) + Lipinski(0.25) + SA(0.25) | Weighted composite with heuristic fallback |
-| Workstreams complete | 9/9 | 9/9 | All merged, zero conflicts |
-| Statistical framework | Mann-Whitney U + CI | Complete — run on trained model scores | p<0.001, d=1.36, null retained |
-
-### Targets ALSO MET (previously partial or unmet)
+### All Planned Goals: MET
 
 | Goal | Target | Achieved | Notes |
 |------|--------|----------|-------|
-| Docking scoring | MPNN (RMSE < 1.0 pIC50) | RMSE=0.7182, R²=0.6863, Pearson=0.8323 | Trained on 10,466 ChEMBL EGFR compounds (12.7M params). Active in scoring cascade. |
-| CI/CD | Clean GitHub Actions | All 121 ruff violations fixed (121→0) | Lint job now passes clean |
-| Statistical significance | p < 0.05 Mann-Whitney U | p<0.001, d=1.36 | Test run; null formally retained (static favored on mean score) |
-| Novel candidates | 100+ VAE-generated | 395 VAE-generated (431 total novel) | VAE v3 (SELFIES) generating valid, unique molecules |
-| VAE validity | >= 50% | 99.9% | SELFIES encoding guarantees near-perfect validity |
+| Test count | 450+ | 646 | Exceeded by 196. Progression: 359 -> 646 across 12 workstreams |
+| Similarity method | Morgan/ECFP4 | Morgan/ECFP4 Tanimoto (radius=2, 2048 bits) | Fallback to n-gram when RDKit unavailable |
+| Drug-likeness method | RDKit QED + Lipinski + SA | QED(0.5) + Lipinski(0.25) + SA(0.25) | Weighted composite with heuristic fallback |
+| Workstreams complete | 12/12 | 12/12 | All merged, zero conflicts |
+| Statistical framework | Mann-Whitney U + CI | Complete | p<0.001, d=1.36, null retained |
+| Docking scoring | MPNN (RMSE < 1.0) | RMSE=0.7182 | MPNN tier 1. GNINA physics-based tier 0 on GPU. |
+| CI/CD | Clean GitHub Actions | 121 ruff violations fixed (121->0) | Lint job passes clean |
+| Statistical significance | p < 0.05 | p<0.001, d=1.36 | Null formally retained (static favored on mean score) |
+| Novel candidates | 100+ VAE-generated | 395 VAE-generated (431 total novel) | SELFIES encoding: 99.9% valid, 94.8% unique |
+| VAE validity | >= 50% | 99.9% | SELFIES guarantees near-perfect validity |
 | VAE uniqueness | >= 80% | 94.8% | Exceeded target |
-| MPNN RMSE | < 1.0 pIC50 | 0.7182 | Met target on 10,466 compounds |
+| MPNN RMSE | < 1.0 pIC50 | 0.7182 | Met target |
 | MPNN R-squared | > 0.5 | 0.6863 | Met target |
 | MPNN Pearson r | > 0.7 | 0.8323 | Met target |
-| hERG AUROC | > 0.75 | 0.7745 | Met target (but hard filtering rejects ALL kinase inhibitors — used informational only) |
+| hERG AUROC | > 0.75 | 0.7745 | Met (but hard filtering rejects ALL kinase inhibitors) |
 | CYP3A4 AUROC | > 0.70 | 0.7323 | Met target |
-| Synthetic accessibility | RDKit SA score | In drug-likeness sub-score | SA is part of drug-likeness composite (25% weight) |
-
-**Summary: all planned goals met.** The null hypothesis was retained — static baseline
-outperforms on mean score — but the state-aware pipeline excels on diversity, novelty,
-and candidate volume.
+| Physics-based docking | GNINA integrated | Tier 0, validated on GPU | Binders -7.32 vs non-binders -4.16 kcal/mol |
+| Pareto optimization | Implemented | Hypervolume comparison active | Weight-free evaluation alongside weighted sum |
+| Retrospective validation | Time-split at 2010/2015 | EF@10 = 4.95/7.72 (state-aware) | 10x enrichment over static |
 
 ---
 
-## Critical Path (COMPLETED)
+## What Retrospective Validation Revealed
 
-All steps in the critical path have been executed:
+This is the most important new result since the last briefing. The retrospective
+validation tests whether the pipeline, trained only on data available before a cutoff
+year, would have identified drugs approved after the cutoff.
 
-```
-1. Train 3 ML models on GPU                              DONE
-   - VAE v3 (SELFIES): 300 epochs on H200               DONE
-   - MPNN: trained on 10,466 compounds                   DONE
-   - ADMET: trained on 27,698 molecules                  DONE
-   |
-   v
-2. Verify model quality metrics                           DONE
-   - VAE: 99.9% valid, 94.8% unique                     EXCEEDED
-   - MPNN: RMSE=0.7182, R²=0.6863, Pearson=0.8323      MET
-   - ADMET: hERG AUROC=0.7745, CYP3A4 AUROC=0.7323     MET
-   |
-   v
-3. Generate VAE candidates (395 generated)                DONE
-   |
-   v
-4. Re-score all candidates with MPNN active               DONE
-   |
-   v
-5. ADMET safety filter (informational only — hard         DONE
-   filtering rejects ALL kinase inhibitors on hERG)
-   |
-   v
-6. Re-run unified scoring for both pipelines              DONE
-   |
-   v
-7. Execute Mann-Whitney U test on score distributions     DONE
-   |
-   v
-8. Null hypothesis formally retained                      DONE
-```
+### Cutoff 2010 (held out: afatinib, osimertinib, dacomitinib, lazertinib, mobocertinib)
 
-**Outcome:** Static baseline had higher mean scores (0.5437 vs 0.4378, p<0.001,
-d=1.36). State-aware pipeline produced more candidates (461 vs 30), greater diversity
-(0.9056 vs 0.5684), and 431 novel molecules.
+| Metric | Static | State-Aware |
+|--------|--------|-------------|
+| EF@10 | 0.47 | **4.95** |
+| EF@50 | 1.00 | **5.70** |
+| Candidates | 30 | 520 |
+| Drugs found | 5/5 | 5/5 |
+| Novelty | 0.90 | **0.99** |
+
+### Cutoff 2015 (held out: dacomitinib, lazertinib, mobocertinib)
+
+| Metric | Static | State-Aware |
+|--------|--------|-------------|
+| EF@10 | 0.79 | **7.72** |
+| EF@50 | 1.00 | **7.28** |
+| Candidates | 30 | 430 |
+| Drugs found | 3/3 | 3/3 |
+| Novelty | 0.90 | **0.99** |
+
+**Key finding:** The state-aware pipeline's enrichment factor is 10x that of the static
+baseline. This means future approved drugs are concentrated ~10x more densely in the
+top-ranked state-aware candidates than in top-ranked static candidates.
+
+**Why the state-aware pipeline wins here but loses on mean score:** The mean score is
+dragged down by 431 diverse but low-similarity VAE-generated molecules (the reference
+similarity component at 35% weight penalizes novelty). But among these diverse
+candidates are molecules that closely resemble future drugs -- they are needles in a
+haystack that the enrichment factor detects.
+
+**Pre-cutoff models performed well:** The pre-2010 MPNN (only 2,974 training compounds)
+achieved R^2=0.717 and Pearson=0.854 -- comparable to or better than the full model on
+10,466 compounds. This suggests early curated data may be higher quality.
 
 ---
 
-## What Was Achieved
+## Gaps That Current Plans Do NOT Address
 
-All models trained to or above target quality. The project now has:
+The following 7 gaps remain open. These are directions for future work, not failures --
+each represents an opportunity to strengthen the project's scientific credibility.
 
-- A real affinity predictor (MPNN) active in the scoring cascade (20% of scoring weight)
-- 395 VAE-generated novel molecules (SELFIES-encoded, 99.9% valid)
-- ADMET safety profiling (informational — hard filtering proved too aggressive for kinase inhibitors)
-- A statistically-tested comparison: p<0.001, d=1.36, null retained
+### 1. No experimental validation
 
-**Significant gaps remain for future work:**
+Zero wet-lab data. No binding assays, no cell viability, no animal models. Every score
+is a computational prediction. Peer reviewers will flag this as the fundamental
+limitation.
 
-### Gaps That Current Plans Do NOT Address
+> **Opportunity:** Testing 5-10 top candidates in a fluorescence polarization binding
+> assay would transform this from a purely computational exercise to a validated
+> pipeline. The retrospective validation result (10x enrichment) makes the case for
+> experimental follow-up much stronger.
 
-1. **No physics-based docking.** The MPNN predicts pIC50 from molecular graphs — it
-   never simulates actual protein-ligand binding. It is a learned proxy, not a docking
-   calculation. Real docking (AutoDock Vina, GNINA, Glide) would give physically
-   interpretable binding poses and energies.
+### 2. No selectivity profiling
 
-2. **No experimental validation.** Zero wet-lab data. No binding assays, no cell
-   viability, no animal models. The entire pipeline is computational. Peer reviewers
-   will flag this as a fundamental limitation.
+The pipeline scores binding to EGFR only. It does not check whether candidates also
+bind off-target kinases (ABL, BRAF, ALK, SRC, etc.). A molecule that binds everything
+is not a useful drug.
 
-3. **No selectivity profiling.** The pipeline scores binding to EGFR only. It does
-   not check whether candidates also bind off-target kinases (ABL, BRAF, ALK, etc.).
-   A molecule that binds everything is not a drug.
+> **Opportunity:** A multi-target MPNN trained on data from multiple kinases, or a
+> structural comparison of binding pockets across the kinome, would enable designing
+> EGFR-specific molecules. The MPNN architecture already supports this -- it would
+> need training data from additional kinases.
 
-4. **No retrosynthetic analysis.** The pipeline generates molecular structures but
-   does not assess whether they can actually be synthesized in a lab. SA score is
-   a rough estimate; real retrosynthetic planning (e.g., ASKCOS, IBM RXN) would
-   identify synthesis routes.
+### 3. No retrosynthetic analysis
 
-5. **Conformational model is discretized.** Real kinase dynamics are continuous —
-   the protein breathes through a landscape of intermediate conformations, not 4
-   discrete states. The 4-state model is a useful simplification but misses
-   intermediate geometries.
+The pipeline generates molecular structures but does not assess whether they can
+actually be synthesized in a lab. SA score is a rough heuristic; real retrosynthetic
+planning (ASKCOS, IBM RXN) would identify actual synthesis routes.
 
-6. **Training data is modest.** 10,466 compounds for MPNN is moderate but still small
-   by modern standards. Pre-training on larger datasets (e.g., ChEMBL-wide, PubChem)
-   followed by fine-tuning on EGFR data would likely improve generalization.
+> **Opportunity:** Integrating a retrosynthetic feasibility gate would filter candidates
+> by actual synthesizability and provide proposed routes. This converts computational
+> candidates into actionable synthesis targets.
 
-7. **No multi-objective optimization.** Scoring is a weighted sum. Pareto
-   optimization across competing objectives (affinity vs. selectivity vs. ADMET vs.
-   synthesis) would explore a richer design space.
+### 4. Conformational model is discretized
 
-8. **ADMET is not in the scoring weights.** The ADMET predictor filters candidates
-   but does not contribute to the unified score. A candidate with perfect affinity
-   but terrible hERG liability still scores high — it just gets flagged afterward.
-   Integrating ADMET into scoring would make the ranking itself safety-aware.
+Real kinase dynamics are continuous -- the protein breathes through a landscape of
+intermediate conformations, not 4 discrete states. The 4-state model is a useful
+simplification but misses intermediate geometries.
 
-9. **No uncertainty quantification.** The models produce point predictions. There
-   is no epistemic uncertainty estimate (how confident is the MPNN in this pIC50?)
-   or aleatoric uncertainty (how noisy is the data?). Bayesian methods or ensembles
-   would provide confidence intervals.
+> **Opportunity:** Replacing discrete states with continuous conformational
+> representations (e.g., PCA of dihedral angles from MD trajectories, or learned
+> embeddings from a protein structure VAE) would capture the full landscape. This
+> would be genuinely novel -- most approaches in the literature also use discrete
+> states. Note: the Head AI deferred this (idea 001) because the null result is not
+> driven by discretization.
 
-10. **No active learning loop.** The pipeline is one-shot: generate → score → rank.
-    An active learning cycle (generate → score → identify most informative candidates
-    → retrain → generate again) could iteratively improve both the model and the
-    candidate pool.
+### 5. Training data is modest
+
+10,466 compounds for MPNN is moderate. Pre-training on larger datasets (ChEMBL-wide,
+PubChem) followed by fine-tuning on EGFR data would likely improve generalization.
+However, the pre-cutoff models performed surprisingly well with fewer compounds
+(R^2=0.717 with only 2,974 compounds), suggesting diminishing returns.
+
+> **Opportunity:** Self-supervised pre-training on millions of compounds (idea 010)
+> before fine-tuning on EGFR data. The Head AI deferred this because models are
+> already achieving target metrics.
+
+### 6. ADMET is not in the scoring weights
+
+The ADMET predictor (hERG AUROC=0.7745, CYP3A4 AUROC=0.7323) filters candidates
+informational only. Hard filtering rejects ALL kinase inhibitors on hERG (a known class
+liability). A candidate with perfect affinity but terrible hERG liability still scores
+high -- it just gets flagged afterward.
+
+> **Opportunity:** Adding ADMET as a 5th scoring component (or restructuring as
+> constrained optimization where ADMET thresholds are constraints rather than
+> penalties) would make the ranking safety-aware. This requires solving the kinase
+> inhibitor hERG problem -- perhaps a kinase-specific hERG threshold or a relative
+> rather than absolute scoring approach.
+
+### 7. No uncertainty quantification
+
+All models produce point predictions. The MPNN predicts pIC50 = 6.3, but how confident
+is it? Without uncertainty estimates, the pipeline cannot distinguish high-confidence
+from low-confidence predictions.
+
+> **Opportunity:** Ensembles (5-10 models), Monte Carlo dropout, or evidential deep
+> learning would provide prediction intervals and enable risk-aware ranking. The
+> Head AI deferred this (idea 004) due to 5-10x GPU cost; MC dropout is a lighter
+> alternative.
+
+---
+
+## New Considerations (Post-WS11/12/13)
+
+### GNINA runtime cost
+
+Physics-based docking is slow (minutes per molecule on GPU). Docking 461 candidates
+across 4 conformational states requires significant GPU time. This makes iterative
+pipeline runs expensive and limits active learning loops.
+
+> **Opportunity:** GNINA's CNN scoring mode is faster than full Vina. Alternatively,
+> a GNINA-trained surrogate model could provide fast approximate docking scores for
+> rapid screening, with full GNINA reserved for top candidates.
+
+### Retrospective validation sample size
+
+The enrichment factors (4.95/7.72 for state-aware, 0.47/0.79 for static) are computed
+against only 5 (pre-2010) or 3 (pre-2015) held-out drugs. These are all the approved
+EGFR drugs that exist, but the small sample means the enrichment estimates have wide
+confidence intervals.
+
+> **Opportunity:** Extending to other kinase families (ALK, ROS1, RET, MET) with
+> known approved drugs would provide more statistical power for the retrospective
+> validation. The pipeline architecture is target-agnostic -- it could be applied to
+> any kinase with conformational state data.
 
 ---
 
 ## The Honest Assessment
 
-StateBind has built solid infrastructure and completed the full experimental cycle.
-The pipeline, testing, scoring, and statistical frameworks are production-quality for
-a research project. The scientific question — does state-awareness help? — has been
-answered: **the null hypothesis is retained.** The static baseline outperforms on mean
-score under the current scoring function.
+StateBind has completed everything it set out to do and more. All 12 workstreams are
+done, all planned goals are met, and the central question has been answered. The
+infrastructure is production-quality for a research project.
 
-However, the result is nuanced. The state-aware pipeline produces vastly more
-candidates (461 vs 30), greater chemical diversity (0.9056 vs 0.5684), a higher
-maximum score (0.7794 vs 0.7288), and 431 novel molecules. Weight sensitivity
-analysis shows 44% of weight combinations favor state-aware design. The deficit is
-concentrated in the reference similarity component — VAE-generated molecules are
-structurally diverse but less similar to the 3 reference drugs.
+The answer to the central question is nuanced:
+- **Static wins on mean score** (the unified scoring function favors known chemotypes
+  through its 35% reference similarity weight)
+- **State-aware wins on drug discovery utility** (10x enrichment for identifying future
+  approved drugs, 15x more candidates, 59% higher diversity, 431 novel molecules)
 
-The 10 gaps listed above are not failures — they are opportunities. Each one represents
-a potential leap in the project's scientific credibility and practical utility. A
-Visionary looking at this project should focus on: which of these gaps, if closed,
-would most change the answer to the central question? In particular, expanding the
-reference set beyond 3 drugs and integrating physics-based docking could shift the
-balance significantly.
+This nuance is scientifically valuable. It reveals that the weighted-sum scoring
+function and the retrospective enrichment metric measure fundamentally different
+things. The scoring function rewards similarity to 3 known drugs. The enrichment
+factor rewards placing future drugs near the top of the candidate list, regardless of
+overall score distribution. The state-aware pipeline excels at the latter because its
+VAE-generated candidates explore diverse chemical space where future drugs are found.
+
+**What the Visionary should focus on:** The 7 remaining gaps are now about strengthening
+the scientific narrative and extending the pipeline, not about basic functionality.
+The highest-impact opportunities are:
+
+1. **Experimental validation** -- Even minimal wet-lab data would transform the project.
+   The 10x enrichment result makes the case for this compelling.
+2. **Selectivity profiling** -- The missing piece for drug design credibility.
+3. **Extending to other kinases** -- Would validate the approach beyond EGFR and
+   provide more statistical power for retrospective validation.
