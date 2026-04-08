@@ -110,9 +110,9 @@ These extend beyond v1 scope. Recorded for directional planning, not as commitme
 
 - [ ] **Active learning loop** -- VAE generates candidates -> MPNN scores them -> top candidates added to MPNN training set -> MPNN retrained -> updated scores guide next VAE generation round. Closes the generation-evaluation loop.
 
-- [ ] **Real docking** -- AutoDock Vina or GNINA integration. Dock candidates against all 4 state-specific receptor structures (prepared as PDBQT). Provides pose-level binding mode information that ML proxies cannot capture. Estimated: 2-3 days for receptor prep + compute.
+- [x] **Real docking** -- **Complete (WS11).** GNINA v1.1 integrated as tier 0 in 4-tier docking cascade. 4 state-specific PDBQT receptors prepared. Validated on GPU: binders -7.32 vs non-binders -4.16 kcal/mol.
 
-- [ ] **Multi-objective optimization** -- Replace weighted linear scoring with Pareto frontier optimization over affinity, druglikeness, selectivity, and ADMET. Produces a diverse candidate set optimized along different tradeoff axes rather than a single composite number.
+- [x] **Multi-objective optimization** -- **Complete (WS12).** Pareto frontier optimization with hypervolume indicator for weight-free comparison. Uses pymoo (exact) with numpy 2D fallback. Pareto front plots integrated into evaluation figures.
 
 - [ ] **Multi-target expansion** -- Replicate the pipeline for ABL (imatinib, DFG-out preference), ALK (G1202R resistance), and BRAF (V600E). Tests whether state-aware advantage generalizes beyond EGFR.
 

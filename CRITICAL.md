@@ -4,47 +4,47 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 ## Scoring System
 
-- Unified scoring weights must sum to 1.0 -- enforced by `_validate_weights()` at `ranking/scoring.py:173-181`. Violating this raises `ValueError`.
-- The 4 required weight keys are: `reference_similarity`, `druglikeness`, `docking_proxy`, `state_specificity` -- validated at `ranking/scoring.py:173`.
+- Unified scoring weights must sum to 1.0 -- enforced by `_validate_weights()` at `ranking/scoring.py:227-235`. Violating this raises `ValueError`.
+- The 4 required weight keys are: `reference_similarity`, `druglikeness`, `docking_proxy`, `state_specificity` -- validated at `ranking/scoring.py:229`.
 - Docking uses 4-tier cascade: GNINA -> MPNN -> DockingProxy MLP -> constant 0.5 stub -- `ranking/scoring.py:_score_docking()`. GNINA only attempted when GPU detected (`_gpu_available()` guard). MPNN trained (RMSE=0.72, R²=0.69, Pearson=0.83; checkpoint `artifacts/models/mpnn/best_model.pt`). ADMET trained (hERG AUROC=0.77, CYP3A4=0.73; checkpoint `artifacts/models/admet/best_model.pt`). VAE v3 (SELFIES) trained (9.5M params, 300 epochs, val_recon=2.26, 99.9% valid generation). Checkpoint `artifacts/models/vae/best_model.pt`.
-- Baseline scoring uses DIFFERENT weights (0.4/0.3/0.3) than unified scoring (0.35/0.30/0.20/0.15) -- `baselines/scoring.py:269-273` vs `ranking/scoring.py:86-91`.
-- `state_specificity` gives state-aware pipeline a structural 0.15 weight advantage over static baseline -- this is by design (`ranking/scoring.py:139-170`).
-- Similarity scoring uses Morgan/ECFP4 fingerprints (WS02) with fallback to SMILES 3-gram Tanimoto -- `baselines/scoring.py:78` (`_score_reference_similarity`).
-- Reference binders (erlotinib, gefitinib, osimertinib) are defined as SMILES literals at `baselines/scoring.py:59-66`.
+- Baseline scoring uses DIFFERENT weights (0.4/0.3/0.3) than unified scoring (0.35/0.30/0.20/0.15) -- `baselines/scoring.py:267-271` vs `ranking/scoring.py:125-130`.
+- `state_specificity` gives state-aware pipeline a structural 0.15 weight advantage over static baseline -- this is by design (`ranking/scoring.py:193-224`).
+- Similarity scoring uses Morgan/ECFP4 fingerprints (WS02) with fallback to SMILES 3-gram Tanimoto -- `baselines/scoring.py:76` (`_score_reference_similarity`).
+- Reference binders (erlotinib, gefitinib, osimertinib) are defined as SMILES literals at `baselines/scoring.py:57-66`.
 
 ## Workstream Conflicts
 
 - WS02 (scoring integration), WS04 (docking proxy), and WS08 (MPNN affinity) ALL modify `ranking/scoring.py` -- they must execute sequentially, not in parallel.
 - Cascading docking fallback chain: MPNN (WS08) -> DockingProxy MLP (WS04) -> stub returning 0.5 (current).
-- Do NOT change `DEFAULT_WEIGHTS` at `ranking/scoring.py:86-91` without also updating the `SCORING_METHOD` string at `ranking/scoring.py:93-97`.
+- Do NOT change `DEFAULT_WEIGHTS` at `ranking/scoring.py:125-130` without also updating the `SCORING_METHOD` string at `ranking/scoring.py:132-136`.
 
 ## Data and Context
 
-- All curated data (mutations, structures, ligands) is embedded as Python literals in source code, NOT loaded from external files -- see `processing/context.py:24-37`, `structure/features.py:28-39`.
+- All curated data (mutations, structures, ligands) is embedded as Python literals in source code, NOT loaded from external files -- see `processing/context.py:24` (`_v1_curated_mutations`), `structure/features.py:25` (`_curated_features`).
 - All 17 resistance mutations map to `DFGin_aCin` (single-class) -- context model evaluation is uninformative (100% accuracy is trivial).
-- `ConformationalState` enum at `processing/models.py:52-57` is the canonical state definition used across the entire codebase. 5 values: DFGin_aCin, DFGin_aCout, DFGout_aCin, DFGout_aCout, unclassified.
+- `ConformationalState` enum at `processing/models.py:51-57` is the canonical state definition used across the entire codebase. 5 values: DFGin_aCin, DFGin_aCout, DFGout_aCin, DFGout_aCout, unclassified.
 
 ## ML Infrastructure
 
 - ML models: MPNN TRAINED (RMSE=0.72, R²=0.69, Pearson=0.83, 12.7M params, best epoch 83, checkpoint `artifacts/models/mpnn/best_model.pt`). ADMET TRAINED (hERG AUROC=0.77, CYP3A4 AUROC=0.73, 187K params, best epoch 40, checkpoint `artifacts/models/admet/best_model.pt`). **VAE v3 (SELFIES) TRAINED** (9.5M params, 300 epochs on H200, val_recon=2.26, checkpoint `artifacts/models/vae/best_model.pt`). Generation: **999/1000 valid (99.9%), 948 unique (94.8%)**. SELFIES guarantees validity by construction. ADMET hard filtering rejects ALL kinase inhibitors on hERG — use as informational, not as pre-ranking gate.
 - **SELFIES mode:** VAE now supports `--selfies` flag in `train_vae.py`. Checkpoint stores `config.representation='selfies'`. Generation script (`generate_vae_candidates.py`) auto-detects SELFIES mode from checkpoint and converts back to SMILES. Requires `pip install selfies`.
 - `SELFIESTokenizer` in `ml/tokenizer.py` handles SELFIES↔SMILES conversion and bracket-delimited tokenization.
-- Optional dependency pattern used everywhere: `try: import torch; HAS_TORCH = True except ImportError: HAS_TORCH = False` -- see `ml/__init__.py:25-30`.
+- Optional dependency pattern used everywhere: `try: import torch; HAS_TORCH = True except ImportError: HAS_TORCH = False` -- see `ml/__init__.py:26-30`.
 - Pydantic configs (`VAEConfig`, `MPNNConfig`, `ADMETConfig`) are ALWAYS importable without torch -- by design for config validation without ML deps.
-- `ATOM_FEATURE_DIM=35` and `BOND_FEATURE_DIM=11` are computed at `ml/graphs.py:98-101` -- MPNN and ADMET models must match these dimensions.
-- Vocabulary special tokens occupy indices 0-3: `<pad>=0, <sos>=1, <eos>=2, <unk>=3` -- `ml/vocabulary.py:20-29`.
+- `ATOM_FEATURE_DIM=35` and `BOND_FEATURE_DIM=11` are computed at `ml/graphs.py:96-102` -- MPNN and ADMET models must match these dimensions.
+- Vocabulary special tokens occupy indices 0-3: `<pad>=0, <sos>=1, <eos>=2, <unk>=3` -- `ml/vocabulary.py:40-44`.
 - Checkpoint convention: `artifacts/models/{vae,mpnn,admet}/best_model.pt`. Vocabulary saved as JSON alongside checkpoint.
 
 ## Module Dependencies
 
 - Import flow is strictly downward: `processing -> structure -> generation -> ranking -> evaluation`. No cycles allowed.
 - `data/` and `utils/` are leaf modules with zero statebind imports -- they can be imported by anything.
-- `ranking/scoring.py` imports scoring functions FROM `baselines/scoring.py` (`_has_rdkit`, `_score_druglikeness`, `_score_druglikeness_enhanced`, `_score_reference_similarity`, `_score_docking_stub`, `_tanimoto_ngram`) at lines 19-26.
-- `generation/models.py` imports `CandidateSource` enum from `baselines/models.py:53-57` -- changing that enum breaks generation.
+- `ranking/scoring.py` imports scoring functions FROM `baselines/scoring.py` (`_has_rdkit`, `_score_docking_stub`, `_score_druglikeness`, `_score_druglikeness_enhanced`, `_score_reference_similarity`) at lines 20-26.
+- `generation/models.py` imports `CandidateSource` enum from `baselines/models.py:51` -- changing that enum breaks generation.
 
 ## Path Resolution
 
-- `DataPaths` at `data/paths.py:18-21` walks up 4 parent directories from `paths.py` to find project root. This is fragile but has a `project_root` fallback parameter.
+- `DataPaths` at `data/paths.py:10-21` walks up 4 parent directories from `paths.py` to find project root. This is fragile but has a `project_root` fallback parameter.
 - All pipeline artifacts go to `artifacts/` as JSON -- modules communicate via disk, never via in-memory shared state.
 
 ## CI/CD
@@ -80,9 +80,9 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 
 ## Model Types
 
-- `ComparativeResult` in `evaluation/comparison.py:75-86` is a DATACLASS, not a Pydantic model. Do not call `.model_dump()` on it.
-- `merge_rankings()` at `ranking/scoring.py:339-372` deduplicates by SMILES, keeping the HIGHER-scoring version.
-- `rank_state_aware()` at `ranking/scoring.py:288-336` deduplicates across states, keeping the FIRST occurrence.
+- `ComparativeResult` in `evaluation/comparison.py:75-93` is a DATACLASS, not a Pydantic model. Do not call `.model_dump()` on it.
+- `merge_rankings()` at `ranking/scoring.py:397-432` deduplicates by SMILES, keeping the HIGHER-scoring version.
+- `rank_state_aware()` at `ranking/scoring.py:342-394` deduplicates across states, keeping the FIRST occurrence.
 
 ## Conventions
 
@@ -142,7 +142,7 @@ Non-obvious facts that an AI agent MUST know to avoid breaking things in the Sta
 - `scripts/build_timesplit_datasets.py` uses 3-tier ChEMBL data fetch (local file → API → curated fallback) with `document_year` filtering and leakage verification.
 - `scripts/build_timesplit_vae_data.py` converts MPNN time-split data to VAE format with structural heuristic state assignment.
 - SELFIES mode is essential for pre-cutoff VAE: SMILES mode produced 0-7.9% valid molecules vs 100% with SELFIES on small training sets.
-- `comparison.py:91` has `retrospective: object = field(default=None)` on `ComparativeResult` — non-breaking addition.
+- `comparison.py:92` has `retrospective: object = field(default=None)` on `ComparativeResult` — non-breaking addition.
 - `figures.py` has `retrospective_enrichment_ascii()` and `retrospective_summary_ascii()` registered in `generate_all_figures()`.
 
 ---

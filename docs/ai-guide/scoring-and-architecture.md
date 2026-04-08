@@ -47,22 +47,22 @@ function delegates to component scorers defined in `baselines/scoring.py`.
 
 | Component | Weight | Implementation | File:Line | Status |
 |-----------|--------|---------------|-----------|--------|
-| reference_similarity | 0.35 | Morgan/ECFP4 fingerprint Tanimoto vs 3 reference binders (falls back to SMILES 3-gram) | `baselines/scoring.py:78` (`_score_reference_similarity`) | Complete (WS02: Morgan fingerprints) |
-| druglikeness | 0.30 | RDKit QED + Lipinski Ro5 (falls back to linear approximation) | `baselines/scoring.py:101` (`_score_druglikeness`) | Complete (WS02: RDKit descriptors) |
-| docking_proxy | 0.20 | 4-tier cascade: GNINA -> MPNN -> DockingProxy MLP -> constant 0.5 stub | `ranking/scoring.py:_score_docking()` | GNINA (WS11) provides physics-based Vina + CNN scores. GPU guard prevents CPU docking. MPNN active as fallback (RMSE=0.72, R²=0.69, Pearson=0.83). |
-| state_specificity | 0.15 | Geometric decay: 1.0/0.5/0.25/0.0 by number of states candidate appears in | `ranking/scoring.py:139` (`_compute_state_specificity`) | Functional; always 0 for static baseline |
+| reference_similarity | 0.35 | Morgan/ECFP4 fingerprint Tanimoto vs 3 reference binders (falls back to SMILES 3-gram) | `baselines/scoring.py:76` (`_score_reference_similarity`) | Complete (WS02: Morgan fingerprints) |
+| druglikeness | 0.30 | RDKit QED + Lipinski Ro5 (falls back to linear approximation) | `baselines/scoring.py:99` (`_score_druglikeness`) | Complete (WS02: RDKit descriptors) |
+| docking_proxy | 0.20 | 4-tier cascade: GNINA -> MPNN -> DockingProxy MLP -> constant 0.5 stub | `ranking/scoring.py:38` (`_score_docking`) | GNINA (WS11) provides physics-based Vina + CNN scores. GPU guard prevents CPU docking. MPNN active as fallback (RMSE=0.72, R²=0.69, Pearson=0.83). |
+| state_specificity | 0.15 | Geometric decay: 1.0/0.5/0.25/0.0 by number of states candidate appears in | `ranking/scoring.py:193` (`_compute_state_specificity`) | Functional; always 0 for static baseline |
 
 ### Weight Definition & Validation
 
-- **Weights defined:** `ranking/scoring.py:86-91` (`DEFAULT_WEIGHTS` dict)
-- **Weights validated:** `ranking/scoring.py:173-181` (`_validate_weights()`) -- checks
+- **Weights defined:** `ranking/scoring.py:125-130` (`DEFAULT_WEIGHTS` dict)
+- **Weights validated:** `ranking/scoring.py:227-235` (`_validate_weights()`) -- checks
   all 4 keys present and sum == 1.0 (tolerance 1e-4)
-- **Method string:** `ranking/scoring.py:93-97` (`SCORING_METHOD`) -- human-readable
+- **Method string:** `ranking/scoring.py:132-136` (`SCORING_METHOD`) -- human-readable
   description embedded in every RankedPool artifact
 
 ### Reference Binders
 
-Defined at `baselines/scoring.py:59-66`:
+Defined at `baselines/scoring.py:57-66`:
 - Erlotinib: `COCCOc1cc2ncnc(Nc3cccc(C#C)c3)c2cc1OCCOC`
 - Gefitinib: `COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCCN1CCOCC1`
 - Osimertinib: `COc1cc(N(C)CCN(C)C)c(NC(=O)/C=C/CN(C)C)cc1Nc1nccc(-c2cn(C)c3ccccc23)n1`
@@ -88,14 +88,14 @@ Priority 2: DockingProxy MLP (WS04, lightweight numpy-based)
     - Interface: DockingProxy.predict(smiles) -> float in [0.0, 1.0]
 
 Priority 3: Constant 0.5 stub (current default)
-    - File: baselines/scoring.py:202-216 (_score_docking_stub)
+    - File: baselines/scoring.py:200-216 (_score_docking_stub)
     - Always available, zero discriminative power
 ```
 
 ### Baseline vs Unified Scoring Difference
 
-The baseline has its OWN scorer at `baselines/scoring.py:248` (`score_candidates()`)
+The baseline has its OWN scorer at `baselines/scoring.py:246` (`score_candidates()`)
 with slightly different weights (0.4/0.3/0.3, no state_specificity). The UNIFIED scorer
-at `ranking/scoring.py:184` (`score_unified()`) uses 0.35/0.30/0.20/0.15. The unified
+at `ranking/scoring.py:238` (`score_unified()`) uses 0.35/0.30/0.20/0.15. The unified
 scorer is what matters for the head-to-head comparison. The baseline scorer exists only
 for Phase 2 standalone runs.

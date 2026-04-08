@@ -142,9 +142,9 @@ ADMET predictions are applied as a post-generation filter before ranking. Candid
 
 These goals extend beyond the current v1 scope. They are recorded here for directional planning, not as commitments.
 
-### Real Physics-Based Docking
+### Real Physics-Based Docking -- COMPLETE (WS11)
 
-Replace or augment the MPNN proxy with physics-based docking using AutoDock Vina or GNINA. Dock each candidate against each of the 4 state-specific receptor structures (prepared as PDBQT files). This provides pose-level information (binding mode, key interactions) that ML proxies cannot. Estimated effort: 2-3 days for receptor preparation and Vina integration, plus compute time proportional to candidate count.
+**Completed by WS11 (GNINA Docking).** GNINA v1.1 integrated as tier 0 in the 4-tier docking cascade. Docks candidates against state-specific receptor structures (4 PDBQT files prepared for 1m17, 2gs7, 3w2r, 4zau). Provides pose-level binding mode information and Vina scores. GPU-only (guarded by `_gpu_available()`). Validated: known binders score -7.32 kcal/mol vs non-binders -4.16 kcal/mol. Score normalization: `sigmoid(-vina_score / 3)`.
 
 ### Experimental Validation via FEP+
 
@@ -172,9 +172,9 @@ Connect the VAE, MPNN, and pipeline into an iterative design cycle:
 
 This closes the loop between generation and evaluation, enabling the pipeline to improve its own candidate quality over iterations.
 
-### Multi-Objective Optimization
+### Multi-Objective Optimization -- COMPLETE (WS12)
 
-Replace the weighted linear scoring function with Pareto frontier optimization. Instead of collapsing affinity, druglikeness, selectivity, and ADMET into a single number, maintain them as separate objectives and identify the Pareto-optimal set: candidates where no single metric can be improved without degrading another. This produces a diverse set of candidates optimized along different tradeoff axes, better reflecting real drug design decisions.
+**Completed by WS12 (Pareto Optimization).** Pareto frontier optimization implemented alongside (not replacing) the weighted scoring function. Hypervolume indicator provides weight-free comparison between pipelines. Uses pymoo for exact hypervolume computation with numpy 2D fallback. `ParetoResult` and `ParetoComparison` dataclasses in `ranking/pareto.py`. Pareto front plots and ASCII summaries integrated into evaluation figures.
 
 ---
 
@@ -224,6 +224,12 @@ Replace the weighted linear scoring function with Pareto frontier optimization. 
 **WS08 -- MPNN Affinity:** Trains the message-passing neural network on ChEMBL EGFR bioactivity data to predict pIC50 from molecular graphs, providing the replacement for the docking stub that transforms the 20% docking score weight from dead weight into real binding affinity signal.
 
 **WS09 -- ADMET Predictor:** Trains the multi-task ADMET model on TDC datasets to predict six safety and pharmacokinetic endpoints, enabling post-generation filtering that removes candidates with hERG liability, poor solubility, or metabolic instability before they reach the ranking stage.
+
+**WS11 -- GNINA Docking:** Integrates GNINA v1.1 as the top tier of the 4-tier docking cascade, replacing MPNN predictions with physics-based docking scores when GPU and prepared receptors are available. Validates that known EGFR binders dock strongly (-7.32 kcal/mol) while non-binders do not (-4.16 kcal/mol), providing pose-level evidence that ML proxies cannot.
+
+**WS12 -- Pareto Optimization:** Adds Pareto frontier analysis alongside the weighted scoring function, computing hypervolume indicators for weight-free pipeline comparison. Eliminates the arbitrary-weight problem that drove the original null result by evaluating candidates along multiple objective axes simultaneously.
+
+**WS13 -- Retrospective Validation:** Validates the pipeline by training on pre-cutoff EGFR data (2010, 2015) and testing whether it identifies molecules resembling drugs approved after the cutoff. State-aware pipeline achieves 10x enrichment over static baseline (EF@10 = 6.34 mean vs 0.63), providing the strongest computational validation in the project without requiring wet lab work.
 
 ---
 

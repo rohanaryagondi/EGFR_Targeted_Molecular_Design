@@ -89,7 +89,7 @@ repo/
 |-- artifacts/                    Pipeline outputs (JSON artifacts)
 |-- reports/                      Generated reports
 |-- docs/                         Documentation (incl. docs/ai-guide/ reference)
-|-- workstreams/                  9 workstream briefs + INTERFACES.md
+|-- workstreams/                  12 workstream briefs + INTERFACES.md
 |-- vision/                       Vision System: briefings, ideas, logs
 |-- admin/                        Admin AI: suggestions and audit log
 +-- HumanOnly/                    Human-only (AI agents must NOT read)
@@ -114,8 +114,8 @@ repo/
 - Do not commit secrets, credentials, or large binary files.
 - Do not create circular imports. Flow is always downward (see dependency graph).
 - Do not mock scoring in integration tests -- mock I/O, not scoring logic.
-- Do not change `DEFAULT_WEIGHTS` without updating `SCORING_METHOD` (`ranking/scoring.py:86-97`).
-- Do not modify `_REFERENCE_BINDERS` without re-running the full pipeline (`baselines/scoring.py:59-66`).
+- Do not change `DEFAULT_WEIGHTS` without updating `SCORING_METHOD` (`ranking/scoring.py:125-136`).
+- Do not modify `_REFERENCE_BINDERS` without re-running the full pipeline (`baselines/scoring.py:57-66`).
 - Do not use `datetime.now()` without `timezone.utc`.
 - Do not read files in `HumanOnly/`.
 - Do not run workstreams 02, 04, and 08 in parallel (all modify `ranking/scoring.py`).

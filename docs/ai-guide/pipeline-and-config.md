@@ -72,7 +72,7 @@ Logs: `artifacts/logs/{name}/`.
 |---|---------|----------|
 | 1 | `ModuleNotFoundError: No module named 'statebind'` | Run `pip install -e ".[dev]"` from project root. |
 | 2 | `ImportError: cannot import name 'AffinityMPNN'` | Install ML deps: `pip install -e ".[ml]"`. The class requires torch. |
-| 3 | `ValueError: Scoring weights must sum to 1.0` | Check `DEFAULT_WEIGHTS` in `ranking/scoring.py:86`. Your custom weights dict must have all 4 keys summing to 1.0. |
+| 3 | `ValueError: Scoring weights must sum to 1.0` | Check `DEFAULT_WEIGHTS` in `ranking/scoring.py:125`. Your custom weights dict must have all 4 keys summing to 1.0. |
 | 4 | `FileNotFoundError` on any data path | Use `DataPaths()` for resolution. Check `data/raw/` exists. Run `scripts/validate_data_layout.py`. |
 | 5 | Tests fail with `assert statebind.__version__ == "0.1.0"` | Version is pinned in both `pyproject.toml:7` and `src/statebind/__init__.py`. Keep them in sync. |
 | 6 | `pydantic.ValidationError` on model construction | Check field types match Pydantic v2 expectations. Common: `float` vs `int`, missing required fields. |
