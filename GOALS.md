@@ -182,7 +182,7 @@ Replace the weighted linear scoring function with Pareto frontier optimization. 
 
 | Metric | Current | Target | Status |
 |--------|---------|--------|--------|
-| Passing tests | 618 | 450+ | Complete |
+| Passing tests | 646 | 450+ | Complete |
 | Docking scoring | 4-tier cascade: GNINA -> MPNN (RMSE=0.72) -> proxy -> stub | Trained MPNN (RMSE < 1.0) | **Complete** (WS11 adds GNINA) |
 | Similarity method | Morgan/ECFP4 Tanimoto (WS02) | Morgan/ECFP4 Tanimoto | Complete |
 | Statistical testing | Mann-Whitney U: p<0.001, d=1.36 (static favored) | p < 0.05 Mann-Whitney U | **Significant but wrong direction** |
@@ -198,7 +198,8 @@ Replace the weighted linear scoring function with Pareto frontier optimization. 
 | Druglikeness method | RDKit QED + Lipinski (WS02) | RDKit QED + Lipinski | Complete |
 | Synthetic accessibility | RDKit SA score (WS01) | RDKit SA score filtering | Complete |
 | Null hypothesis | **Not rejected** (static favored, p<0.001) | Rejected or formally retained | **Formally retained** |
-| Workstreams complete | 11 of 12 | 9 of 9 (original) | Complete (WS11+WS12 bonus) |
+| Retrospective validation | State-aware EF@10=4.95/7.72 vs static 0.47/0.79 | 10x enrichment over static | **Complete** (WS13) |
+| Workstreams complete | 12 of 12 | 9 of 9 (original) | Complete (WS11+WS12+WS13 bonus) |
 | Training data prepared | VAE 8,109 / MPNN 10,466 / ADMET 27,698 | ChEMBL EGFR + TDC ADMET | Complete |
 | State-conditioned generation | SELFIES VAE (9.5M params, 300 epochs, 99.9% valid) | Conditional VAE sampling | **Complete** ✅ |
 

@@ -16,10 +16,10 @@
 
 ## Status
 
-- **Last session:** 2026-04-07
+- **Last session:** 2026-04-08
 - **Branch:** ML (always)
-- **Last updated:** 2026-04-07T22:00:00+00:00
-- **Head AI generation:** 5
+- **Last updated:** 2026-04-08T02:00:00+00:00
+- **Head AI generation:** 6
 
 ---
 
@@ -29,6 +29,7 @@
 
 | Date | Branch | Workstream | Tests Before | Tests After | Conflicts |
 |------|--------|------------|-------------|-------------|-----------|
+| 2026-04-08 | ws13/retro | WS13: Retrospective Validation | 618 | 646 | None (fast-forward) |
 | 2026-04-07 | ws12/pareto | WS12: Pareto Optimization | 581 | 618 | None |
 | 2026-04-07 | ws11/gnina | WS11: GNINA Docking | 548 | 581 | None |
 | 2026-04-07 | (ML direct) | sklearn/torch_geometric fix | 548 | 548 | N/A (fix, not new tests) |
@@ -120,7 +121,7 @@
 |------|------|--------------------|-------------|--------|
 | 2026-04-07 | 005: GNINA Docking | WS11 | Modular Agent | **Complete, merged to ML** |
 | 2026-04-07 | 008: Pareto Optimization | WS12 | Modular Agent | **Complete, merged to ML** |
-| 2026-04-07 | 009: Time-Split Validation | WS13 | Modular Agent | Brief complete, not started |
+| 2026-04-07 | 009: Time-Split Validation | WS13 | Modular Agent | **Complete, merged to ML** |
 
 ---
 
@@ -155,20 +156,17 @@
 ## Current State
 
 **What is done:**
-- All 11 workstreams complete and merged to ML (618 tests passing, 0 skips on full GPU run)
-- WS11 (GNINA Docking): 4-tier scoring cascade (GNINA -> MPNN -> proxy -> stub), 33 tests, validated on GPU (binders -7.32 vs non-binders -4.16 kcal/mol)
+- All 12 workstreams complete and merged to ML (646 tests, 640 passing + 6 GPU-skipped on login node)
+- WS13 (Retrospective Validation): time-split validation at 2010/2015 cutoffs, 28 tests, state-aware EF@10 = 4.95/7.72 vs static 0.47/0.79 (10x enrichment)
+- WS11 (GNINA Docking): 4-tier scoring cascade (GNINA -> MPNN -> proxy -> stub), 33 tests, validated on GPU
 - WS12 (Pareto Optimization): hypervolume comparison, Pareto front plots, 36 tests
-- sklearn fix: `structure/clustering.py` now uses optional dependency pattern (was unconditional import)
-- ADMET test fix: model quality tests skip when torch_geometric absent (was failing silently)
-- Full SLURM GPU test: 618 passed, 0 skipped, 0 failures (job 7587145, L40S, 65 min)
-- GNINA v1.1 binary installed at `bin/gnina`, receptors prepared for all 4 states
-- pymoo installed for exact hypervolume computation
-- Testing policy documented in `docs/ai-guide/testing-and-deps.md` (3 tiers, SLURM requirements)
-- All documentation updated (CLAUDE.md, CRITICAL.md, GOALS.md, TODO.md, workstreams/README.md, docs/ai-guide/*, HumanOnly/*)
+- Pre-cutoff MPNN/VAE models retrained (mpnn_pre2010, mpnn_pre2015, vae_pre2010, vae_pre2015)
+- All documentation updated (CLAUDE.md, CRITICAL.md, docs/ai-guide/*)
 - All pushed to GitHub
 
 **What is NOT done:**
-- WS13 (Retrospective Validation): brief written, not started. Needs ChEMBL time-split data curation + restricted MPNN retraining.
+- Full SLURM GPU test with WS13 (646 tests). Previous GPU run was 618/618 (pre-WS13). WS13 adds no GPU-dependent tests, so login-node 646 total is sufficient.
+- GOALS.md and TODO.md not yet updated with WS13 completion (should update workstream count, test count, retrospective result).
 
 **Known artifacts on disk:**
 - `data/processed/egfr_affinity.json` -- 10,466 ChEMBL EGFR compounds (pIC50)
@@ -184,15 +182,16 @@
 
 ## Next Steps
 
-1. **Launch WS13** (Retrospective Validation) -- needs ChEMBL time-split data
-   curation + restricted MPNN retraining. Brief at `workstreams/13-retrospective-validation.md`.
+1. **Update GOALS.md and TODO.md** with WS13 completion: 12/12 workstreams done, 646 tests, retrospective validation result (10x enrichment).
 
-2. **Re-run full comparison** with GNINA scores and Pareto evaluation now that WS11+WS12
-   are merged. The scoring cascade will use GNINA on GPU nodes automatically.
+2. **Update workstreams/README.md** to mark WS13 as Complete.
 
-3. **Run Assistant AI** to refresh briefings before any further Visionary sessions.
+3. **Re-run full comparison** with GNINA scores and Pareto evaluation now that WS11+WS12+WS13
+   are all merged. The scoring cascade will use GNINA on GPU nodes automatically.
 
-4. **Consider Admin AI audit** -- documentation just updated; good time to verify consistency.
+4. **Run Assistant AI** to refresh briefings before any further Visionary sessions.
+
+5. **Consider Admin AI audit** -- documentation just updated; good time to verify consistency.
 
 ---
 
