@@ -18,7 +18,7 @@
 
 - **Last session:** 2026-04-08
 - **Branch:** ML (always)
-- **Last updated:** 2026-04-08T02:00:00+00:00
+- **Last updated:** 2026-04-08T03:00:00+00:00
 - **Head AI generation:** 6
 
 ---
@@ -150,6 +150,7 @@
 | 2026-04-07 | Fix sklearn unconditional import in clustering.py | Leave as-is (it worked before) | Unconditional import violated the project's optional dependency pattern and caused test collection errors. Wrapped in try/except with HAS_SKLEARN guard, matching ml/__init__.py pattern. |
 | 2026-04-07 | Require SLURM GPU tests for scoring/ML/docking changes | Trust local tests only | GNINA docking activates on GPU nodes and adds ~60 min to test suite. Local tests miss 4 GNINA + 6 ADMET + 1 pymoo tests. Full SLURM run is the only way to verify 618/618 pass. Policy documented in docs/ai-guide/testing-and-deps.md. |
 | 2026-04-07 | Install pymoo + copy GNINA binary to ML branch | Leave as optional skips | Zero-skip test runs are the gold standard. pymoo is pip-installable. GNINA binary (293MB) is gitignored but present at bin/gnina. |
+| 2026-04-08 | Comprehensive doc audit: fix all stale line refs, counts, stretch goals | Leave stale docs | 12 stale line refs in CRITICAL.md, 10 in scoring doc, workstream briefs count wrong, stretch goals not marked done. All fixed, pushed to GitHub. Major checkpoint. |
 
 ---
 
@@ -166,7 +167,7 @@
 
 **What is NOT done:**
 - Full SLURM GPU test with WS13 (646 tests). Previous GPU run was 618/618 (pre-WS13). WS13 adds no GPU-dependent tests, so login-node 646 total is sufficient.
-- GOALS.md and TODO.md not yet updated with WS13 completion (should update workstream count, test count, retrospective result).
+- Retrospective result artifacts not in git (generated during SLURM runs, gitignored). Numbers cited in docs are from verified SLURM outputs.
 
 **Known artifacts on disk:**
 - `data/processed/egfr_affinity.json` -- 10,466 ChEMBL EGFR compounds (pIC50)
@@ -182,16 +183,13 @@
 
 ## Next Steps
 
-1. **Update GOALS.md and TODO.md** with WS13 completion: 12/12 workstreams done, 646 tests, retrospective validation result (10x enrichment).
-
-2. **Update workstreams/README.md** to mark WS13 as Complete.
-
-3. **Re-run full comparison** with GNINA scores and Pareto evaluation now that WS11+WS12+WS13
+1. **Re-run full comparison** with GNINA scores and Pareto evaluation now that WS11+WS12+WS13
    are all merged. The scoring cascade will use GNINA on GPU nodes automatically.
 
-4. **Run Assistant AI** to refresh briefings before any further Visionary sessions.
+2. **Run Assistant AI** to refresh briefings before any further Visionary sessions.
 
-5. **Consider Admin AI audit** -- documentation just updated; good time to verify consistency.
+3. **Consider Admin AI audit** -- documentation was comprehensively audited 2026-04-08 but
+   may want a second pass after future changes.
 
 ---
 
