@@ -2,9 +2,10 @@
 
 ## Status
 
-- **Last session:** Session 1 -- 2026-03-30
+- **Last session:** Session 2 -- 2026-04-08
 - **Total ideas proposed:** 12
-- **Last updated:** 2026-03-30
+- **Deep research agents designed:** 3
+- **Last updated:** 2026-04-08
 
 ---
 
@@ -78,14 +79,82 @@
 
 ---
 
+### Session 2 -- 2026-04-08
+
+#### Mission
+
+User wants StateBind to become publication-worthy at a top venue (Nature Computational
+Science, JCIM, or similar). Designed a Gemini Deep Research strategy to survey the
+full landscape of techniques, data, and ML approaches that would elevate the project.
+
+#### Deep Research Agents Designed
+
+3 Gemini Deep Research agents, each with a self-contained briefing doc in `vision/DeepResearch/`:
+
+1. **Agent 1: Techniques & Methods** (`techniques-and-methods.md`)
+   - 10 research questions covering: 3D structure-based generation, conformational ensemble methods, physics-informed affinity, multi-objective optimization, active learning, uncertainty quantification, selectivity scoring, retrosynthetic analysis, protein-ligand interaction fingerprints, water/solvation modeling
+   - Addresses deferred ideas: 001, 002, 003, 004, 007, 011, 012
+
+2. **Agent 2: Data & Validation** (`data-and-validation.md`)
+   - 10 research questions covering: KLIFS database, multi-kinase PDB/ChEMBL data, approved drug timelines, benchmark datasets, validation methodologies, clinical outcome data, selectivity datasets, conformational state databases, expansion target ranking
+   - Addresses the generalizability problem (EGFR-only) and small validation sample (3-5 drugs)
+   - Critical for publication: need >=3 additional kinase targets with sufficient data
+
+3. **Agent 3: Foundation Models & Benchmarks** (`foundation-models-and-benchmarks.md`)
+   - 10 research questions covering: pre-trained molecular representations, protein language models, protein-ligand co-representations, SOTA generative models, published benchmarks, self-supervised pre-training, transfer learning, multi-task learning, integration patterns, computational requirements
+   - Addresses deferred ideas: 001, 006, 010 and the "no SOTA comparison" reviewer concern
+
+#### Key Strategic Insights
+
+1. **The 10x enrichment is the publication anchor.** Everything should amplify and validate this finding. Multi-kinase replication is the highest-priority expansion.
+
+2. **Three pillars for top-venue publication:**
+   - Generalizability (works across kinase families, not just EGFR)
+   - Technical sophistication (foundation models, 3D awareness, uncertainty)
+   - Rigorous benchmarking (comparison against published SOTA methods)
+
+3. **The scoring function tension is the paper's intellectual contribution.** Static wins on mean score but loses on enrichment. This reveals that weighted-sum similarity scoring and enrichment measure fundamentally different things. A paper that formalizes this insight -- and shows it generalizes across kinases -- is genuinely novel.
+
+4. **Foundation model integration is the fastest path to ML novelty.** Replacing one-hot state conditioning with ESM-2 conformational embeddings (idea 001) + replacing scratch GNN with pre-trained backbone (idea 010) are architecturally simple but dramatically more sophisticated. The combination is publishable.
+
+#### Briefing Observations (Session 3 briefings, updated 2026-04-07)
+
+- All 12 workstreams complete (up from 10 at session 1 briefing)
+- 3 of my session-1 ideas were accepted and implemented: 005 (GNINA), 008 (Pareto), 009 (retrospective)
+- Retrospective validation result (10x enrichment) is the strongest finding in the project
+- Remaining 9 ideas still deferred -- the deep research agents will provide evidence to prioritize them
+- 7 remaining gaps identified in briefings, all addressable by the deep research strategy
+
+#### Reflections
+
+**What felt right:**
+- Splitting by techniques / data / ML is clean and non-overlapping
+- Each doc is self-contained -- Gemini reads only its file, no repo exploration needed
+- The data agent is arguably the most important: multi-kinase expansion is the #1 path to publication
+- 10 questions per agent is enough for depth without overwhelming
+
+**What I'm uncertain about:**
+- Whether Gemini Deep Research will find specific enough data (exact ChEMBL compound counts per kinase per state) vs general survey-level answers
+- Whether the foundation model landscape moves too fast -- some models in my list may already be superseded
+- Whether we should add a 4th agent focused specifically on publication strategy (target journals, reviewer expectations, impact metrics). Deferred for now; can run separately.
+
+**What to explore in session 3:**
+- Results from all 3 Gemini Deep Research agents -- synthesize into concrete expansion plan
+- Prioritize deferred ideas based on deep research findings
+- Design new workstreams (WS14+) for the highest-impact expansions
+- Consider a 4th deep research agent for publication strategy if needed
+
+---
+
 ## Current State
 
-**What is done:** 12 ideas proposed in session 1, covering 6 categories. All ideas follow the template and reference the briefings. Running log is current.
+**What is done:** 12 ideas from session 1 (3 accepted/implemented, 9 deferred). 3 Gemini Deep Research briefing docs written and pushed to GitHub. Awaiting Gemini agent runs.
 
 **Next steps:**
-1. Wait for Head AI review and status updates on proposed ideas
-2. In next session, explore remaining gaps: interaction fingerprints, SOTA benchmarking, IP analysis
-3. Address any briefing gaps flagged above (pending Assistant AI refresh)
+1. User runs 3 Gemini Deep Research agents with provided prompts
+2. Visionary reviews Gemini outputs and synthesizes into expansion plan
+3. Propose new workstreams (WS14+) based on deep research findings
+4. Design publication narrative and target venues
 
 ---
 
