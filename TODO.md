@@ -20,7 +20,7 @@ For workstream briefs and interface contracts, see `workstreams/README.md`.
 - [x] **Phase 7: Ranking + evaluation** -- Unified scoring function (4 weighted components), candidate merge, head-to-head comparison pipeline. `ranking/` + `evaluation/` modules.
 - [x] **ML infrastructure** -- `Trainer` base class, `SMILESTokenizer`, `Vocabulary`, PyG graph construction utilities, `ModelCard`, `TrainerConfig`. `ml/` shared code.
 - [x] **ML architectures** -- Conditional SMILES VAE (`ml/vae.py`), Affinity MPNN (`ml/mpnn.py`), Multi-task ADMET (`ml/admet.py`). Pydantic configs, YAML files (`configs/vae.yaml`, `configs/mpnn.yaml`, `configs/admet.yaml`), training scripts (`scripts/train_*.py`).
-- [x] **Documentation** -- `CLAUDE.md`, `GOALS.md`, `CRITICAL.md`, 11 module READMEs, 9 workstream briefs, `INTERFACES.md`, `docs/` suite (23 files total).
+- [x] **Documentation** -- `CLAUDE.md`, `GOALS.md`, `CRITICAL.md`, 11 module READMEs, 12 workstream briefs, `INTERFACES.md`, `docs/` suite (23 files total).
 
 ---
 

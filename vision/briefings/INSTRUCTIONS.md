@@ -23,7 +23,7 @@ skip any. The Visionary's ideas are only as good as the context you provide.
 5. `workstreams/README.md` -- Workstream index, dependency graph, status table
 6. `workstreams/INTERFACES.md` -- Interface contracts between modules
 
-### Progress Reports (all 9 + Head AI)
+### Progress Reports (all 12 + Head AI)
 7. `reports/workstreams/ws01-report.md` -- Chemistry Foundation
 8. `reports/workstreams/ws02-report.md` -- Scoring Integration
 9. `reports/workstreams/ws03-report.md` -- Statistical Testing
@@ -33,7 +33,10 @@ skip any. The Visionary's ideas are only as good as the context you provide.
 13. `reports/workstreams/ws07-report.md` -- Conditional VAE
 14. `reports/workstreams/ws08-report.md` -- MPNN Affinity
 15. `reports/workstreams/ws09-report.md` -- ADMET Predictor
-16. `reports/head-ai-log.md` -- Head AI merge log and decisions
+16. `reports/workstreams/ws11-report.md` -- GNINA Physics-Based Docking
+17. `reports/workstreams/ws12-report.md` -- Pareto Multi-Objective Optimization
+18. `reports/workstreams/ws13-report.md` -- Retrospective Time-Split Validation
+19. `reports/head-ai-log.md` -- Head AI merge log and decisions
 
 ### Key Source Files (for architecture understanding)
 17. `src/statebind/ranking/scoring.py` -- The heart of the scoring function
@@ -120,7 +123,7 @@ ideas are born. Be brutally honest about what's missing.
 - The dependency graph (which modules import from which)
 - The scoring function deep dive:
   - 4 components, their weights, their status (real vs stub)
-  - The cascading fallback chain for docking (MPNN -> proxy -> stub)
+  - The 4-tier cascading fallback chain for docking (GNINA -> MPNN -> proxy -> stub)
   - How state_specificity works (geometric decay)
 - ML model summaries (VAE, MPNN, ADMET): purpose, architecture, input/output, status
 - The config system (YAML-driven, no hard-coded values)
@@ -135,14 +138,16 @@ not implementation details.
 primary fuel.
 
 **Must include:**
-- Current stubs and approximations (docking score, any others)
-- Scoring function limitations (what 3-gram Tanimoto misses vs Morgan fingerprints,
-  what constant 0.5 docking wastes, etc.)
+- Remaining stubs and approximations (note: GNINA docking is now physics-based,
+  Morgan fingerprints are active, Pareto optimization is implemented)
+- Scoring function limitations (reference similarity penalizes novel molecules,
+  state_specificity is only 15% weight, etc.)
 - Scientific limitations (no experimental validation, no MD simulations, simplified
-  conformational model, etc.)
-- ML limitations (no pre-training, limited training data, no external validation sets)
+  conformational model, single kinase family, etc.)
+- ML limitations (no pre-training, limited training data, no external validation
+  beyond retrospective time-split)
 - Pipeline limitations (no retrosynthetic analysis, no ADMET filtering in scoring,
-  no multi-objective optimization, etc.)
+  no active learning loop, etc.)
 - What peer reviewers would criticize
 - What drug discovery practitioners would find naive
 
