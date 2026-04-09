@@ -18,21 +18,30 @@ IdeationDept/
 ├── Cohort1/               # First roundtable (completed)
 │   ├── agents/            # Cohort1 specialist personas
 │   └── output/            # Cohort1 research, proposals, critiques
-└── Cohort2/               # Second roundtable (different specialists)
-    ├── agents/            # Cohort2 specialist personas
-    └── output/            # Cohort2 research, proposals, critiques
+├── Cohort2/               # Second roundtable (different specialists, completed)
+│   ├── agents/            # Cohort2 specialist personas
+│   └── output/            # Cohort2 research, proposals, critiques
+└── ReviewCohort/          # Critical review panel (reads both cohorts)
+    ├── agents/            # Review panel member personas
+    └── output/            # Reviews, verification, deliberation, final plan
 ```
 
 **Shared resources** (at IdeationDept root): `context/project-briefing.md`, `templates/`.
 **Cohort-specific**: Each cohort has its own `agents/` and `output/` directories.
 
-### Contamination Firewall
+### Contamination Firewall (Ideation Cohorts Only)
 
-Agents in one cohort must NOT read another cohort's output. This ensures independent
-ideation. Specifically:
+Agents in ideation cohorts (Cohort1, Cohort2) must NOT read another ideation cohort's
+output. This ensures independent ideation. Specifically:
 - Cohort2 agents must NOT read `Cohort1/output/` (research, proposals, critiques, etc.)
 - Cohort2 agents MAY read Cohort1 agent persona files for structural inspiration only
 - The orchestrator enforces this by never including cross-cohort output in subagent prompts
+
+### ReviewCohort Exception
+
+The ReviewCohort is the **exception** to the contamination firewall. Its entire purpose
+is to read and critically evaluate output from BOTH Cohort1 and Cohort2. ReviewCohort
+agents MUST read both cohorts' final agendas, proposals, and critiques.
 
 ---
 
@@ -100,7 +109,8 @@ All documents written by agents follow these conventions:
 - **Agent short names**:
   - Cohort1: `medchem`, `compchem`, `structbio`, `mlres`, `genai`, `synthbio`, `datasci`
   - Cohort2: `drughunt`, `biophys`, `cheminfo`, `clinonc`, `protml`, `kinpharm`, `bencharch`
-  - Orchestrator: `orch` (both cohorts)
+  - ReviewCohort: `compbiorev`, `mlrev`, `principal`, `associate`, `progdir`
+  - Orchestrator: `orch` (all cohorts)
 - **Frontmatter**: Every document starts with YAML frontmatter:
   ```yaml
   ---
