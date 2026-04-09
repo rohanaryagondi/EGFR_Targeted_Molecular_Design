@@ -15,11 +15,14 @@ import pytest
 
 from statebind.evaluation.retrospective import (
     EGFR_DRUG_APPROVALS,
+    HAS_RDKIT_SCORING,
     RetrospectiveComparison,
     RetrospectiveResult,
     TimeSplitDataset,
+    compute_bedroc,
     compute_candidate_future_similarities,
     compute_enrichment_factor,
+    compute_enrichment_with_ci,
     compute_novelty,
     compute_retrospective_metrics,
     generate_retrospective_summary,
@@ -189,6 +192,122 @@ class TestEnrichmentFactor:
     def test_enrichment_k_zero(self) -> None:
         """top_k=0 should return 0.0."""
         assert compute_enrichment_factor([0.5, 0.6], threshold=0.4, top_k=0) == 0.0
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# BEDROC tests
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+class TestBEDROC:
+    """Test BEDROC early enrichment metric."""
+
+    @pytest.mark.skipif(not HAS_RDKIT_SCORING, reason="RDKit not installed")
+    def test_bedroc_perfect_ranking(self) -> None:
+        """All actives ranked first -> BEDROC close to 1.0."""
+        scores = [10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0]
+        actives = [True, True, True, False, False, False, False, False, False, False]
+        bedroc = compute_bedroc(scores, actives, alpha=20.0)
+        assert bedroc > 0.9
+
+    @pytest.mark.skipif(not HAS_RDKIT_SCORING, reason="RDKit not installed")
+    def test_bedroc_worst_ranking(self) -> None:
+        """All actives ranked last -> BEDROC close to 0.0."""
+        scores = [10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0]
+        actives = [False, False, False, False, False, False, False, True, True, True]
+        bedroc = compute_bedroc(scores, actives, alpha=20.0)
+        assert bedroc < 0.15
+
+    @pytest.mark.skipif(not HAS_RDKIT_SCORING, reason="RDKit not installed")
+    def test_bedroc_random_ranking(self) -> None:
+        """Uniformly distributed actives -> BEDROC close to fraction of actives."""
+        # 10 actives among 100 compounds, evenly spaced
+        scores = list(range(100, 0, -1))
+        scores_float = [float(s) for s in scores]
+        actives = [i % 10 == 0 for i in range(100)]
+        bedroc = compute_bedroc(scores_float, actives, alpha=20.0)
+        # Should be modest -- not close to 1.0 or 0.0
+        assert 0.01 < bedroc < 0.8
+
+    @pytest.mark.skipif(not HAS_RDKIT_SCORING, reason="RDKit not installed")
+    def test_bedroc_alpha_sensitivity(self) -> None:
+        """Higher alpha penalises late actives more strongly."""
+        # Actives in the middle -- not perfect, not worst
+        scores = [10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0]
+        actives = [False, False, False, True, True, True, False, False, False, False]
+
+        bedroc_low_alpha = compute_bedroc(scores, actives, alpha=5.0)
+        bedroc_high_alpha = compute_bedroc(scores, actives, alpha=80.0)
+
+        # Higher alpha should penalise these mid-ranked actives more
+        assert bedroc_high_alpha < bedroc_low_alpha
+
+    def test_bedroc_without_rdkit(self) -> None:
+        """ImportError raised when RDKit is not available."""
+        import statebind.evaluation.retrospective as retro_mod
+
+        original = retro_mod.HAS_RDKIT_SCORING
+        try:
+            retro_mod.HAS_RDKIT_SCORING = False
+            with pytest.raises(ImportError, match="RDKit is required"):
+                compute_bedroc([1.0, 2.0], [True, False])
+        finally:
+            retro_mod.HAS_RDKIT_SCORING = original
+
+    @pytest.mark.skipif(not HAS_RDKIT_SCORING, reason="RDKit not installed")
+    def test_bedroc_mismatched_lengths(self) -> None:
+        """Mismatched lengths should raise ValueError."""
+        with pytest.raises(ValueError, match="same length"):
+            compute_bedroc([1.0, 2.0], [True])
+
+    @pytest.mark.skipif(not HAS_RDKIT_SCORING, reason="RDKit not installed")
+    def test_bedroc_zero_actives(self) -> None:
+        """Zero actives should raise ValueError."""
+        with pytest.raises(ValueError, match="zero actives"):
+            compute_bedroc([1.0, 2.0], [False, False])
+
+    @pytest.mark.skipif(not HAS_RDKIT_SCORING, reason="RDKit not installed")
+    def test_bedroc_rounded_to_4_decimals(self) -> None:
+        """BEDROC should be rounded to 4 decimal places."""
+        scores = [10.0, 9.0, 8.0, 7.0, 6.0]
+        actives = [True, True, False, False, False]
+        bedroc = compute_bedroc(scores, actives)
+        # Check that it has at most 4 decimal places
+        assert bedroc == round(bedroc, 4)
+
+
+class TestEnrichmentWithCI:
+    """Test integrated enrichment + CI computation."""
+
+    def test_enrichment_with_ci_returns_ef_fields(self) -> None:
+        """Result should contain EF point estimate and CI bounds."""
+        sims = [0.8, 0.6, 0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+        result = compute_enrichment_with_ci(
+            sims, threshold=0.4, top_k=3, n_bootstrap=500, seed=42
+        )
+        assert "ef_point" in result
+        assert "ef_ci_lower" in result
+        assert "ef_ci_upper" in result
+        assert result["ef_ci_lower"] <= result["ef_point"] <= result["ef_ci_upper"]
+
+    def test_enrichment_with_ci_bedroc_fields_present(self) -> None:
+        """BEDROC fields should be present (possibly None without RDKit)."""
+        sims = [0.8, 0.6, 0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+        result = compute_enrichment_with_ci(
+            sims, threshold=0.4, top_k=3, n_bootstrap=500, seed=42
+        )
+        assert "bedroc_point" in result
+        assert "bedroc_ci_lower" in result
+        assert "bedroc_ci_upper" in result
+
+    def test_enrichment_with_ci_metadata(self) -> None:
+        """Result should contain n_bootstrap and alpha."""
+        sims = [0.5, 0.3, 0.1]
+        result = compute_enrichment_with_ci(
+            sims, threshold=0.4, n_bootstrap=500, alpha=0.1, seed=42
+        )
+        assert result["n_bootstrap"] == 500
+        assert result["alpha"] == 0.1
 
 
 # ═══════════════════════════════════════════════════════════════════════════

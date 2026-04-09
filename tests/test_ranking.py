@@ -163,7 +163,7 @@ class TestUnifiedScoring:
     def test_state_specificity_in_all_states(self):
         state_map = {
             "DFGin_aCin": {"CCO"}, "DFGin_aCout": {"CCO"},
-            "DFGout_aCin": {"CCO"}, "DFGout_aCout": {"CCO"},
+            "DFGout_aCin": {"CCO"},
         }
         spec = _compute_state_specificity("CCO", "DFGin_aCin", state_map)
         assert spec == 0.0

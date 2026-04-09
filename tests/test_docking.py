@@ -293,7 +293,7 @@ class TestReceptorPreparation:
             if s.is_representative:
                 representative_states.add(s.state.value)
 
-        expected = {"DFGin_aCin", "DFGin_aCout", "DFGout_aCin", "DFGout_aCout"}
+        expected = {"DFGin_aCin", "DFGin_aCout", "DFGout_aCin"}
         assert expected == representative_states
 
 
@@ -401,7 +401,6 @@ class TestDockingAnalysis:
                     "DFGin_aCin": 0.8,
                     "DFGin_aCout": 0.6,
                     "DFGout_aCin": 0.5,
-                    "DFGout_aCout": 0.4,
                 },
                 best_state="DFGin_aCin",
                 is_selective=True,
@@ -415,9 +414,9 @@ class TestDockingAnalysis:
 
         heatmap = compute_score_heatmap(summary)
         assert len(heatmap["candidates"]) == 3
-        assert len(heatmap["states"]) == 4
+        assert len(heatmap["states"]) == 3
         assert len(heatmap["scores"]) == 3
-        assert len(heatmap["scores"][0]) == 4
+        assert len(heatmap["scores"][0]) == 3
 
     def test_selectivity_result_model(self):
         """StateSelectivityResult validates with all fields."""

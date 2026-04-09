@@ -24,6 +24,7 @@ from statebind.evaluation.sensitivity import (
 from statebind.evaluation.statistics import (
     BootstrapCI,
     StatisticalTest,
+    bca_bootstrap_confidence_interval,
     bootstrap_confidence_interval,
     cliff_delta,
     cohens_d,
@@ -150,6 +151,102 @@ class TestBootstrapCI:
         )
         assert isinstance(ci, BootstrapCI)
         assert ci.ci_lower <= ci.ci_upper
+
+
+# ── BCa Bootstrap CI Tests ───────────────────────────────────────────
+
+
+class TestBCaBootstrapCI:
+    """Test bias-corrected and accelerated bootstrap confidence intervals."""
+
+    def test_bca_symmetric_approx_percentile(self):
+        """BCa on symmetric data should be close to percentile CI."""
+        rng = np.random.default_rng(42)
+        data = rng.normal(5.0, 1.0, 200).tolist()
+
+        ci_pct = bootstrap_confidence_interval(
+            data, lambda x: float(np.mean(x)), n_bootstrap=5000, seed=42
+        )
+        ci_bca = bca_bootstrap_confidence_interval(
+            data, lambda x: float(np.mean(x)), n_bootstrap=5000, seed=42
+        )
+
+        # For symmetric data, BCa and percentile should be close
+        assert abs(ci_bca.ci_lower - ci_pct.ci_lower) < 0.15
+        assert abs(ci_bca.ci_upper - ci_pct.ci_upper) < 0.15
+
+    def test_bca_skewed_differs_from_percentile(self):
+        """BCa on skewed data should differ from percentile CI."""
+        # Exponential distribution is right-skewed
+        rng = np.random.default_rng(42)
+        data = rng.exponential(scale=2.0, size=100).tolist()
+
+        ci_pct = bootstrap_confidence_interval(
+            data, lambda x: float(np.mean(x)), n_bootstrap=5000, seed=42
+        )
+        ci_bca = bca_bootstrap_confidence_interval(
+            data, lambda x: float(np.mean(x)), n_bootstrap=5000, seed=42
+        )
+
+        # At least one bound should differ noticeably
+        lower_diff = abs(ci_bca.ci_lower - ci_pct.ci_lower)
+        upper_diff = abs(ci_bca.ci_upper - ci_pct.ci_upper)
+        assert lower_diff > 0.01 or upper_diff > 0.01
+
+    def test_bca_valid_bounds(self):
+        """BCa CI bounds: lower <= point estimate <= upper."""
+        rng = np.random.default_rng(42)
+        data = rng.normal(3.0, 0.5, 100).tolist()
+
+        ci = bca_bootstrap_confidence_interval(
+            data, lambda x: float(np.mean(x)), n_bootstrap=5000, seed=42
+        )
+        assert ci.ci_lower <= ci.point_estimate <= ci.ci_upper
+
+    def test_bca_fallback_without_scipy(self):
+        """Without scipy, BCa falls back to percentile bootstrap."""
+        import statebind.evaluation.statistics as stats_mod
+
+        original = stats_mod.HAS_SCIPY
+        try:
+            stats_mod.HAS_SCIPY = False
+            data = [1.0, 2.0, 3.0, 4.0, 5.0]
+            ci = bca_bootstrap_confidence_interval(
+                data, lambda x: float(np.mean(x)), n_bootstrap=500, seed=42
+            )
+            # Should still produce a valid CI (percentile fallback)
+            assert isinstance(ci, BootstrapCI)
+            assert ci.ci_lower <= ci.point_estimate <= ci.ci_upper
+        finally:
+            stats_mod.HAS_SCIPY = original
+
+    def test_bca_default_n_bootstrap(self):
+        """Default n_bootstrap should be 10000."""
+        data = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        ci = bca_bootstrap_confidence_interval(
+            data, lambda x: float(np.mean(x)), seed=42
+        )
+        assert ci.n_bootstrap == 10000
+
+    def test_bca_reproducible(self):
+        """Same seed produces same result."""
+        data = [1.0, 2.0, 3.0, 4.0, 5.0]
+        ci1 = bca_bootstrap_confidence_interval(
+            data, lambda x: float(np.mean(x)), n_bootstrap=1000, seed=123
+        )
+        ci2 = bca_bootstrap_confidence_interval(
+            data, lambda x: float(np.mean(x)), n_bootstrap=1000, seed=123
+        )
+        assert ci1.ci_lower == ci2.ci_lower
+        assert ci1.ci_upper == ci2.ci_upper
+
+    def test_bca_constant_values(self):
+        """All-identical values should return point estimate as both bounds."""
+        data = [5.0] * 20
+        ci = bca_bootstrap_confidence_interval(
+            data, lambda x: float(np.mean(x)), n_bootstrap=500, seed=42
+        )
+        assert ci.ci_lower == ci.ci_upper == ci.point_estimate
 
 
 # ── Effect Size Tests ─────────────────────────────────────────────────

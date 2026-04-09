@@ -199,17 +199,28 @@ def _compute_state_specificity(
 
     Uses geometric decay (1/2^(n-1)) because a candidate appearing in 2
     states is substantially less specific than one in 1 state, while the
-    difference between 3 and 4 states is negligible. Linear decay would
+    difference between 3+ states is negligible. Linear decay would
     overweight moderately-shared candidates.
+
+    The number of conformational states (currently 3: DFGin_aCin,
+    DFGin_aCout, DFGout_aCin) determines the floor: a candidate
+    appearing in all N_STATES returns 0.0.
 
     Returns:
         1.0 if candidate appears only in target_state
         0.5 if candidate appears in 2 states
-        0.25 if candidate appears in 3 states
-        0.0 if candidate appears in all 4 states or has no target state
+        0.0 if candidate appears in all conformational states or has
+            no target state
     """
+    from statebind.processing.models import ConformationalState
+
     if not target_state or not state_smiles_map:
         return 0.0
+
+    # Number of real conformational states (excluding UNCLASSIFIED)
+    n_conformational = sum(
+        1 for s in ConformationalState if s != ConformationalState.UNCLASSIFIED
+    )
 
     n_states_present = sum(
         1 for ss in state_smiles_map.values() if smiles in ss
@@ -217,11 +228,10 @@ def _compute_state_specificity(
 
     if n_states_present <= 1:
         return 1.0
-    elif n_states_present == 2:
-        return 0.5
-    elif n_states_present == 3:
-        return 0.25
-    return 0.0
+    elif n_states_present >= n_conformational:
+        return 0.0
+    # Geometric decay for intermediate values
+    return round(1.0 / (2 ** (n_states_present - 1)), 4)
 
 
 def _validate_weights(weights: dict[str, float]) -> None:

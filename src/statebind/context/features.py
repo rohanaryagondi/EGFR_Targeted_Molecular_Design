@@ -222,10 +222,10 @@ def assign_state_label(m: MutationRecord) -> tuple[str, dict[str, float]]:
     2. If preferred_states is empty, assign "DFGin_aCin" as default
        (most mutations retain some active-state binding).
 
-    Also returns a soft label distribution across all 4 states.
+    Also returns a soft label distribution across all 3 states.
     The distribution is:
     - 0.7 for the primary state
-    - 0.1 distributed among other states
+    - 0.15 distributed among other states
     - If multiple preferred_states, distribute 0.7 proportionally
 
     Returns:
@@ -235,7 +235,6 @@ def assign_state_label(m: MutationRecord) -> tuple[str, dict[str, float]]:
         ConformationalState.DFGIN_ACIN,
         ConformationalState.DFGIN_ACOUT,
         ConformationalState.DFGOUT_ACIN,
-        ConformationalState.DFGOUT_ACOUT,
     ]
 
     preferred = m.preferred_states
@@ -243,7 +242,9 @@ def assign_state_label(m: MutationRecord) -> tuple[str, dict[str, float]]:
         # Default assumption: mutations without known preference
         # are assigned to active state with low confidence
         primary = ConformationalState.DFGIN_ACIN.value
-        dist = {s.value: 0.25 for s in all_states}  # uniform = uncertain
+        n = len(all_states)
+        p = 1.0 / n
+        dist = {s.value: p for s in all_states}  # uniform = uncertain
         return primary, dist
 
     primary = preferred[0].value

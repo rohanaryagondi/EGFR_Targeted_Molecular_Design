@@ -86,8 +86,8 @@ class TestCandidateSchema:
         assert lib.state == "DFGin_aCin"
 
     def test_multi_state_result_has_states(self, generation):
-        assert len(generation.states) == 4
-        assert len(generation.libraries) == 4
+        assert len(generation.states) == 3
+        assert len(generation.libraries) == 3
 
     def test_all_candidates_have_state(self, generation):
         for lib in generation.libraries:
@@ -113,8 +113,8 @@ class TestCandidateSchema:
 # ── Conditioning tests ────────────────────────────────────────────────────
 
 class TestConditioning:
-    def test_four_states_covered(self, conditions):
-        assert len(conditions) == 4
+    def test_three_states_covered(self, conditions):
+        assert len(conditions) == 3
 
     def test_active_state_has_hinge_strategy(self, conditions):
         active = conditions["DFGin_aCin"]
@@ -123,10 +123,6 @@ class TestConditioning:
     def test_dfgout_has_back_pocket_strategy(self, conditions):
         dfgout = conditions["DFGout_aCin"]
         assert GenerationStrategy.BACK_POCKET_EXTENSION in dfgout.strategies
-
-    def test_dfgout_acout_has_ploop_strategy(self, conditions):
-        dfgout_acout = conditions["DFGout_aCout"]
-        assert GenerationStrategy.P_LOOP_INTERACTION in dfgout_acout.strategies
 
     def test_active_has_gatekeeper_avoiding(self, conditions):
         active = conditions["DFGin_aCin"]
@@ -174,12 +170,6 @@ class TestGeneration:
         ploop = [c for c in active.candidates
                  if c.strategy == GenerationStrategy.P_LOOP_INTERACTION]
         assert len(ploop) == 0
-
-    def test_dfgout_acout_has_ploop_candidates(self, generation):
-        dfgout = next(l for l in generation.libraries if l.state == "DFGout_aCout")
-        ploop = [c for c in dfgout.candidates
-                 if c.strategy == GenerationStrategy.P_LOOP_INTERACTION]
-        assert len(ploop) > 0
 
     def test_deduplication_within_state(self, generation):
         for lib in generation.libraries:
@@ -251,7 +241,7 @@ class TestDiversity:
 
     def test_cross_state_diversity(self, filtered):
         report = analyze_cross_state_diversity(filtered)
-        assert len(report.per_state) == 4
+        assert len(report.per_state) == 3
         assert report.total_unique_across_all > 0
 
     def test_state_unique_candidates_exist(self, filtered):
@@ -267,7 +257,7 @@ class TestEvaluation:
     def test_evaluation_has_per_state(self, generation, filtered):
         diversity = analyze_cross_state_diversity(filtered)
         evl = evaluate_generation(generation, filtered, diversity)
-        assert len(evl.per_state) == 4
+        assert len(evl.per_state) == 3
 
     def test_evaluation_to_dict(self, generation, filtered):
         diversity = analyze_cross_state_diversity(filtered)
@@ -275,7 +265,7 @@ class TestEvaluation:
         d = evaluation_to_dict(evl)
         assert "total_generated" in d
         assert "per_state" in d
-        assert len(d["per_state"]) == 4
+        assert len(d["per_state"]) == 3
 
     def test_baseline_comparison(self, filtered):
         static_smiles = {"CCO", "c1ccccc1"}  # dummy static set

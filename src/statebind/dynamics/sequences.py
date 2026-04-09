@@ -20,11 +20,10 @@ from datetime import datetime, timezone
 
 from statebind.processing.models import ConformationalState
 
-# Short aliases for readability
+# Short aliases for readability (3-state model: DFGout_aCout removed)
 _ACT = ConformationalState.DFGIN_ACIN       # Active
 _SRC = ConformationalState.DFGIN_ACOUT      # Src-like inactive
-_OUT = ConformationalState.DFGOUT_ACIN      # DFGout intermediate
-_CLS = ConformationalState.DFGOUT_ACOUT     # Classical inactive
+_OUT = ConformationalState.DFGOUT_ACIN      # DFGout intermediate (deepest inactive)
 
 
 @dataclass
@@ -82,8 +81,8 @@ def _canonical_sequences() -> list[StateSequence]:
         # ── Activation pathways ─────────────────────────────
         StateSequence(
             sequence_id="canonical_activation_1",
-            states=[_CLS.value, _OUT.value, _SRC.value, _ACT.value],
-            description="Classical inactive → active via DFG flip then αC rotation",
+            states=[_OUT.value, _OUT.value, _SRC.value, _ACT.value],
+            description="DFGout inactive → active via DFG flip then αC rotation",
             provenance="Shan et al., PNAS 2013; Ruan & Bhatt, PNAS 2012",
             context="WT EGFR activation",
         ),
@@ -96,8 +95,8 @@ def _canonical_sequences() -> list[StateSequence]:
         ),
         StateSequence(
             sequence_id="canonical_activation_3",
-            states=[_CLS.value, _SRC.value, _ACT.value],
-            description="Classical inactive → Src-like → active (αC moves first)",
+            states=[_OUT.value, _SRC.value, _ACT.value],
+            description="DFGout inactive → Src-like → active (αC moves first)",
             provenance="Sutto & Bhatt, PNAS 2014",
             context="Alternative activation route",
         ),
@@ -105,8 +104,8 @@ def _canonical_sequences() -> list[StateSequence]:
         # ── Inactivation pathways ───────────────────────────
         StateSequence(
             sequence_id="canonical_inactivation_1",
-            states=[_ACT.value, _SRC.value, _CLS.value],
-            description="Active → Src-like → classical inactive",
+            states=[_ACT.value, _SRC.value, _OUT.value],
+            description="Active → Src-like → DFGout inactive",
             provenance="Shan et al., PNAS 2013",
             context="WT EGFR autoinhibition",
         ),
@@ -119,8 +118,8 @@ def _canonical_sequences() -> list[StateSequence]:
         ),
         StateSequence(
             sequence_id="canonical_inactivation_3",
-            states=[_ACT.value, _OUT.value, _CLS.value],
-            description="Active → DFGout intermediate → classical inactive",
+            states=[_ACT.value, _OUT.value, _OUT.value],
+            description="Active → DFGout intermediate → DFGout inactive",
             provenance="Sutto & Bhatt, PNAS 2014",
             context="DFG-first inactivation route",
         ),
@@ -188,14 +187,14 @@ def _canonical_sequences() -> list[StateSequence]:
         ),
         StateSequence(
             sequence_id="wt_equilibrium_2",
-            states=[_SRC.value, _CLS.value, _SRC.value, _OUT.value, _CLS.value],
+            states=[_SRC.value, _OUT.value, _SRC.value, _OUT.value, _OUT.value],
             description="WT EGFR samples inactive states",
             provenance="Sutto & Bhatt, PNAS 2014 (computed equilibrium)",
             context="WT EGFR, no ligand, deeper inactive sampling",
         ),
         StateSequence(
             sequence_id="wt_equilibrium_3",
-            states=[_ACT.value, _SRC.value, _CLS.value, _OUT.value, _ACT.value],
+            states=[_ACT.value, _SRC.value, _OUT.value, _OUT.value, _ACT.value],
             description="WT EGFR full cycle through all states",
             provenance="Composite from MD literature",
             context="WT EGFR, illustrative full cycle",

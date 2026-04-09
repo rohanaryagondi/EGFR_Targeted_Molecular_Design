@@ -48,6 +48,17 @@ try:
 except ImportError:
     HAS_TORCH_GEOMETRIC = False
 
+try:
+    from rdkit import Chem as _Chem  # noqa: I001
+    from rdkit.Chem.Scaffolds.MurckoScaffold import (
+        GetScaffoldForMol as _GetScaffoldForMol,
+        MakeScaffoldGeneric as _MakeScaffoldGeneric,
+    )
+
+    HAS_SCAFFOLD = True
+except ImportError:
+    HAS_SCAFFOLD = False
+
 if TYPE_CHECKING:
     from torch_geometric.data import Data
 
@@ -112,6 +123,14 @@ class AffinityDatasetConfig(BaseModel):
     max_samples: int | None = Field(
         default=None, description="Cap on total samples loaded (None = no cap)."
     )
+    split_type: str = Field(
+        default="random",
+        description=(
+            "Split strategy: 'random' (seeded permutation), "
+            "'scaffold' (Murcko scaffold grouping), or "
+            "'temporal' (year-ordered chronological)."
+        ),
+    )
 
     @field_validator("test_ratio")
     @classmethod
@@ -162,6 +181,7 @@ class AffinityDataset(_BaseClass):
         self,
         graphs: list[Data],
         smiles_list: list[str] | None = None,
+        years: list[int] | None = None,
     ) -> None:
         _require_torch()
         super().__init__()
@@ -169,6 +189,7 @@ class AffinityDataset(_BaseClass):
         self.smiles_list: list[str] = smiles_list or [
             getattr(g, "smiles", "") for g in graphs
         ]
+        self.years: list[int] | None = years
 
     def __len__(self) -> int:
         """Return the number of valid molecular graphs in the dataset."""
@@ -342,6 +363,23 @@ def load_affinity_dataset(
     return AffinityDataset(graphs=graphs, smiles_list=smiles_list)
 
 
+def _subset(
+    dataset: AffinityDataset, idx: np.ndarray | list[int]
+) -> AffinityDataset:
+    """Create a subset of *dataset* from the given indices.
+
+    Keeps ``graphs``, ``smiles_list``, and ``years`` aligned.
+    """
+    graphs = [dataset.graphs[i] for i in idx]
+    smiles = [dataset.smiles_list[i] for i in idx]
+    years = (
+        [dataset.years[i] for i in idx]
+        if dataset.years is not None
+        else None
+    )
+    return AffinityDataset(graphs=graphs, smiles_list=smiles, years=years)
+
+
 def split_dataset(
     dataset: AffinityDataset,
     config: AffinityDatasetConfig | None = None,
@@ -349,25 +387,36 @@ def split_dataset(
     val_ratio: float = 0.1,
     test_ratio: float = 0.1,
     seed: int = 42,
+    split_type: str = "random",
 ) -> tuple[AffinityDataset, AffinityDataset, AffinityDataset]:
     """Split an :class:`AffinityDataset` into train / validation / test sets.
 
-    Uses a seeded random permutation to ensure reproducibility.
+    Supports three split strategies:
+
+    - ``"random"`` -- seeded random permutation (original behavior).
+    - ``"scaffold"`` -- group by Murcko scaffold so molecules sharing a
+      scaffold never appear in different splits. Requires RDKit.
+    - ``"temporal"`` -- chronological split by publication year. Requires
+      ``dataset.years`` to be populated.
 
     Args:
         dataset: The full dataset to split.
-        config: If provided, split ratios and seed are taken from the config.
-            Explicit keyword arguments override config values.
+        config: If provided, split ratios, seed, and split_type are taken
+            from the config.  Explicit keyword arguments override config
+            values when *config* is ``None``.
         train_ratio: Fraction for training (default 0.8).
         val_ratio: Fraction for validation (default 0.1).
         test_ratio: Fraction for test (default 0.1).
         seed: Random seed (default 42).
+        split_type: ``"random"``, ``"scaffold"``, or ``"temporal"``.
 
     Returns:
         A tuple ``(train_dataset, val_dataset, test_dataset)``.
 
     Raises:
-        ValueError: If ratios do not sum to approximately 1.0.
+        ValueError: If ratios do not sum to approximately 1.0, or if
+            *split_type* is not recognised.
+        ImportError: If ``split_type="scaffold"`` and RDKit is not installed.
     """
     _require_torch()
 
@@ -377,6 +426,7 @@ def split_dataset(
         val_ratio = config.val_ratio
         test_ratio = config.test_ratio
         seed = config.seed
+        split_type = config.split_type
 
     total = train_ratio + val_ratio + test_ratio
     if abs(total - 1.0) > 1e-6:
@@ -385,6 +435,47 @@ def split_dataset(
             f"{train_ratio} + {val_ratio} + {test_ratio} = {total}"
         )
 
+    if split_type == "scaffold":
+        return scaffold_split(
+            dataset,
+            train_ratio=train_ratio,
+            val_ratio=val_ratio,
+            test_ratio=test_ratio,
+            seed=seed,
+        )
+    if split_type == "temporal":
+        return temporal_split(
+            dataset,
+            train_ratio=train_ratio,
+            val_ratio=val_ratio,
+            test_ratio=test_ratio,
+        )
+    if split_type == "random":
+        return _random_split(
+            dataset,
+            train_ratio=train_ratio,
+            val_ratio=val_ratio,
+            seed=seed,
+        )
+
+    raise ValueError(
+        f"Unknown split_type '{split_type}'. "
+        "Expected 'random', 'scaffold', or 'temporal'."
+    )
+
+
+# ---------------------------------------------------------------------------
+# Split implementations
+# ---------------------------------------------------------------------------
+
+
+def _random_split(
+    dataset: AffinityDataset,
+    train_ratio: float = 0.8,
+    val_ratio: float = 0.1,
+    seed: int = 42,
+) -> tuple[AffinityDataset, AffinityDataset, AffinityDataset]:
+    """Random permutation split (original default behaviour)."""
     n = len(dataset)
     rng = np.random.RandomState(seed)
     indices = rng.permutation(n)
@@ -396,21 +487,186 @@ def split_dataset(
     val_idx = indices[n_train : n_train + n_val]
     test_idx = indices[n_train + n_val :]
 
-    def _subset(idx: np.ndarray) -> AffinityDataset:
-        graphs = [dataset.graphs[i] for i in idx]
-        smiles = [dataset.smiles_list[i] for i in idx]
-        return AffinityDataset(graphs=graphs, smiles_list=smiles)
-
-    train_ds = _subset(train_idx)
-    val_ds = _subset(val_idx)
-    test_ds = _subset(test_idx)
+    train_ds = _subset(dataset, train_idx)
+    val_ds = _subset(dataset, val_idx)
+    test_ds = _subset(dataset, test_idx)
 
     logger.info(
-        "Split dataset: train=%d, val=%d, test=%d (seed=%d)",
+        "Random split: train=%d, val=%d, test=%d (seed=%d)",
         len(train_ds),
         len(val_ds),
         len(test_ds),
         seed,
+    )
+
+    return train_ds, val_ds, test_ds
+
+
+def scaffold_split(
+    dataset: AffinityDataset,
+    train_ratio: float = 0.8,
+    val_ratio: float = 0.1,
+    test_ratio: float = 0.1,
+    seed: int = 42,
+) -> tuple[AffinityDataset, AffinityDataset, AffinityDataset]:
+    """Split *dataset* so molecules sharing a Murcko scaffold stay together.
+
+    Scaffolds are shuffled (seeded) and greedily assigned to train / val /
+    test to approximate the requested ratios.  Molecules whose SMILES cannot
+    be parsed by RDKit are placed in the training set with a warning.
+
+    Args:
+        dataset: Full :class:`AffinityDataset`.
+        train_ratio: Target fraction for training.
+        val_ratio: Target fraction for validation.
+        test_ratio: Target fraction for test.
+        seed: Random seed for scaffold shuffling.
+
+    Returns:
+        ``(train, val, test)`` :class:`AffinityDataset` tuple.
+
+    Raises:
+        ImportError: If RDKit is not installed.
+    """
+    if not HAS_SCAFFOLD:
+        raise ImportError(
+            "scaffold_split requires RDKit. Install with: "
+            "pip install rdkit-pypi"
+        )
+
+    n = len(dataset)
+
+    # --- group indices by generic Murcko scaffold ---
+    scaffold_to_indices: dict[str, list[int]] = {}
+    unparseable_indices: list[int] = []
+
+    for i, smi in enumerate(dataset.smiles_list):
+        mol = _Chem.MolFromSmiles(smi)
+        if mol is None:
+            logger.warning(
+                "scaffold_split: could not parse SMILES '%s' "
+                "(index %d); assigning to training set.",
+                smi,
+                i,
+            )
+            unparseable_indices.append(i)
+            continue
+
+        core = _GetScaffoldForMol(mol)
+        generic = _MakeScaffoldGeneric(core)
+        scaffold_smi = _Chem.MolToSmiles(generic)
+
+        scaffold_to_indices.setdefault(scaffold_smi, []).append(i)
+
+    # --- shuffle scaffolds (not individual molecules) ---
+    rng = np.random.RandomState(seed)
+    scaffolds = list(scaffold_to_indices.keys())
+    rng.shuffle(scaffolds)
+
+    # --- greedy assignment to approximate target ratios ---
+    train_indices: list[int] = list(unparseable_indices)
+    val_indices: list[int] = []
+    test_indices: list[int] = []
+
+    train_target = train_ratio * n
+    val_target = val_ratio * n
+    test_target = test_ratio * n
+
+    for scaffold_key in scaffolds:
+        members = scaffold_to_indices[scaffold_key]
+
+        # Compute how far each bucket is from its target
+        train_gap = train_target - len(train_indices)
+        val_gap = val_target - len(val_indices)
+        test_gap = test_target - len(test_indices)
+
+        # Assign to the bucket that is furthest below its target
+        max_gap = max(train_gap, val_gap, test_gap)
+        if max_gap == train_gap:
+            train_indices.extend(members)
+        elif max_gap == val_gap:
+            val_indices.extend(members)
+        else:
+            test_indices.extend(members)
+
+    train_ds = _subset(dataset, train_indices)
+    val_ds = _subset(dataset, val_indices)
+    test_ds = _subset(dataset, test_indices)
+
+    logger.info(
+        "Scaffold split: train=%d, val=%d, test=%d "
+        "(%d scaffolds, %d unparseable -> train, seed=%d)",
+        len(train_ds),
+        len(val_ds),
+        len(test_ds),
+        len(scaffolds),
+        len(unparseable_indices),
+        seed,
+    )
+
+    return train_ds, val_ds, test_ds
+
+
+def temporal_split(
+    dataset: AffinityDataset,
+    train_ratio: float = 0.8,
+    val_ratio: float = 0.1,
+    test_ratio: float = 0.1,
+    year_column: str = "year",
+) -> tuple[AffinityDataset, AffinityDataset, AffinityDataset]:
+    """Split *dataset* chronologically so the test set contains the newest data.
+
+    Molecules are sorted by year (earliest first). The first
+    ``train_ratio`` fraction becomes train, the next ``val_ratio``
+    fraction becomes validation, and the remainder becomes test.
+
+    Args:
+        dataset: Full :class:`AffinityDataset` with ``years`` populated.
+        train_ratio: Target fraction for training.
+        val_ratio: Target fraction for validation.
+        test_ratio: Target fraction for test.
+        year_column: Unused (kept for API symmetry with config keys).
+
+    Returns:
+        ``(train, val, test)`` :class:`AffinityDataset` tuple.
+
+    Raises:
+        ValueError: If ``dataset.years`` is ``None`` or empty.
+    """
+    if dataset.years is None or len(dataset.years) == 0:
+        raise ValueError(
+            "temporal_split requires dataset.years to be populated. "
+            "Provide a list of integer years when constructing AffinityDataset."
+        )
+
+    if len(dataset.years) != len(dataset):
+        raise ValueError(
+            f"dataset.years length ({len(dataset.years)}) does not match "
+            f"dataset length ({len(dataset)})."
+        )
+
+    n = len(dataset)
+    # Sort indices by year (ascending -- earliest first)
+    sorted_indices = np.argsort(dataset.years).tolist()
+
+    n_train = int(n * train_ratio)
+    n_val = int(n * val_ratio)
+
+    train_idx = sorted_indices[:n_train]
+    val_idx = sorted_indices[n_train : n_train + n_val]
+    test_idx = sorted_indices[n_train + n_val :]
+
+    train_ds = _subset(dataset, train_idx)
+    val_ds = _subset(dataset, val_idx)
+    test_ds = _subset(dataset, test_idx)
+
+    logger.info(
+        "Temporal split: train=%d (years <=%s), val=%d, test=%d (years >=%s)",
+        len(train_ds),
+        max(dataset.years[i] for i in train_idx) if train_idx else "?",
+        len(val_ds),
+        len(test_ds),
+        min(dataset.years[i] for i in test_idx) if test_idx else "?",
     )
 
     return train_ds, val_ds, test_ds

@@ -2,7 +2,7 @@
 #
 # This config drives the state-conditioned molecular generator.
 # The VAE learns to generate novel molecules conditioned on EGFR
-# conformational states (DFGin_aCin, DFGin_aCout, DFGout_aCin, DFGout_aCout).
+# conformational states (DFGin_aCin, DFGin_aCout, DFGout_aCin).
 #
 # SELFIES mode: pass --selfies to train_vae.py to use SELFIES representation.
 # SELFIES guarantees every generated string decodes to a valid molecule,
@@ -18,7 +18,7 @@ model:
   latent_dim: 64
   n_layers: 2
   dropout: 0.2           # Increased from 0.1 to reduce overfitting
-  n_states: 4
+  n_states: 3
   kl_weight: 0.01        # Increased from 0.001 to reduce prior-posterior mismatch
   pad_idx: 0
 
@@ -45,7 +45,6 @@ data:
     DFGin_aCin: 0
     DFGin_aCout: 1
     DFGout_aCin: 2
-    DFGout_aCout: 3
 
 generation:
   n_samples_per_state: 100

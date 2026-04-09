@@ -1,7 +1,7 @@
 """Conditional SMILES VAE with GRU encoder and decoder.
 
 Generates novel molecules conditioned on EGFR conformational states
-(DFGin_aCin, DFGin_aCout, DFGout_aCin, DFGout_aCout).  The state
+(DFGin_aCin, DFGin_aCout, DFGout_aCin).  The state
 conditioning vector is concatenated to encoder inputs at every timestep
 and to the latent code before projection to the decoder initial hidden
 state.
@@ -81,7 +81,7 @@ class VAEConfig(BaseModel):
     n_layers: int = 2
     dropout: float = 0.1
     n_states: int = Field(
-        default=4,
+        default=3,
         description="Number of conditioning states (EGFR conformations)",
     )
     kl_weight: float = Field(

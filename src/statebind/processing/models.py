@@ -52,7 +52,6 @@ class ConformationalState(str, Enum):
     DFGIN_ACIN = "DFGin_aCin"
     DFGIN_ACOUT = "DFGin_aCout"
     DFGOUT_ACIN = "DFGout_aCin"
-    DFGOUT_ACOUT = "DFGout_aCout"
     UNCLASSIFIED = "unclassified"
 
 

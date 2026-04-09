@@ -158,9 +158,7 @@ def main() -> None:
                  "to fill αC-helix cavity.")
     lines.append("3. **DFGout_aCin**: Back pocket extensions appear (CF3 tails, amide linkers). "
                  "These type-II motifs are unique to DFG-out states.")
-    lines.append("4. **DFGout_aCout**: Largest and most diverse set. P-loop interaction "
-                 "strategies appear. Back pocket + volume filling combine for the "
-                 "largest candidate molecules.")
+    lines.append("   (DFGout_aCout state removed: no genuine EGFR DFGout/aCout structures exist.)")
     lines.append("")
 
     # 8. Limitations

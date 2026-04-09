@@ -42,7 +42,6 @@ DEFAULT_STATE_MAPPING: dict[str, int] = {
     "DFGin_aCin": 0,
     "DFGin_aCout": 1,
     "DFGout_aCin": 2,
-    "DFGout_aCout": 3,
 }
 
 
@@ -81,7 +80,7 @@ class SMILESDatasetConfig(BaseModel):
     """
 
     max_len: int = Field(default=128, description="Maximum sequence length including SOS/EOS")
-    n_states: int = Field(default=4, description="Number of conformational states")
+    n_states: int = Field(default=3, description="Number of conformational states")
     state_mapping: dict[str, int] = Field(
         default_factory=lambda: dict(DEFAULT_STATE_MAPPING),
         description="State label -> integer index mapping",
@@ -267,7 +266,7 @@ def load_smiles_dataset(
 
         [
             {"smiles": "c1ccc(NC(=O)...)cc1", "state": "DFGin_aCin"},
-            {"smiles": "CC(=O)Nc1ccc...",     "state": "DFGout_aCout"},
+            {"smiles": "CC(=O)Nc1ccc...",     "state": "DFGout_aCin"},
             ...
         ]
 

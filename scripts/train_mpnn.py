@@ -430,6 +430,7 @@ def train_mpnn(
     config_path: str = "configs/mpnn.yaml",
     resume_path: str | None = None,
     data_dir: str | None = None,
+    split_type: str | None = None,
 ) -> None:
     """End-to-end MPNN training pipeline.
 
@@ -440,6 +441,8 @@ def train_mpnn(
         config_path: Path to the YAML configuration file.
         resume_path: Optional path to a checkpoint to resume from.
         data_dir: Optional override for the data directory.
+        split_type: Optional override for the split strategy
+            (``"random"``, ``"scaffold"``, or ``"temporal"``).
     """
     import torch
     from torch_geometric.loader import DataLoader
@@ -449,11 +452,29 @@ def train_mpnn(
     model_config = _build_model_config(raw_config)
     trainer_config = _build_trainer_config(raw_config)
     data_config = _build_data_config(raw_config, data_dir_override=data_dir)
+
+    # CLI --split-type overrides the config value
+    if split_type is not None:
+        data_config = data_config.model_copy(update={"split_type": split_type})
+
     eval_config = raw_config.get("evaluation", {})
     metrics_list: list[str] = eval_config.get("metrics", ["rmse", "mae", "r2", "pearson"])
     eval_output_path = Path(eval_config.get(
         "output_path", "artifacts/evaluation/mpnn_metrics.json"
     ))
+
+    # When --split-type overrides the config, use split-specific output paths
+    # to avoid overwriting the default (random split) artifacts.
+    effective_split = data_config.split_type
+    if split_type is not None and split_type != "random":
+        suffix = f"_{split_type}"
+        trainer_config = trainer_config.model_copy(update={
+            "checkpoint_dir": trainer_config.checkpoint_dir.rstrip("/") + suffix + "/",
+            "log_dir": trainer_config.log_dir.rstrip("/") + suffix + "/",
+        })
+        eval_output_path = eval_output_path.with_stem(
+            eval_output_path.stem + suffix
+        )
 
     print(f"Config loaded from: {config_path}")
     print(f"  Model: hidden_dim={model_config.hidden_dim}, "
@@ -462,6 +483,7 @@ def train_mpnn(
     print(f"  Training: epochs={trainer_config.epochs}, "
           f"lr={trainer_config.learning_rate}, "
           f"batch_size={trainer_config.batch_size}")
+    print(f"  Split type: {effective_split}")
 
     # ── Seed and device ───────────────────────────────────────────────
     set_seed(trainer_config.seed)
@@ -773,6 +795,13 @@ def _parse_args() -> argparse.Namespace:
         default=None,
         help="Override data directory (replaces dir in config data_path)",
     )
+    parser.add_argument(
+        "--split-type",
+        type=str,
+        default=None,
+        choices=["random", "scaffold", "temporal"],
+        help="Override split strategy (default: use config value)",
+    )
     return parser.parse_args()
 
 
@@ -787,4 +816,5 @@ if __name__ == "__main__":
         config_path=args.config,
         resume_path=args.resume,
         data_dir=args.data_dir,
+        split_type=args.split_type,
     )

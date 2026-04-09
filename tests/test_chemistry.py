@@ -24,7 +24,9 @@ from statebind.chemistry.validation import canonicalize_smiles, validate_smiles
 # Convenience aliases
 _ERLOTINIB = _REFERENCE_BINDERS[0]
 _GEFITINIB = _REFERENCE_BINDERS[1]
-_OSIMERTINIB = _REFERENCE_BINDERS[2]
+# Osimertinib SMILES defined directly (removed from _REFERENCE_BINDERS to fix
+# temporal leakage -- approved 2015/2017, used as future drug in retrospective).
+_OSIMERTINIB = "COc1cc(N(C)CCN(C)C)c(NC(=O)/C=C/CN(C)C)cc1Nc1nccc(-c2cn(C)c3ccccc23)n1"
 
 
 # ── Fingerprints ──────────────────────────────────────────────────────────

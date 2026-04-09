@@ -162,7 +162,7 @@ class TestLabelAssignment:
         unknown = next(m for m in mutations if not m.preferred_states)
         label, dist = assign_state_label(unknown)
         # Should be uniform-ish
-        assert all(abs(v - 0.25) < 0.01 for v in dist.values())
+        assert all(abs(v - 1.0 / len(dist)) < 0.01 for v in dist.values())
 
     def test_distribution_sums_to_one(self, mutations):
         for m in mutations:
@@ -295,8 +295,8 @@ class TestPredictionSchema:
         p = Prediction(
             mutation_id="T790M",
             predicted_label="DFGin_aCin",
-            probabilities={"DFGin_aCin": 0.7, "DFGin_aCout": 0.1,
-                          "DFGout_aCin": 0.1, "DFGout_aCout": 0.1},
+            probabilities={"DFGin_aCin": 0.7, "DFGin_aCout": 0.15,
+                          "DFGout_aCin": 0.15},
             confidence=0.7,
         )
         assert p.mutation_id == "T790M"

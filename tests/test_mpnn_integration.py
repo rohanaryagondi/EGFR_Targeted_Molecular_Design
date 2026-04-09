@@ -6,8 +6,9 @@ Groups:
   3. Adapter interface (6): predict_affinity fallback, batch, edge cases
   4. Scoring integration (5): cascading fallback, method string, stub fallback
   5. Edge cases (3): long SMILES, disconnected, reset
+  6. Dataset splits (6): scaffold, temporal, backward compat, invalid type, no rdkit
 
-Total: ~22 tests.
+Total: ~28 tests.
 """
 
 from __future__ import annotations
@@ -15,6 +16,8 @@ from __future__ import annotations
 import math
 import sys
 from pathlib import Path
+
+import pytest
 
 # Make scripts importable
 _SCRIPTS_DIR = str(Path(__file__).resolve().parent.parent / "scripts")
@@ -257,3 +260,216 @@ class TestEdgeCases:
         assert ap._MODEL is None
         assert ap._DEVICE is None
         assert ap._LOAD_ATTEMPTED is False
+
+
+# ── Group 6: Dataset Split Tests ──────────────────────────────────────────
+
+
+def _make_toy_dataset(n: int = 50, years: list[int] | None = None) -> object:
+    """Build a tiny AffinityDataset with *n* molecules for split tests.
+
+    Uses ``pytest.importorskip`` for torch / torch_geometric so the tests
+    are cleanly skipped when GPU dependencies are absent.
+
+    Returns an :class:`AffinityDataset` instance (typed as ``object`` so the
+    helper itself does not need torch at import time).
+    """
+    torch = pytest.importorskip("torch")
+    pytest.importorskip("torch_geometric")
+
+    from statebind.ml.affinity_dataset import AffinityDataset
+    from statebind.ml.graphs import smiles_to_graph
+
+    # A pool of small, parseable SMILES covering diverse scaffolds
+    _smiles_pool = [
+        "c1ccccc1",          # benzene
+        "c1ccc(O)cc1",       # phenol
+        "c1ccc(N)cc1",       # aniline
+        "c1ccc2ccccc2c1",    # naphthalene
+        "C1CCCCC1",          # cyclohexane
+        "c1ccncc1",          # pyridine
+        "c1ccc(CC)cc1",      # ethylbenzene
+        "c1ccoc1",           # furan
+        "c1ccsc1",           # thiophene
+        "c1cc[nH]c1",        # pyrrole
+        "CCO",               # ethanol
+        "CCCC",              # butane
+        "CC(=O)O",           # acetic acid
+        "CC(=O)N",           # acetamide
+        "c1ccc(-c2ccccc2)cc1",  # biphenyl
+    ]
+
+    graphs = []
+    smiles_list = []
+    for i in range(n):
+        smi = _smiles_pool[i % len(_smiles_pool)]
+        g = smiles_to_graph(smi)
+        if g is None:
+            continue
+        g.y = torch.tensor([5.0 + (i % 10) * 0.3], dtype=torch.float)
+        graphs.append(g)
+        smiles_list.append(smi)
+
+    return AffinityDataset(
+        graphs=graphs,
+        smiles_list=smiles_list,
+        years=years,
+    )
+
+
+class TestDatasetSplits:
+    """Tests for scaffold_split, temporal_split, and split_dataset dispatch."""
+
+    # -- a. scaffold_split: non-overlapping scaffolds between splits ----------
+
+    def test_scaffold_split_no_scaffold_overlap(self) -> None:
+        """Train and test sets must not share any Murcko scaffold."""
+        pytest.importorskip("torch")
+        pytest.importorskip("torch_geometric")
+        rdkit_chem = pytest.importorskip("rdkit.Chem")
+
+        from rdkit.Chem.Scaffolds.MurckoScaffold import (  # noqa: E402
+            GetScaffoldForMol,
+            MakeScaffoldGeneric,
+        )
+
+        from statebind.ml.affinity_dataset import scaffold_split
+
+        ds = _make_toy_dataset(50)
+        train_ds, val_ds, test_ds = scaffold_split(ds, seed=42)
+
+        def _scaffolds(smiles_list: list[str]) -> set[str]:
+            scaffolds: set[str] = set()
+            for smi in smiles_list:
+                mol = rdkit_chem.MolFromSmiles(smi)
+                if mol is None:
+                    continue
+                core = GetScaffoldForMol(mol)
+                generic = MakeScaffoldGeneric(core)
+                scaffolds.add(rdkit_chem.MolToSmiles(generic))
+            return scaffolds
+
+        train_scaff = _scaffolds(train_ds.smiles_list)
+        test_scaff = _scaffolds(test_ds.smiles_list)
+        overlap = train_scaff & test_scaff
+        assert overlap == set(), (
+            f"Scaffold overlap between train and test: {overlap}"
+        )
+
+    # -- b. scaffold_split: approximate ratios (within 20%) ------------------
+
+    def test_scaffold_split_approximate_ratios(self) -> None:
+        """Split sizes should be within 20% of the target ratios."""
+        pytest.importorskip("torch")
+        pytest.importorskip("torch_geometric")
+        pytest.importorskip("rdkit")
+
+        from statebind.ml.affinity_dataset import scaffold_split
+
+        ds = _make_toy_dataset(100)
+        n = len(ds)
+        train_ds, val_ds, test_ds = scaffold_split(
+            ds, train_ratio=0.8, val_ratio=0.1, test_ratio=0.1, seed=42,
+        )
+
+        # All molecules must be accounted for
+        assert len(train_ds) + len(val_ds) + len(test_ds) == n
+
+        # Ratios within 20% of target
+        assert abs(len(train_ds) / n - 0.8) < 0.20, (
+            f"Train ratio {len(train_ds)/n:.2f} too far from 0.8"
+        )
+        assert abs(len(val_ds) / n - 0.1) < 0.20, (
+            f"Val ratio {len(val_ds)/n:.2f} too far from 0.1"
+        )
+        assert abs(len(test_ds) / n - 0.1) < 0.20, (
+            f"Test ratio {len(test_ds)/n:.2f} too far from 0.1"
+        )
+
+    # -- c. temporal_split: test set has latest years ------------------------
+
+    def test_temporal_split_order(self) -> None:
+        """Test set must contain the latest years."""
+        pytest.importorskip("torch")
+        pytest.importorskip("torch_geometric")
+
+        from statebind.ml.affinity_dataset import temporal_split
+
+        years = [2000 + i for i in range(50)]  # 2000..2049
+        ds = _make_toy_dataset(50, years=years)
+        train_ds, val_ds, test_ds = temporal_split(ds)
+
+        # Test set years should all be >= max(train years)
+        if train_ds.years and test_ds.years:
+            assert min(test_ds.years) >= max(train_ds.years), (
+                "Test set contains years older than training set"
+            )
+        # Val years should be between train and test
+        if val_ds.years and train_ds.years:
+            assert min(val_ds.years) >= max(train_ds.years), (
+                "Val set contains years older than training set"
+            )
+
+    # -- d. backward compat: random split unchanged --------------------------
+
+    def test_random_split_backward_compat(self) -> None:
+        """split_dataset(ds, split_type='random') matches old behaviour."""
+        pytest.importorskip("torch")
+        pytest.importorskip("torch_geometric")
+
+        from statebind.ml.affinity_dataset import split_dataset
+
+        ds = _make_toy_dataset(50)
+        train_a, val_a, test_a = split_dataset(ds, seed=42)
+        train_b, val_b, test_b = split_dataset(
+            ds, seed=42, split_type="random",
+        )
+
+        assert train_a.smiles_list == train_b.smiles_list
+        assert val_a.smiles_list == val_b.smiles_list
+        assert test_a.smiles_list == test_b.smiles_list
+
+    # -- e. invalid split_type raises ValueError -----------------------------
+
+    def test_invalid_split_type_raises(self) -> None:
+        """Unknown split_type must raise ValueError."""
+        pytest.importorskip("torch")
+        pytest.importorskip("torch_geometric")
+
+        from statebind.ml.affinity_dataset import split_dataset
+
+        ds = _make_toy_dataset(20)
+        with pytest.raises(ValueError, match="Unknown split_type"):
+            split_dataset(ds, split_type="nonexistent")
+
+    # -- f. scaffold_split without RDKit raises ImportError -------------------
+
+    def test_scaffold_split_no_rdkit_raises(self) -> None:
+        """scaffold_split must raise ImportError when RDKit is missing."""
+        pytest.importorskip("torch")
+        pytest.importorskip("torch_geometric")
+
+        import statebind.ml.affinity_dataset as ad_mod
+        from statebind.ml.affinity_dataset import scaffold_split
+
+        ds = _make_toy_dataset(20)
+        original = ad_mod.HAS_SCAFFOLD
+        try:
+            ad_mod.HAS_SCAFFOLD = False
+            with pytest.raises(ImportError, match="scaffold_split requires RDKit"):
+                scaffold_split(ds, seed=42)
+        finally:
+            ad_mod.HAS_SCAFFOLD = original
+
+    # -- g. temporal_split without years raises ValueError -------------------
+
+    def test_temporal_split_no_years_raises(self) -> None:
+        """temporal_split must raise ValueError when years is None."""
+        pytest.importorskip("torch")
+        pytest.importorskip("torch_geometric")
+
+        from statebind.ml.affinity_dataset import temporal_split
+
+        ds = _make_toy_dataset(20)  # no years
+        with pytest.raises(ValueError, match="dataset.years"):
+            temporal_split(ds)

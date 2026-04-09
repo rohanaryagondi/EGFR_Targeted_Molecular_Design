@@ -85,11 +85,11 @@ class TestSequenceBuilder:
         assert dataset.n_transitions > 0
         assert len(dataset.transitions) == dataset.n_transitions
 
-    def test_all_four_states_present(self, dataset):
+    def test_all_three_states_present(self, dataset):
         all_states = set()
         for seq in dataset.sequences:
             all_states.update(seq.states)
-        assert len(all_states) == 4
+        assert len(all_states) == 3
 
     def test_sequences_have_provenance(self, dataset):
         for seq in dataset.sequences:
@@ -188,7 +188,7 @@ class TestModelSchemas:
             from_state="DFGin_aCin",
             predicted_state="DFGin_aCout",
             probabilities={"DFGin_aCin": 0.3, "DFGin_aCout": 0.4,
-                          "DFGout_aCin": 0.2, "DFGout_aCout": 0.1},
+                          "DFGout_aCin": 0.3},
             confidence=0.4,
             model_name="markov",
         )
@@ -210,8 +210,8 @@ class TestModelSchemas:
             transition_dataset=dataset,
             transition_matrix=trans_matrix,
             embeddings=None,
-            stationary_distribution={"DFGin_aCin": 0.4, "DFGin_aCout": 0.3,
-                                     "DFGout_aCin": 0.15, "DFGout_aCout": 0.15},
+            stationary_distribution={"DFGin_aCin": 0.4, "DFGin_aCout": 0.35,
+                                     "DFGout_aCin": 0.25},
             model_name="markov",
         )
         assert out.model_name == "markov"

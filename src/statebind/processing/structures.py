@@ -172,19 +172,9 @@ def _v1_curated_structures() -> list[StructureRecord]:
         ),
 
         # ── DFGout_aCin ─────────────────────────────────────────────
-        StructureRecord(
-            pdb_id="3iku",
-            resolution=2.75,
-            chain="A",
-            state=ConformationalState.DFGOUT_ACIN,
-            ligand_id="DJK",
-            ligand_bound=True,
-            is_apo=False,
-            mutations_present=[],
-            is_representative=True,
-            notes="WT EGFR with DFG-out and aC-helix in. Type-II inhibitor bound.",
-            provenance=Provenance(sources=["pdb", "klifs"], processing_date="2026-03-14"),
-        ),
+        # NOTE: 3iku (ParM, E. coli) was removed -- it is not an EGFR structure.
+        # No wild-type EGFR DFGout structures exist in PDB; 3w2r is the best
+        # available representative (T790M/L858R double mutant).
         StructureRecord(
             pdb_id="3w2r",
             resolution=2.35,
@@ -193,35 +183,10 @@ def _v1_curated_structures() -> list[StructureRecord]:
             ligand_id="W2R",
             ligand_bound=True,
             is_apo=False,
-            mutations_present=[],
-            notes="DFG-out with type-II inhibitor.",
-            provenance=Provenance(sources=["pdb", "klifs"], processing_date="2026-03-14"),
-        ),
-
-        # ── DFGout_aCout (Classical inactive) ───────────────────────
-        StructureRecord(
-            pdb_id="4zau",
-            resolution=2.9,
-            chain="A",
-            state=ConformationalState.DFGOUT_ACOUT,
-            ligand_id="4ZA",
-            ligand_bound=True,
-            is_apo=False,
-            mutations_present=[],
+            mutations_present=["T790M", "L858R"],
             is_representative=True,
-            notes="WT EGFR classical inactive. Both DFG-out and aC-helix-out.",
-            provenance=Provenance(sources=["pdb", "klifs"], processing_date="2026-03-14"),
-        ),
-        StructureRecord(
-            pdb_id="5d41",
-            resolution=2.85,
-            chain="A",
-            state=ConformationalState.DFGOUT_ACOUT,
-            ligand_id="5IA",
-            ligand_bound=True,
-            is_apo=False,
-            mutations_present=[],
-            notes="Inactive EGFR conformation.",
+            notes="T790M/L858R EGFR DFGout_aCin representative. Type-II inhibitor bound. "
+                  "No WT EGFR DFGout structures exist in PDB.",
             provenance=Provenance(sources=["pdb", "klifs"], processing_date="2026-03-14"),
         ),
 

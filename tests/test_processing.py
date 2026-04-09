@@ -102,14 +102,13 @@ class TestStructureDataset:
         ids = [s.pdb_id for s in ds.structures]
         assert len(ids) == len(set(ids))
 
-    def test_all_four_states_represented(self):
+    def test_all_three_states_represented(self):
         ds = build_structure_dataset()
         states = {s.state for s in ds.structures}
         expected = {
             ConformationalState.DFGIN_ACIN,
             ConformationalState.DFGIN_ACOUT,
             ConformationalState.DFGOUT_ACIN,
-            ConformationalState.DFGOUT_ACOUT,
         }
         assert expected.issubset(states), f"Missing states: {expected - states}"
 

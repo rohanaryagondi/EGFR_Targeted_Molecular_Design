@@ -814,12 +814,11 @@ def main() -> None:
         "DFGin_aCin": 0,
         "DFGin_aCout": 1,
         "DFGout_aCin": 2,
-        "DFGout_aCout": 3,
     })
 
     ds_config = SMILESDatasetConfig(
         max_len=data_cfg.get("max_len", 128),
-        n_states=model_cfg.get("n_states", 4),
+        n_states=model_cfg.get("n_states", 3),
         state_mapping=state_mapping,
     )
 
@@ -879,7 +878,7 @@ def main() -> None:
         latent_dim=model_cfg.get("latent_dim", 64),
         n_layers=model_cfg.get("n_layers", 2),
         dropout=model_cfg.get("dropout", 0.1),
-        n_states=model_cfg.get("n_states", 4),
+        n_states=model_cfg.get("n_states", 3),
         kl_weight=model_cfg.get("kl_weight", 0.01),
         pad_idx=vocab.pad_idx,
     )

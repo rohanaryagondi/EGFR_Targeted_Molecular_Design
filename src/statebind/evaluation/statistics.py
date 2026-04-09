@@ -1,16 +1,20 @@
 """Statistical hypothesis testing for pipeline comparison.
 
-Provides Mann-Whitney U tests, bootstrap confidence intervals, Cohen's d
-and Cliff's delta effect sizes, and permutation tests. scipy is optional;
-all functions fall back to numpy-only implementations when scipy is unavailable.
+Provides Mann-Whitney U tests, bootstrap confidence intervals (percentile and
+BCa), Cohen's d and Cliff's delta effect sizes, and permutation tests. scipy is
+optional; all functions fall back to numpy-only implementations when scipy is
+unavailable.
 """
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 try:
     from scipy import stats as scipy_stats
@@ -140,6 +144,121 @@ def bootstrap_confidence_interval(
     return BootstrapCI(
         metric_name=getattr(statistic_fn, "__name__", "statistic"),
         point_estimate=round(point_estimate, 4),
+        ci_lower=round(lower, 4),
+        ci_upper=round(upper, 4),
+        alpha=alpha,
+        n_bootstrap=n_bootstrap,
+    )
+
+
+def bca_bootstrap_confidence_interval(
+    values: list[float],
+    statistic_fn: Callable[[list[float]], float],
+    alpha: float = 0.05,
+    n_bootstrap: int = 10000,
+    seed: int = 42,
+) -> BootstrapCI:
+    """Bias-corrected and accelerated (BCa) bootstrap confidence interval.
+
+    Provides narrower and more accurate CIs than percentile bootstrap,
+    especially for skewed distributions. Requires scipy for the normal
+    quantile function; falls back to percentile bootstrap if scipy is
+    unavailable.
+
+    Args:
+        values: Observed sample values.
+        statistic_fn: Function mapping a list of floats to a scalar statistic.
+        alpha: Significance level (default 0.05 for 95 % CI).
+        n_bootstrap: Number of bootstrap resamples (default 10 000).
+        seed: Random seed for reproducibility.
+
+    Returns:
+        BootstrapCI with BCa-corrected bounds.
+    """
+    if not HAS_SCIPY:
+        logger.warning(
+            "scipy not available -- falling back to percentile bootstrap CI"
+        )
+        return bootstrap_confidence_interval(
+            values, statistic_fn, alpha=alpha, n_bootstrap=n_bootstrap, seed=seed
+        )
+
+    arr = np.asarray(values, dtype=np.float64)
+    n = len(arr)
+    rng = np.random.default_rng(seed)
+
+    # Point estimate
+    theta_hat = statistic_fn(values)
+
+    # --- Bootstrap distribution ---
+    boot_stats = np.empty(n_bootstrap)
+    for i in range(n_bootstrap):
+        sample = rng.choice(arr, size=n, replace=True)
+        boot_stats[i] = statistic_fn(sample.tolist())
+
+    # Edge case: zero variance in bootstrap distribution
+    if np.all(boot_stats == boot_stats[0]):
+        logger.warning(
+            "All bootstrap estimates are identical (%.4f) -- "
+            "returning point estimate as both bounds",
+            boot_stats[0],
+        )
+        return BootstrapCI(
+            metric_name=getattr(statistic_fn, "__name__", "statistic"),
+            point_estimate=round(theta_hat, 4),
+            ci_lower=round(theta_hat, 4),
+            ci_upper=round(theta_hat, 4),
+            alpha=alpha,
+            n_bootstrap=n_bootstrap,
+        )
+
+    # --- Bias correction (z0) ---
+    prop_below = np.mean(boot_stats < theta_hat)
+    # Clamp to avoid +-inf from ppf(0) or ppf(1)
+    prop_below = np.clip(prop_below, 1e-10, 1.0 - 1e-10)
+    z0 = float(scipy_stats.norm.ppf(prop_below))
+
+    # --- Acceleration (a) via jackknife ---
+    jack_estimates = np.empty(n)
+    for i in range(n):
+        jack_sample = np.concatenate([arr[:i], arr[i + 1 :]]).tolist()
+        jack_estimates[i] = statistic_fn(jack_sample)
+
+    theta_dot = np.mean(jack_estimates)
+    diff = theta_dot - jack_estimates
+    numerator = np.sum(diff ** 3)
+    denominator = 6.0 * (np.sum(diff ** 2) ** 1.5)
+
+    if denominator == 0.0:
+        # All jackknife estimates identical -- acceleration is zero
+        a = 0.0
+    else:
+        a = float(numerator / denominator)
+
+    # --- Adjusted percentiles ---
+    z_alpha_lower = float(scipy_stats.norm.ppf(alpha / 2))
+    z_alpha_upper = float(scipy_stats.norm.ppf(1 - alpha / 2))
+
+    # BCa adjustment formula
+    numer_lower = z0 + z_alpha_lower
+    alpha1 = float(
+        scipy_stats.norm.cdf(z0 + numer_lower / (1 - a * numer_lower))
+    )
+    numer_upper = z0 + z_alpha_upper
+    alpha2 = float(
+        scipy_stats.norm.cdf(z0 + numer_upper / (1 - a * numer_upper))
+    )
+
+    # Clamp to valid percentile range
+    alpha1 = np.clip(alpha1, 1e-10, 1.0 - 1e-10)
+    alpha2 = np.clip(alpha2, 1e-10, 1.0 - 1e-10)
+
+    lower = float(np.percentile(boot_stats, 100 * alpha1))
+    upper = float(np.percentile(boot_stats, 100 * alpha2))
+
+    return BootstrapCI(
+        metric_name=getattr(statistic_fn, "__name__", "statistic"),
+        point_estimate=round(theta_hat, 4),
         ci_lower=round(lower, 4),
         ci_upper=round(upper, 4),
         alpha=alpha,

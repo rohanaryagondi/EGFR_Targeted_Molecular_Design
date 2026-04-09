@@ -95,9 +95,9 @@ def compute_max_reference_similarity(
 ) -> float:
     """Maximum Morgan similarity to reference EGFR binders.
 
-    Uses the three canonical reference binders (erlotinib, gefitinib,
-    osimertinib) from ``baselines.scoring._REFERENCE_BINDERS`` when
-    *references* is ``None``.
+    Uses the two canonical reference binders (erlotinib, gefitinib)
+    from ``baselines.scoring._REFERENCE_BINDERS`` when *references*
+    is ``None``.
 
     Falls back to n-gram Tanimoto when RDKit is unavailable (the
     fallback is handled transparently by :func:`compute_morgan_similarity`).

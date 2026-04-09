@@ -59,8 +59,6 @@ _REFERENCE_BINDERS = [
     "COCCOc1cc2ncnc(Nc3cccc(C#C)c3)c2cc1OCCOC",
     # Gefitinib
     "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCCN1CCOCC1",
-    # Osimertinib
-    "COc1cc(N(C)CCN(C)C)c(NC(=O)/C=C/CN(C)C)cc1Nc1nccc(-c2cn(C)c3ccccc23)n1",
 ]
 
 

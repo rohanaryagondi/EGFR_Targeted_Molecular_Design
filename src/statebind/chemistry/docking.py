@@ -145,7 +145,6 @@ class DockingConfig(BaseModel):
         "DFGin_aCin": "1m17",
         "DFGin_aCout": "2gs7",
         "DFGout_aCin": "3w2r",
-        "DFGout_aCout": "4zau",
     })
 
 
@@ -193,7 +192,6 @@ def load_docking_config(config_path: Path | None = None) -> DockingConfig:
             "DFGin_aCin": "1m17",
             "DFGin_aCout": "2gs7",
             "DFGout_aCin": "3w2r",
-            "DFGout_aCout": "4zau",
         }),
     )
 

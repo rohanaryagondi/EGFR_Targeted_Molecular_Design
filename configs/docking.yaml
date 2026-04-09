@@ -21,13 +21,12 @@ scoring:
 
 states:
   # Representative PDB structures for each conformational state.
-  # 3iku from the curated atlas is not EGFR; 3w2r (T790M/L858R EGFR,
-  # DFGout_aCin) is used instead for actual docking.
+  # 3iku was removed from the atlas (ParM, E. coli -- not EGFR).
+  # 3w2r (T790M/L858R EGFR, DFGout_aCin) is the representative.
   representatives:
     DFGin_aCin: 1m17
     DFGin_aCout: 2gs7
     DFGout_aCin: 3w2r
-    DFGout_aCout: 4zau
 
 batch:
   n_workers: 4                              # Parallel docking workers

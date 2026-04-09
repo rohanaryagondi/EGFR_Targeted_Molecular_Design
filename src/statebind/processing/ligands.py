@@ -137,8 +137,8 @@ def _v1_curated_ligands() -> list[LigandRecord]:
             ligand_id="DJK",
             canonical_smiles="",  # Placeholder — complex heterocyclic
             source=LigandSource.PDB_COCRYSTAL,
-            pdb_id="3iku",
-            notes="Type-II inhibitor binding DFG-out conformation.",
+            pdb_id="3w2r",
+            notes="Type-II inhibitor binding DFG-out conformation (3w2r, T790M/L858R).",
             provenance=Provenance(sources=["pdb"], processing_date="2026-03-14"),
         ),
     ]

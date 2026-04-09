@@ -10,10 +10,20 @@ See ``workstreams/13-retrospective-validation.md`` for the full design.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
 from statebind.chemistry.fingerprints import compute_morgan_similarity
+
+logger = logging.getLogger(__name__)
+
+try:
+    from rdkit.ML.Scoring.Scoring import CalcBEDROC
+
+    HAS_RDKIT_SCORING = True
+except ImportError:
+    HAS_RDKIT_SCORING = False
 
 # ── EGFR Drug Approval Database ────────────────────────────────────────────
 #
@@ -195,6 +205,159 @@ def compute_enrichment_factor(
     hit_rate_overall = total_hits / n
 
     return round(hit_rate_top_k / hit_rate_overall, 4)
+
+
+# ── BEDROC ────────────────────────────────────────────────────────────────
+
+
+def compute_bedroc(
+    scores: list[float],
+    actives: list[bool],
+    alpha: float = 20.0,
+) -> float:
+    """Boltzmann-Enhanced Discrimination of ROC (BEDROC).
+
+    BEDROC is the standard metric for evaluating early enrichment in
+    virtual screening.  Higher ``alpha`` penalises late-appearing actives
+    more strongly (alpha=20.0 is the conventional default).
+
+    Args:
+        scores: Predicted scores for each compound (higher = better).
+        actives: Boolean flag per compound indicating whether it is active.
+        alpha: Exponential weight parameter (default 20.0).
+
+    Returns:
+        BEDROC score rounded to 4 decimal places.
+
+    Raises:
+        ImportError: If RDKit is not installed.
+        ValueError: If ``scores`` and ``actives`` have different lengths,
+            or if there are no actives.
+    """
+    if not HAS_RDKIT_SCORING:
+        raise ImportError(
+            "RDKit is required for BEDROC computation. "
+            "Install with: pip install rdkit"
+        )
+
+    if len(scores) != len(actives):
+        msg = (
+            f"scores and actives must have the same length, "
+            f"got {len(scores)} and {len(actives)}"
+        )
+        raise ValueError(msg)
+
+    n_actives = sum(1 for a in actives if a)
+    if n_actives == 0:
+        msg = "Cannot compute BEDROC with zero actives"
+        raise ValueError(msg)
+
+    # Pair scores with active flags and sort by score descending
+    paired = sorted(zip(scores, actives), key=lambda x: -x[0])
+    # CalcBEDROC expects a list of [0, 1] ints, sorted by predicted score desc
+    sorted_activities = [[1 if active else 0] for _, active in paired]
+
+    bedroc = CalcBEDROC(sorted_activities, 0, alpha)
+    return round(float(bedroc), 4)
+
+
+def compute_enrichment_with_ci(
+    candidate_similarities: list[float],
+    threshold: float = 0.4,
+    top_k: int = 10,
+    alpha: float = 0.05,
+    n_bootstrap: int = 10000,
+    seed: int = 42,
+) -> dict[str, Any]:
+    """Enrichment factor and BEDROC with BCa bootstrap confidence intervals.
+
+    Computes EF@K and (optionally) BEDROC point estimates together with
+    BCa bootstrap CIs.  If scipy is unavailable the CI falls back to
+    percentile bootstrap.  If RDKit is unavailable BEDROC fields are
+    ``None``.
+
+    Args:
+        candidate_similarities: Ordered list (by composite score descending)
+            of each candidate's max Tanimoto similarity to any future drug.
+        threshold: Minimum similarity to count as a "hit" for EF.
+        top_k: Number of top candidates for EF computation.
+        alpha: Significance level for CIs (default 0.05 = 95 %).
+        n_bootstrap: Number of bootstrap resamples (default 10 000).
+        seed: Random seed for reproducibility.
+
+    Returns:
+        Dict with keys: ``ef_point``, ``ef_ci_lower``, ``ef_ci_upper``,
+        ``bedroc_point``, ``bedroc_ci_lower``, ``bedroc_ci_upper``,
+        ``n_bootstrap``, ``alpha``.
+    """
+    from statebind.evaluation.statistics import bca_bootstrap_confidence_interval
+
+    # --- EF point estimate + CI ---
+    ef_point = compute_enrichment_factor(
+        candidate_similarities, threshold=threshold, top_k=top_k
+    )
+
+    def _ef_statistic(sims: list[float]) -> float:
+        return compute_enrichment_factor(sims, threshold=threshold, top_k=top_k)
+
+    ef_ci = bca_bootstrap_confidence_interval(
+        candidate_similarities,
+        _ef_statistic,
+        alpha=alpha,
+        n_bootstrap=n_bootstrap,
+        seed=seed,
+    )
+
+    result: dict[str, Any] = {
+        "ef_point": ef_point,
+        "ef_ci_lower": ef_ci.ci_lower,
+        "ef_ci_upper": ef_ci.ci_upper,
+        "bedroc_point": None,
+        "bedroc_ci_lower": None,
+        "bedroc_ci_upper": None,
+        "n_bootstrap": n_bootstrap,
+        "alpha": alpha,
+    }
+
+    # --- BEDROC point estimate + CI (optional, needs RDKit) ---
+    if not HAS_RDKIT_SCORING:
+        logger.warning(
+            "RDKit not available -- BEDROC fields will be None"
+        )
+        return result
+
+    actives = [s >= threshold for s in candidate_similarities]
+    scores = list(range(len(candidate_similarities), 0, -1))
+    scores_float = [float(s) for s in scores]
+
+    try:
+        bedroc_point = compute_bedroc(scores_float, actives, alpha=20.0)
+    except ValueError:
+        logger.warning("Cannot compute BEDROC (likely zero actives)")
+        return result
+
+    def _bedroc_statistic(sims: list[float]) -> float:
+        a = [s >= threshold for s in sims]
+        n_act = sum(1 for x in a if x)
+        if n_act == 0:
+            return 0.0
+        sc = list(range(len(sims), 0, -1))
+        sc_float = [float(x) for x in sc]
+        return compute_bedroc(sc_float, a, alpha=20.0)
+
+    bedroc_ci = bca_bootstrap_confidence_interval(
+        candidate_similarities,
+        _bedroc_statistic,
+        alpha=alpha,
+        n_bootstrap=n_bootstrap,
+        seed=seed,
+    )
+
+    result["bedroc_point"] = bedroc_point
+    result["bedroc_ci_lower"] = bedroc_ci.ci_lower
+    result["bedroc_ci_upper"] = bedroc_ci.ci_upper
+
+    return result
 
 
 # ── Similarity computation ─────────────────────────────────────────────────

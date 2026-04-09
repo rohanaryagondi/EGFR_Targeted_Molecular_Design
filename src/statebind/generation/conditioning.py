@@ -6,7 +6,7 @@ pocket features to generation strategies:
 - DFGin_aCin (active): compact pocket → hinge optimization, gatekeeper avoidance
 - DFGin_aCout (Src-like): moderate pocket, broken salt bridge → aC-helix interactions
 - DFGout_aCin: large pocket + back pocket → type-II extensions
-- DFGout_aCout: largest pocket, folded P-loop → volume-filling, P-loop contacts
+  (DFGout_aCout removed: no genuine EGFR DFGout/aCout structures exist)
 
 These mappings are literature-informed and determine WHICH chemical
 modifications are applied during state-conditioned generation.
@@ -35,7 +35,7 @@ class PocketCondition:
 # ── State-specific pocket conditions ────────────────────────────────────
 
 def get_pocket_conditions() -> dict[str, PocketCondition]:
-    """Return pocket conditions for all 4 canonical EGFR states.
+    """Return pocket conditions for all 3 canonical EGFR states.
 
     Each condition maps a pocket geometry to generation strategies.
 
@@ -43,7 +43,9 @@ def get_pocket_conditions() -> dict[str, PocketCondition]:
     - DFGin_aCin (~450 Å³): Stamos et al., JBC 2002 (PDB 1M17)
     - DFGin_aCout (~520 Å³): Zhang et al., Nature 2006 (PDB 2GS7)
     - DFGout_aCin (~790 Å³): Yun et al., PNAS 2008 (PDB 3IKA/3IKU)
-    - DFGout_aCout (~850 Å³): Park et al., JACS 2015 (PDB 4ZAU)
+
+    DFGout_aCout was removed: 4ZAU and 5D41 were reclassified as DFGin
+    (no genuine EGFR DFGout structures exist in the PDB).
 
     Exact volumes vary by detection method. Values represent approximate
     magnitude and relative ordering across states.
@@ -93,13 +95,13 @@ def get_pocket_conditions() -> dict[str, PocketCondition]:
         ),
         ConformationalState.DFGOUT_ACIN.value: PocketCondition(
             state=ConformationalState.DFGOUT_ACIN.value,
-            representative_pdb="3iku",
+            representative_pdb="3w2r",
             pocket=PocketDescriptor(
-                pocket_volume=790.0,
+                pocket_volume=800.0,
                 back_pocket_accessible=True,
                 covalent_cys_exposed=True,
-                gatekeeper_clearance=4.9,
-                hinge_accessibility=0.85,
+                gatekeeper_clearance=5.0,
+                hinge_accessibility=0.86,
                 p_loop_conformation="extended",
             ),
             strategies=[
@@ -111,27 +113,6 @@ def get_pocket_conditions() -> dict[str, PocketCondition]:
             rationale="DFG-out opens back pocket (790 Å³). Type-II inhibitor "
                       "opportunity. Extend into allosteric back pocket behind "
                       "the DFG motif. Larger gatekeeper clearance (4.9 Å).",
-        ),
-        ConformationalState.DFGOUT_ACOUT.value: PocketCondition(
-            state=ConformationalState.DFGOUT_ACOUT.value,
-            representative_pdb="4zau",
-            pocket=PocketDescriptor(
-                pocket_volume=850.0,
-                back_pocket_accessible=True,
-                covalent_cys_exposed=True,
-                gatekeeper_clearance=5.1,
-                hinge_accessibility=0.71,
-                p_loop_conformation="folded",
-            ),
-            strategies=[
-                GenerationStrategy.BACK_POCKET_EXTENSION,
-                GenerationStrategy.VOLUME_FILLING,
-                GenerationStrategy.P_LOOP_INTERACTION,
-                GenerationStrategy.ANALOG,
-            ],
-            rationale="Largest pocket (850 Å³). Both DFG flipped and αC rotated. "
-                      "Back pocket accessible. P-loop folded over pocket — "
-                      "design for P-loop contacts. Reduced hinge access (0.71).",
         ),
     }
 

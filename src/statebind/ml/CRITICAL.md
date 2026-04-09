@@ -16,7 +16,7 @@
 
 - `scripts/prepare_vae_data.py` uses 3-tier fallback: local ChEMBL file → ChEMBL REST API (stdlib `urllib.request` only) → curated ~55 EGFR inhibitors. The curated fallback always works with zero external dependencies.
 - VAE training data format: `[{"smiles": str, "state": str}, ...]` at `data/processed/egfr_smiles_{train,val}.json`. State labels MUST match `DEFAULT_STATE_MAPPING` keys in `vae_dataset.py:41-46`.
-- State assignment for curated compounds uses inhibitor-type heuristics (Type-I→DFGin_aCin, Type-I½→DFGin_aCout, Type-II→DFGout_aCin, allosteric→DFGout_aCout). Unknown types get seeded random assignment — this is a documented limitation.
+- State assignment for curated compounds uses inhibitor-type heuristics (Type-I→DFGin_aCin, Type-I½→DFGin_aCout, Type-II→DFGout_aCin, allosteric→DFGout_aCin). Unknown types get seeded random assignment — this is a documented limitation.
 - Reference binders from `baselines/scoring.py:59-66` are forced into the training split, never validation. See `_split_train_val()` in `scripts/prepare_vae_data.py`.
 - Tests `test_generate_with_temperature_zero` and `test_generate_empty_latent` in `tests/test_vae_integration.py` are skipped when torch is not installed (`pytest.importorskip("torch")`). They test VAE `.generate()` determinism and zero-latent behavior respectively.
 

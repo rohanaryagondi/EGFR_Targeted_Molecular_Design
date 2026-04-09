@@ -56,7 +56,7 @@ except ImportError:
 #   Type-I½ (inactive αC-helix) → DFGin_aCout
 #   Type-II (DFG-out binders) → DFGout_aCin
 #   Covalent / 3rd-gen → DFGin_aCin (bind active, covalent to C797)
-#   Allosteric / unconventional → DFGout_aCout
+#   Allosteric / unconventional → DFGout_aCin (formerly DFGout_aCout, removed)
 _CURATED_EGFR_INHIBITORS: list[tuple[str, str, str]] = [
     # ── 1st-generation reversible Type-I ──────────────────────────────
     (
@@ -279,55 +279,55 @@ _CURATED_EGFR_INHIBITORS: list[tuple[str, str, str]] = [
         "aumolertinib_like",
     ),
 
-    # ── Allosteric / DFGout_aCout ────────────────────────────────────
+    # ── Allosteric / DFGout_aCin (formerly DFGout_aCout) ─────────────
     (
         "O=C(c1cc(F)cc(F)c1)c1ccc2[nH]c(-c3ccccc3)nc2c1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_01",
     ),
     (
         "O=C(Nc1cccc(C(F)(F)F)c1)c1cnc2ccccc2n1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_02",
     ),
     (
         "Cc1noc(NC(=O)c2ccc(F)cc2)c1-c1ccc(Cl)cc1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_03",
     ),
     (
         "O=C(Nc1ccccc1F)c1cc(-c2ccncc2)no1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_04",
     ),
     (
         "CC(=O)Nc1ccc(-c2cc(C(F)(F)F)nn2-c2ccccc2)cc1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_05",
     ),
     (
         "O=C(Nc1ccc(F)cc1F)c1ccc(-c2cccnc2)o1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_06",
     ),
     (
         "O=C(c1ccc(F)cc1)N1CCN(c2ncnc3ccccc23)CC1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_07",
     ),
     (
         "Cc1cc(-c2cccc(NC(=O)c3ccc(C#N)cc3)c2)on1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_08",
     ),
     (
         "O=C(Nc1cccc(-c2noc(C(F)(F)F)n2)c1)c1ccc(Cl)cc1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_09",
     ),
     (
         "CC(=O)Nc1ccc2oc(-c3ccc(O)cc3)nc2c1",
-        "DFGout_aCout",
+        "DFGout_aCin",
         "allosteric_10",
     ),
 ]
@@ -519,9 +519,9 @@ def _assign_state_from_type(
         "type_ii": "DFGout_aCin",
         "type-ii": "DFGout_aCin",
         "type2": "DFGout_aCin",
-        "type_iii": "DFGout_aCout",
-        "type-iii": "DFGout_aCout",
-        "allosteric": "DFGout_aCout",
+        "type_iii": "DFGout_aCin",
+        "type-iii": "DFGout_aCin",
+        "allosteric": "DFGout_aCin",
     }
     key = inhibitor_type.strip().lower()
     if key in type_map:

@@ -28,11 +28,11 @@ ML infrastructure for StateBind: provides three neural network architectures for
 
 ### Conditional SMILES VAE (`vae.py`)
 
-Generates novel SMILES conditioned on EGFR conformational states (DFGin_aCin, DFGin_aCout, DFGout_aCin, DFGout_aCout). State conditioning is injected at two points: concatenated to encoder token embeddings at every timestep, and concatenated to the latent code before decoder hidden state projection.
+Generates novel SMILES conditioned on EGFR conformational states (DFGin_aCin, DFGin_aCout, DFGout_aCin). State conditioning is injected at two points: concatenated to encoder token embeddings at every timestep, and concatenated to the latent code before decoder hidden state projection.
 
-- **Encoder:** Embedding(vocab_size, 128) -> Bidirectional GRU(128+4, 256, 2 layers) -> Linear(512, 64) for mu and logvar
+- **Encoder:** Embedding(vocab_size, 128) -> Bidirectional GRU(128+3, 256, 2 layers) -> Linear(512, 64) for mu and logvar
 - **Latent:** Reparameterization trick, z = mu + eps * exp(0.5 * logvar)
-- **Decoder:** Linear(64+4, 256*2) -> GRU(128, 256, 2 layers) with teacher forcing -> Linear(256, vocab_size)
+- **Decoder:** Linear(64+3, 256*2) -> GRU(128, 256, 2 layers) with teacher forcing -> Linear(256, vocab_size)
 - **Loss:** Cross-entropy reconstruction (ignoring padding) + beta-weighted KL divergence
 - **Generation:** Autoregressive decoding with temperature-scaled sampling or greedy argmax
 

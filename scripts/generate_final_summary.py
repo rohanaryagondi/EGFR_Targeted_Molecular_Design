@@ -117,8 +117,8 @@ def main() -> None:
                 "max_score": result.scores.static_stats.get("max", 0),
             },
             "state_aware": {
-                "structures": ["1M17", "2GS7", "3IKU", "4ZAU"],
-                "states": ["DFGin_aCin", "DFGin_aCout", "DFGout_aCin", "DFGout_aCout"],
+                "structures": ["1M17", "2GS7", "3W2R"],
+                "states": ["DFGin_aCin", "DFGin_aCout", "DFGout_aCin"],
                 "strategies_used": 7,
                 "candidates_generated": generation.total_candidates,
                 "candidates_filtered": filtered.total_passed,

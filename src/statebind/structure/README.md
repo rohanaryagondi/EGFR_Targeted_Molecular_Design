@@ -75,7 +75,7 @@ Conformational state atlas for the EGFR kinase domain (Phase 3). This module cla
 - **Literature-curated features only:** All 9 geometric features are hand-curated from published analyses, not computed from PDB coordinates. The curated set covers 16 structures.
 - **No coordinate-based computation:** Feature extraction raises `KeyError` for PDB IDs not in the curated set. Future versions should compute features from PDB files using BioPython or MDAnalysis.
 - **Fixed feature set:** The 9-feature representation is manually selected; no automated feature discovery.
-- **Small structure set:** 16 structures across 4 states (7 DFGin_aCin, 5 DFGin_aCout, 2 DFGout_aCin, 2 DFGout_aCout).
+- **Small structure set:** 14 structures across 3 states (7 DFGin_aCin, 5 DFGin_aCout, 2 DFGout_aCin). DFGout_aCout removed (no genuine EGFR structures).
 
 ## Planned Improvements
 

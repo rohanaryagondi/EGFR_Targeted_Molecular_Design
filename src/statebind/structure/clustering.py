@@ -137,7 +137,6 @@ def _generate_cluster_label(dominant_state, members) -> str:
         ConformationalState.DFGIN_ACIN: "Active (DFGin/αCin)",
         ConformationalState.DFGIN_ACOUT: "Src-like inactive (DFGin/αCout)",
         ConformationalState.DFGOUT_ACIN: "DFGout intermediate (DFGout/αCin)",
-        ConformationalState.DFGOUT_ACOUT: "Classical inactive (DFGout/αCout)",
         ConformationalState.UNCLASSIFIED: "Unclassified",
     }
     base = labels.get(dominant_state, "Unknown")

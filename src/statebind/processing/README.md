@@ -21,7 +21,7 @@ Exported from `__init__.py`:
 
 | Symbol | Kind | Description |
 |--------|------|-------------|
-| `ConformationalState` | `str, Enum` | `DFGin_aCin`, `DFGin_aCout`, `DFGout_aCin`, `DFGout_aCout`, `unclassified` |
+| `ConformationalState` | `str, Enum` | `DFGin_aCin`, `DFGin_aCout`, `DFGout_aCin`, `unclassified` |
 | `ResistanceGeneration` | `str, Enum` | `1st`, `2nd`, `3rd`, `4th`, `activating`, `unknown` |
 | `MechanismCategory` | `str, Enum` | `gatekeeper`, `covalent_site`, `hinge`, `hydrophobic_spine`, `p_loop`, `activation_loop`, `solvent_front`, `ac_helix`, `allosteric`, `activating_mutation`, `other`, `unknown` |
 | `ConformationalEffect` | `str, Enum` | `stabilizes_DFGin`, `stabilizes_DFGout`, `stabilizes_active`, `destabilizes_inactive`, `steric_clash`, `no_direct_conformational`, `unknown` |

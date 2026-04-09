@@ -22,8 +22,8 @@ from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
-# The 4 EGFR conformational states
-_STATES = ["DFGin_aCin", "DFGin_aCout", "DFGout_aCin", "DFGout_aCout"]
+# The 3 EGFR conformational states (DFGout_aCout removed: no genuine structures)
+_STATES = ["DFGin_aCin", "DFGin_aCout", "DFGout_aCin"]
 
 
 # ── Data models ──────────────────────────────────────────────────────────

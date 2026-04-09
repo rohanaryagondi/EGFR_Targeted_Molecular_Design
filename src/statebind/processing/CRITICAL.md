@@ -2,7 +2,7 @@
 
 - ALL curated data is embedded as Python literals in source code, not loaded from external files -- `context.py:24-37` returns hard-coded `MutationRecord` list.
 - Dataset sizes: 18 mutations (17 resistance + 1 activating pair), 16 structures, 9 ligands.
-- `ConformationalState` enum at `models.py:52-57` is the CANONICAL state definition used by every downstream module. 5 values: DFGin_aCin, DFGin_aCout, DFGout_aCin, DFGout_aCout, unclassified.
+- `ConformationalState` enum at `models.py:52-56` is the CANONICAL state definition used by every downstream module. 4 values: DFGin_aCin, DFGin_aCout, DFGout_aCin, unclassified. (DFGout_aCout removed: no genuine EGFR DFGout/aCout structures exist.)
 - `ResistanceGeneration` enum at `models.py:18-24` has 6 values: FIRST through FOURTH, ACTIVATING, UNKNOWN.
 - `MechanismCategory` enum at `models.py:27-39` has 12 values covering all known EGFR resistance mechanisms.
 - `ConformationalEffect` enum at `models.py:42-49` has 7 values describing how mutations affect conformational equilibrium.

@@ -209,20 +209,8 @@ def _curated_features() -> dict[str, tuple[StructuralFeatures, PocketDescriptor]
         ),
 
         # ── DFGout_aCin ────────────────────────────────────────────
-        "3iku": (
-            StructuralFeatures(
-                dfg_asp_phe_dist=10.2, dfg_phe_position=6.5,
-                ac_helix_salt_bridge=3.1, ac_helix_rotation=3.0,
-                p_loop_displacement=0.8, hinge_angle=150.0,
-                activation_loop_rmsd=4.2, gatekeeper_sidechain=-58.0,
-                pocket_volume=780.0,
-            ),
-            PocketDescriptor(
-                pocket_volume=780.0, back_pocket_accessible=True,
-                covalent_cys_exposed=True, gatekeeper_clearance=4.8,
-                hinge_accessibility=0.85, p_loop_conformation="extended",
-            ),
-        ),
+        # NOTE: 3iku (ParM, E. coli) was removed -- not an EGFR structure.
+        # 3w2r (T790M/L858R) is the DFGout_aCin representative.
         "3w2r": (
             StructuralFeatures(
                 dfg_asp_phe_dist=10.5, dfg_phe_position=6.8,
@@ -238,35 +226,6 @@ def _curated_features() -> dict[str, tuple[StructuralFeatures, PocketDescriptor]
             ),
         ),
 
-        # ── DFGout_aCout (Classical inactive) ──────────────────────
-        "4zau": (
-            StructuralFeatures(
-                dfg_asp_phe_dist=11.0, dfg_phe_position=7.2,
-                ac_helix_salt_bridge=10.5, ac_helix_rotation=22.0,
-                p_loop_displacement=1.8, hinge_angle=143.0,
-                activation_loop_rmsd=5.5, gatekeeper_sidechain=-55.0,
-                pocket_volume=850.0,
-            ),
-            PocketDescriptor(
-                pocket_volume=850.0, back_pocket_accessible=True,
-                covalent_cys_exposed=True, gatekeeper_clearance=5.2,
-                hinge_accessibility=0.70, p_loop_conformation="folded",
-            ),
-        ),
-        "5d41": (
-            StructuralFeatures(
-                dfg_asp_phe_dist=10.8, dfg_phe_position=7.0,
-                ac_helix_salt_bridge=10.2, ac_helix_rotation=21.0,
-                p_loop_displacement=1.7, hinge_angle=144.0,
-                activation_loop_rmsd=5.2, gatekeeper_sidechain=-57.0,
-                pocket_volume=830.0,
-            ),
-            PocketDescriptor(
-                pocket_volume=830.0, back_pocket_accessible=True,
-                covalent_cys_exposed=True, gatekeeper_clearance=5.0,
-                hinge_accessibility=0.72, p_loop_conformation="folded",
-            ),
-        ),
     }
 
 

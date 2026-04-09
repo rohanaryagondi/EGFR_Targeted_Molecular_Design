@@ -5,4 +5,6 @@ Provides:
 - Summary table generation
 - Figure generation (text-based for portability)
 - Honest assessment framework
+- BCa bootstrap confidence intervals
+- BEDROC early enrichment metric
 """

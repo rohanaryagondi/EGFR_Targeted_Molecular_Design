@@ -30,7 +30,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Conformational states and their one-hot indices
-STATE_NAMES = ["DFGin_aCin", "DFGin_aCout", "DFGout_aCin", "DFGout_aCout"]
+STATE_NAMES = ["DFGin_aCin", "DFGin_aCout", "DFGout_aCin"]
 
 
 def main() -> None:

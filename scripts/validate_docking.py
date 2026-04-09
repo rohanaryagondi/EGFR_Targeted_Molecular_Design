@@ -57,7 +57,7 @@ NON_BINDERS = {
     "glucose": "OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O",
 }
 
-STATES = ["DFGin_aCin", "DFGin_aCout", "DFGout_aCin", "DFGout_aCout"]
+STATES = ["DFGin_aCin", "DFGin_aCout", "DFGout_aCin"]
 
 
 def dock_compound(

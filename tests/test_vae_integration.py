@@ -66,7 +66,7 @@ SAMPLE_VAE_OUTPUT = {
         },
         {
             "smiles": "CC(=O)Nc1ccc(-c2ccncc2)cc1",
-            "state": "DFGout_aCout",
+            "state": "DFGout_aCin",
             "source": "vae_latent_sample",
             "is_valid": True,
             "is_novel": True,
@@ -265,13 +265,13 @@ class TestEdgeCases:
             latent_dim=8,
             n_layers=1,
             dropout=0.0,
-            n_states=4,
+            n_states=3,
         )
         model = ConditionalSMILESVAE(config)
         model.eval()
 
         z = torch.zeros(2, config.latent_dim)
-        state = torch.zeros(2, 4)
+        state = torch.zeros(2, 3)
         state[:, 0] = 1.0  # DFGin_aCin
 
         seq1 = model.generate(z, state, max_len=20, temperature=0, vocab=vocab)
@@ -295,13 +295,13 @@ class TestEdgeCases:
             latent_dim=8,
             n_layers=1,
             dropout=0.0,
-            n_states=4,
+            n_states=3,
         )
         model = ConditionalSMILESVAE(config)
         model.eval()
 
         z = torch.zeros(1, config.latent_dim)
-        state = torch.zeros(1, 4)
+        state = torch.zeros(1, 3)
         state[0, 2] = 1.0  # DFGout_aCin
 
         sequences = model.generate(
@@ -337,8 +337,8 @@ class TestEdgeCases:
         candidates = load_vae_candidates(path)
         libraries = build_vae_libraries(candidates)
 
-        # Sample data has 4 valid candidates across 4 states
-        assert len(libraries) == 4
+        # Sample data has 4 valid candidates across 3 states
+        assert len(libraries) == 3
         states = [lib.state for lib in libraries]
         assert states == sorted(states), "Libraries should be sorted by state"
         for lib in libraries:
