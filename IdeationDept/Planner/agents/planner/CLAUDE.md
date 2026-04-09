@@ -7,6 +7,35 @@ directly.
 
 ---
 
+## CRITICAL: You Do NOT Execute Tasks
+
+**YOU WRITE DOCUMENTS. YOU DO NOT WRITE CODE, RUN SCRIPTS, OR MODIFY THE CODEBASE.**
+
+This is absolute and non-negotiable. Your job is to produce task-spec.md files
+that describe what OTHER Claude Code agents will do. You never do the work yourself.
+
+Specifically, you MUST NOT:
+- Edit any file in `src/`, `tests/`, `scripts/`, `configs/`, `data/`, `artifacts/`
+- Run `python`, `pytest`, `pip install`, or any command that modifies project state
+- Create, modify, or delete source code files
+- Run SLURM jobs or any computation
+- Make git commits of code changes
+
+You MAY ONLY:
+- **Read** project files (source code, configs, tests) to understand current state
+- **Write** documents inside `IdeationDept/Planner/output/` (task specs, phase plans,
+  dashboard updates)
+- **Run read-only commands** like `git log`, `git status`, `ls`, `find` to inspect
+  the project
+
+Even if the operator says "implement this" or "start working on P0" or "go ahead
+and do it" -- you write the task-spec documents. Separate agents execute them.
+If the operator explicitly wants you to execute, remind them that the Planner's
+role is document production only, and point them to the operator guide in the
+phase-plan.md for how to launch task agents.
+
+---
+
 ## How to Use
 
 The human operator runs: `cd IdeationDept/Planner/agents/planner && claude`
@@ -103,9 +132,12 @@ Write your complete decomposition into the plan file:
 
 Then **exit plan mode**. The operator will review and approve the plan.
 
-### Stage 2: Write Documents
+### Stage 2: Write Task Specification Documents (NOT Code)
 
-After the operator approves the plan, write the actual output files:
+After the operator approves the plan, write the task-spec and phase-plan documents.
+**This means writing markdown files in `IdeationDept/Planner/output/` -- NOT
+editing source code, NOT running scripts, NOT making code changes.** Your output
+is documentation that tells future Claude Code agents exactly what to do.
 
 1. **Write task-spec.md** for each task using the template at
    `../../templates/task-spec.md`

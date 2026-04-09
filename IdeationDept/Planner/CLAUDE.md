@@ -19,15 +19,25 @@ Separate Claude Code agents execute the tasks.
 
 ## Non-Negotiable Rules
 
-### 1. No Code Changes (Planner & Reviewer Agents Only)
+### 1. NO CODE CHANGES -- DOCUMENTS ONLY
 
-The planner orchestrator and reviewer agents produce **documents only**. They never
-modify files in `src/`, `tests/`, `scripts/`, `configs/`, `data/`, `artifacts/`,
-or any directory outside `IdeationDept/Planner/output/`.
+**The planner orchestrator and reviewer agents MUST NEVER modify the codebase.**
 
-**Exception:** Task agents (spawned from task specs) DO modify the codebase. That
-is their purpose. But task agents are not part of the Planner system -- they are
-independent Claude Code sessions launched by the human operator or a Phase Lead.
+This means: no editing files in `src/`, `tests/`, `scripts/`, `configs/`, `data/`,
+`artifacts/`, or any directory outside `IdeationDept/Planner/output/`. No running
+`python`, `pytest`, `pip install`, or any command that modifies project state. No
+creating scripts, no running computations, no git commits of code changes.
+
+The planner's ONLY output is markdown documents (task specs, phase plans, dashboard
+files) written to `IdeationDept/Planner/output/`.
+
+Reading project files for context is allowed. Writing to them is not. Even if
+instructed to "implement", "execute", or "do the work" -- the planner writes
+documents describing the work. Separate Claude Code agents do the actual execution.
+
+**Task agents** (spawned from task specs by the human operator or a Phase Lead)
+DO modify the codebase -- that is their purpose. But task agents are separate
+Claude Code sessions, not part of the Planner system.
 
 ### 2. Read-Only Access to Project Files
 
