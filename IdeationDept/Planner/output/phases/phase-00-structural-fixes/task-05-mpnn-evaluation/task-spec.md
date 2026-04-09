@@ -3,7 +3,7 @@ phase: "Phase 0: Structural & Methodological Fixes"
 task_id: P0-T05
 task_name: "MPNN Scaffold Split Evaluation (GPU)"
 implementation_plan_ref: "P3: MPNN Scaffold + Temporal Split (evaluation portion)"
-status: pending
+status: completed
 created: 2026-04-09T18:00:00Z
 estimated_effort: "2-4 hours (mostly SLURM wait time)"
 ---

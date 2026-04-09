@@ -3,7 +3,7 @@ type: phase-plan
 phase: "Phase 0: Structural & Methodological Fixes"
 implementation_plan_ref: "P0, P1, P2, P3, P4, P5"
 created: 2026-04-09T18:00:00Z
-status: pending
+status: completed
 ---
 
 # Phase Plan: Structural & Methodological Fixes
@@ -31,15 +31,15 @@ R^2 >= 0.35).
 
 | Task ID | Task Name | Effort | Dependencies | Wave | Conditional? | Status |
 |---------|-----------|--------|-------------|------|-------------|--------|
-| P0-T01 | Verify 4ZAU DFG Conformation | 2h | None | 1 | No | pending |
-| P0-T02 | Fix Osimertinib Reference Leakage | 15min | None | 1 | No | pending |
-| P0-T03 | MPNN Scaffold + Temporal Split (Code) | 2-3d | None | 1 | No | pending |
-| P0-T04 | Bootstrap CIs + BEDROC | 0.5-1d | None | 1 | No | pending |
-| P0-T05 | MPNN Scaffold Split Evaluation (GPU) | 2-4h | T03 | 2 | No | pending |
-| P0-T06 | Fix Structural Annotations (Common) | 4-8h | T01 | 2 | No | pending |
-| P0-T07 | Remove DFGout_aCout (3-State Switch) | 1-1.5d | T01=DFGin, T06 | 3 | YES | pending |
-| P0-T08 | VAE Retrain (3-State) | 30min GPU | T07 | 4 | YES | pending |
-| P0-T09 | Pre-Registration Document | 2-4h | All prior settled | 4 | No | pending |
+| P0-T01 | Verify 4ZAU DFG Conformation | 2h | None | 1 | No | completed |
+| P0-T02 | Fix Osimertinib Reference Leakage | 15min | None | 1 | No | completed |
+| P0-T03 | MPNN Scaffold + Temporal Split (Code) | 2-3d | None | 1 | No | completed |
+| P0-T04 | Bootstrap CIs + BEDROC | 0.5-1d | None | 1 | No | completed |
+| P0-T05 | MPNN Scaffold Split Evaluation (GPU) | 2-4h | T03 | 2 | No | completed |
+| P0-T06 | Fix Structural Annotations (Common) | 4-8h | T01 | 2 | No | completed |
+| P0-T07 | Remove DFGout_aCout (3-State Switch) | 1-1.5d | T01=DFGin, T06 | 3 | Executed (DFGin confirmed) | completed |
+| P0-T08 | VAE Retrain (3-State) | 30min GPU | T07 | 4 | Executed (3-state) | completed |
+| P0-T09 | Pre-Registration Document | 2-4h | All prior settled | 4 | No | completed |
 
 ## Execution Order
 
@@ -181,12 +181,12 @@ is to execute all 9 tasks (7 unconditional, 2 conditional) in the correct order.
 
 ## Success Criteria
 
-- [ ] All PDB annotations verified and corrected
-- [ ] 3-state or 4-state model decision made and implemented
-- [ ] Osimertinib removed from reference binders
-- [ ] Scaffold + temporal split implemented with tests
-- [ ] MPNN R^2 evaluated with scaffold split (G1 outcome known)
-- [ ] BCa bootstrap + BEDROC implemented with tests
-- [ ] Pre-registration document committed with timestamp
-- [ ] All 646+ tests pass (or more, with new tests added)
-- [ ] Progress tracker updated for all tasks
+- [x] All PDB annotations verified and corrected
+- [x] 3-state model adopted (4ZAU=DFGin_aCin, 5D41=DFGin_aCout, DFGout_aCout removed)
+- [x] Osimertinib removed from reference binders
+- [x] Scaffold + temporal split implemented with tests (7 new tests)
+- [x] MPNN R^2 evaluated with scaffold split (G1 GO: R^2 = 0.5153)
+- [x] BCa bootstrap + BEDROC implemented with tests (19 new tests)
+- [x] Pre-registration document committed (commit 9e7cf96)
+- [x] 669 tests pass (was 646; 23 new tests added, 0 failures)
+- [x] Progress tracker updated for all tasks

@@ -3,7 +3,7 @@ phase: "Phase 0: Structural & Methodological Fixes"
 task_id: P0-T07
 task_name: "Remove DFGout_aCout (3-State Switch)"
 implementation_plan_ref: "P1: Fix Structural Annotations (3-state switch portion)"
-status: pending
+status: completed
 created: 2026-04-09T18:00:00Z
 estimated_effort: "1-1.5 days"
 conditional: true

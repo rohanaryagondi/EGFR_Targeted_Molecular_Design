@@ -3,7 +3,7 @@ phase: "Phase 0: Structural & Methodological Fixes"
 task_id: P0-T04
 task_name: "Bootstrap CIs + BEDROC"
 implementation_plan_ref: "P4: Bootstrap Confidence Intervals + BEDROC"
-status: pending
+status: completed
 created: 2026-04-09T18:00:00Z
 estimated_effort: "0.5-1 day"
 ---

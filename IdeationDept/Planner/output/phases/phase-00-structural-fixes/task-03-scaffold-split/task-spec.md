@@ -3,7 +3,7 @@ phase: "Phase 0: Structural & Methodological Fixes"
 task_id: P0-T03
 task_name: "MPNN Scaffold + Temporal Split (Code)"
 implementation_plan_ref: "P3: MPNN Scaffold + Temporal Split"
-status: pending
+status: completed
 created: 2026-04-09T18:00:00Z
 estimated_effort: "2-3 days"
 ---

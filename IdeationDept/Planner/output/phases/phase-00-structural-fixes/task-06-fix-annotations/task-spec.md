@@ -3,7 +3,7 @@ phase: "Phase 0: Structural & Methodological Fixes"
 task_id: P0-T06
 task_name: "Fix Structural Annotations (Common)"
 implementation_plan_ref: "P1: Fix Structural Annotations (common fixes for both 3-state and 4-state paths)"
-status: pending
+status: completed
 created: 2026-04-09T18:00:00Z
 estimated_effort: "4-8 hours"
 ---
