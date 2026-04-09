@@ -12,8 +12,8 @@ cd IdeationDept/Planner/agents/planner && claude
 
 Then say: **"Plan out the next phase"**
 
-The Planner will read the implementation plan, check current progress, and produce
-a phase directory with task specs and an operator guide.
+The Planner will enter `/ultraplan` mode to research and decompose the work, present
+the plan for your approval, then write the task specs and operator guide.
 
 ## How It Works
 
@@ -21,10 +21,18 @@ a phase directory with task specs and an operator guide.
 You say "Plan out the next phase"
         │
         ▼
-Planner reads implementation plan + current progress
+Planner enters /ultraplan mode
+  - reads implementation plan + current progress
+  - reads actual codebase files
+  - decomposes work items into atomic tasks
+  - groups tasks into execution waves
+  - writes the plan for your review
         │
         ▼
-Planner produces:
+Planner exits plan mode, you review and approve
+        │
+        ▼
+Planner writes output documents:
   output/phases/phase-NN-<name>/
     ├── phase-plan.md          ← read this: your operator guide
     └── task-NN-<name>/

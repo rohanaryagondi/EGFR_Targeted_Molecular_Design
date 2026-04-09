@@ -21,16 +21,25 @@ Then says one of:
 
 ## Planning Protocol
 
-When the operator says "Plan out the next phase" (or similar):
+When the operator says "Plan out the next phase" (or similar), you work in
+**two stages**: first plan using `/ultraplan`, then write the documents.
 
-### Step 1: Read Context
+### Stage 1: Plan with `/ultraplan`
+
+**Immediately enter plan mode by running `/ultraplan`.** This is mandatory. Do all
+research, reading, analysis, and decomposition inside plan mode before writing
+any output files. The plan file is your scratchpad for thinking through the phase.
+
+While in plan mode, perform these steps:
+
+#### Step 1: Read Context
 
 1. Read `../../context/implementation-plan.md` (the full ReviewCohort plan)
 2. Read `../../output/logs/progress.md` to see what's been completed
 3. Read any reviewer reports from `../../output/reviews/` for the most recent phase
 4. Read `../../output/dashboard/decisions-needed.md` for pending gate decisions
 
-### Step 2: Assess Current State
+#### Step 2: Assess Current State
 
 1. Identify which phase comes next based on progress.md
 2. Check gate outcomes from the implementation plan:
@@ -41,12 +50,12 @@ When the operator says "Plan out the next phase" (or similar):
    - G4 (week 8): ABL1 enrichment > 1.0
    - G5 (week 12): >= 2/3 kinases positive
 3. If a gate outcome affects the next phase, check whether the decision has been
-   recorded. If not, add it to `decisions-needed.md` and tell the operator.
+   recorded. If not, note it in the plan for later addition to `decisions-needed.md`.
 4. Read key codebase files to verify the actual project state matches expectations.
    For example, if progress.md says P1 is complete, spot-check that the structural
    annotations are actually fixed.
 
-### Step 3: Decompose Work Items
+#### Step 3: Decompose Work Items
 
 For each work item (P0-P21) in the next phase:
 
@@ -65,10 +74,8 @@ For each work item (P0-P21) in the next phase:
 4. **Identify dependencies** between tasks:
    - Which tasks must complete before others can start?
    - Which tasks can run in parallel?
-5. **Write a task-spec.md** for each task using the template at
-   `../../templates/task-spec.md`
 
-### Step 4: Group into Execution Waves
+#### Step 4: Group into Execution Waves
 
 Organize tasks into waves based on dependencies:
 
@@ -78,39 +85,48 @@ Wave 2: [T04]             -- depends on T01
 Wave 3: [T05, T06]        -- depend on T04
 ```
 
-### Step 5: Determine Execution Strategy
+#### Step 5: Determine Execution Strategy
 
-- **3+ parallel tasks in a wave?** Create a Phase Lead specification. The Phase
+- **3+ parallel tasks in a wave?** Plan a Phase Lead specification. The Phase
   Lead is a Claude Code agent the human runs once, which spawns task agents as
   subagents. This minimizes human touchpoints.
-- **< 3 parallel tasks?** The operator runs them directly. Document the order
-  in the phase-plan.md operator guide.
+- **< 3 parallel tasks?** The operator runs them directly. Note the order for
+  the operator guide.
 
-### Step 6: Write Phase Plan
+#### Step 6: Finalize Plan and Exit
 
-Write `../../output/phases/phase-NN-<name>/phase-plan.md` using the template
-at `../../templates/phase-plan.md`. This includes:
-- Phase overview
-- Task summary table
-- Execution order (wave diagram)
-- Operator guide (step-by-step what the human does)
-- Phase Lead instructions (if applicable)
-- Reviewer checklist
-- Go/no-go gates in this phase
+Write your complete decomposition into the plan file:
+- Task list with IDs, names, effort estimates, dependencies, wave assignments
+- Execution strategy (Phase Lead vs. direct execution)
+- Reviewer assignments
+- Any gate decisions or open questions
 
-### Step 7: Assign Reviewers
+Then **exit plan mode**. The operator will review and approve the plan.
 
-For each phase, specify in the phase-plan.md:
-- What the reviewer should check after the phase completes
-- Which task specs to compare against actual changes
-- Which go/no-go gate criteria to evaluate
-- Where to write the review (`../../output/reviews/phase-NN/`)
+### Stage 2: Write Documents
 
-### Step 8: Update Dashboard
+After the operator approves the plan, write the actual output files:
 
-1. Update `../../output/dashboard/current-status.md` with the new phase plan
-2. Update `../../output/dashboard/action-items.md` with next steps for the operator
-3. Update `../../output/dashboard/decisions-needed.md` if gates require human input
+1. **Write task-spec.md** for each task using the template at
+   `../../templates/task-spec.md`
+2. **Write phase-plan.md** at `../../output/phases/phase-NN-<name>/phase-plan.md`
+   using the template at `../../templates/phase-plan.md`. This includes:
+   - Phase overview
+   - Task summary table
+   - Execution order (wave diagram)
+   - Operator guide (step-by-step what the human does)
+   - Phase Lead instructions (if applicable)
+   - Reviewer checklist
+   - Go/no-go gates in this phase
+3. **Assign reviewers** in the phase-plan.md:
+   - What the reviewer should check after the phase completes
+   - Which task specs to compare against actual changes
+   - Which go/no-go gate criteria to evaluate
+   - Where to write the review (`../../output/reviews/phase-NN/`)
+4. **Update dashboard:**
+   - `../../output/dashboard/current-status.md` with the new phase plan
+   - `../../output/dashboard/action-items.md` with next steps for the operator
+   - `../../output/dashboard/decisions-needed.md` if gates require human input
 
 ---
 
