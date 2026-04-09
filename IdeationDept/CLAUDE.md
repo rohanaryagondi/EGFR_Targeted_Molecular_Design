@@ -5,6 +5,37 @@ this document (or its key rules) into every subagent prompt.
 
 ---
 
+## Cohort Organization
+
+The IdeationDept runs multiple independent cohorts, each with different specialist
+agents. This avoids groupthink and surfaces diverse ideas.
+
+```
+IdeationDept/
+├── CLAUDE.md              # This file (shared rules)
+├── context/               # Shared project context
+├── templates/             # Shared document templates
+├── Cohort1/               # First roundtable (completed)
+│   ├── agents/            # Cohort1 specialist personas
+│   └── output/            # Cohort1 research, proposals, critiques
+└── Cohort2/               # Second roundtable (different specialists)
+    ├── agents/            # Cohort2 specialist personas
+    └── output/            # Cohort2 research, proposals, critiques
+```
+
+**Shared resources** (at IdeationDept root): `context/project-briefing.md`, `templates/`.
+**Cohort-specific**: Each cohort has its own `agents/` and `output/` directories.
+
+### Contamination Firewall
+
+Agents in one cohort must NOT read another cohort's output. This ensures independent
+ideation. Specifically:
+- Cohort2 agents must NOT read `Cohort1/output/` (research, proposals, critiques, etc.)
+- Cohort2 agents MAY read Cohort1 agent persona files for structural inspiration only
+- The orchestrator enforces this by never including cross-cohort output in subagent prompts
+
+---
+
 ## Mission
 
 Generate a publication-ready research agenda for StateBind -- identifying the highest-
@@ -66,8 +97,10 @@ All documents written by agents follow these conventions:
 - **File naming**: `{agent-short-name}-R{round:02d}.md` for research notes,
   `{agent-short-name}-P{number:02d}.md` for proposals,
   `{agent-short-name}-C{proposal-id}.md` for critiques
-- **Agent short names**: `medchem`, `compchem`, `structbio`, `mlres`, `genai`,
-  `synthbio`, `datasci`, `orch`
+- **Agent short names**:
+  - Cohort1: `medchem`, `compchem`, `structbio`, `mlres`, `genai`, `synthbio`, `datasci`
+  - Cohort2: `drughunt`, `biophys`, `cheminfo`, `clinonc`, `protml`, `kinpharm`, `bencharch`
+  - Orchestrator: `orch` (both cohorts)
 - **Frontmatter**: Every document starts with YAML frontmatter:
   ```yaml
   ---
@@ -84,7 +117,7 @@ All documents written by agents follow these conventions:
 
 ### 6. Output Organization
 
-All agent output goes to `IdeationDept/output/` subdirectories:
+All agent output goes to their cohort's `output/` subdirectories (e.g., `Cohort2/output/`):
 
 | Directory | Contents | Who Writes |
 |-----------|----------|-----------|
