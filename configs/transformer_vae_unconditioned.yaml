@@ -1,0 +1,71 @@
+# Unconditioned Transformer VAE Training Configuration
+#
+# For Ablation C: tests VAE quality without state conditioning.
+# Same architecture as transformer_vae.yaml but with n_states=1.
+# All molecules are labeled "unconditioned" (single state).
+#
+# Expected training time: ~30-60 minutes on single GPU
+
+model:
+  vocab_size: 150        # Adjusted during training based on data
+  embed_dim: 128
+  latent_dim: 64
+  n_states: 1            # Single state (no conditioning)
+  pad_idx: 0
+
+  # Encoder (bidirectional GRU)
+  encoder_hidden_dim: 256
+  encoder_n_layers: 2
+  encoder_dropout: 0.1
+
+  # Decoder (Transformer)
+  d_model: 256
+  n_heads: 4
+  n_decoder_layers: 4
+  dim_feedforward: 512
+  decoder_dropout: 0.1
+
+  # z injection
+  n_prefix_tokens: 8
+
+  # Anti-collapse
+  word_dropout: 0.1
+  free_bits: 0.25
+
+  # KL
+  kl_weight: 1.0
+
+training:
+  epochs: 2000
+  batch_size: 128
+  learning_rate: 0.0003
+  weight_decay: 0.00001
+  lr_scheduler: cosine
+  lr_warmup_epochs: 10
+  patience: 300
+  gradient_clip: 1.0
+  device: auto
+  checkpoint_dir: artifacts/models/transformer_vae_unconditioned/
+  log_dir: artifacts/logs/transformer_vae_unconditioned/
+  seed: 42
+  num_workers: 4
+  mixed_precision: false
+
+data:
+  train_path: data/processed/egfr_smiles_unconditioned_train.json
+  val_path: data/processed/egfr_smiles_unconditioned_val.json
+  max_len: 128
+  state_mapping:
+    unconditioned: 0
+
+generation:
+  n_samples_per_state: 300   # Match conditioned total (3 states x 100)
+  temperature: 0.8
+  max_len: 128
+  output_path: artifacts/generation/transformer_vae_unconditioned_candidates.json
+
+kl_annealing:
+  warmup_epochs: 50
+  strategy: linear
+
+early_stop_metric: val_recon_loss

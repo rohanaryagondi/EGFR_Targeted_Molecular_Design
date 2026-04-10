@@ -18,6 +18,7 @@ from statebind.processing.models import (
     MutationRecord,
     ResistanceGeneration,
     StructureDataset,
+    StructureRecord,
     BenchmarkSummary,
 )
 
@@ -134,6 +135,17 @@ class TestStructureDataset:
         for s in ds.structures:
             if s.mutations_present:
                 assert all(len(m) >= 3 for m in s.mutations_present)
+
+    def test_structure_record_target_gene_default(self):
+        """StructureRecord defaults target_gene to EGFR for backward compat."""
+        record = StructureRecord(pdb_id="test")
+        assert record.target_gene == "EGFR"
+
+    def test_structure_record_target_gene_abl1(self):
+        """StructureRecord accepts target_gene='ABL1' for multi-kinase support."""
+        record = StructureRecord(pdb_id="1iep", target_gene="ABL1")
+        assert record.target_gene == "ABL1"
+        assert record.pdb_id == "1iep"
 
 
 # ── Ligand Dataset Tests ────────────────────────────────────────────────

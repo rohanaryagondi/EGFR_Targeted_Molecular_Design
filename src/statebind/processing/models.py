@@ -123,7 +123,7 @@ class ContextDataset(BaseModel):
 
 
 class StructureRecord(BaseModel):
-    """A single EGFR structure entry."""
+    """A single kinase structure entry."""
 
     pdb_id: str = Field(description="4-char PDB ID, lowercase")
     resolution: float = Field(default=0.0, description="Resolution in Angstroms")
@@ -146,6 +146,7 @@ class StructureRecord(BaseModel):
     deposition_date: str = Field(default="")
     organism: str = Field(default="Homo sapiens")
     notes: str = Field(default="")
+    target_gene: str = Field(default="EGFR", description="Target gene symbol")
     provenance: Provenance = Field(default_factory=lambda: Provenance(sources=["pdb"]))
 
 

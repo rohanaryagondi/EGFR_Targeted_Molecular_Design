@@ -55,6 +55,7 @@ ml = [
     "torch>=2.0",
     "torch-geometric>=2.4",
     "rdkit",
+    "fcd_torch>=1.0",
 ]
 full = [
     "statebind[dev,science,structure,chemistry]",

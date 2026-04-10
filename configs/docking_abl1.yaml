@@ -1,0 +1,70 @@
+# GNINA Physics-Informed Docking Configuration -- ABL1 Kinase
+# Mirrors EGFR docking config (docking.yaml) with ABL1-specific structures.
+#
+# ABL1 state-representative structures (KLIFS-verified):
+#   DFGin_aCin:  2GQG (dasatinib, human WT, 2.4 Å)
+#   DFGin_aCout: 2G1T (Src-like inactive, human WT, 1.8 Å)
+#   DFGout_aCin: 1IEP (imatinib, mouse WT, 2.1 Å)
+#
+# Box coordinates centered on the ABL1 ATP binding pocket.
+# Centroid estimated from ligand center-of-mass in representative structures.
+
+gnina:
+  binary_path: gnina                        # Path to GNINA binary (or "gnina" if on PATH)
+  exhaustiveness: 8                         # Vina exhaustiveness parameter
+  num_modes: 5                              # Number of binding poses to generate
+  cnn_scoring: rescore                      # CNN scoring mode: none, rescore, refinement
+  timeout_per_molecule: 120                 # Seconds before killing subprocess
+  gpu: false                                # Use GPU acceleration for CNN scoring
+
+receptor:
+  output_dir: data/processed/docking/receptors_abl1/
+  box_padding: 5.0                          # Angstroms of padding around pocket centroid
+  default_box_size: [25.0, 25.0, 25.0]      # Default docking box size (Angstroms)
+
+scoring:
+  normalization: sigmoid                    # Score normalization method
+  vina_scale: 3.0                           # Denominator in sigmoid(-vina_score / scale)
+  score_source: vina                        # Score for ranking: vina, cnn_score, cnn_affinity
+
+states:
+  # Representative PDB structures for each ABL1 conformational state.
+  # All verified against RCSB PDB and KLIFS (April 2026).
+  #
+  # 1IEP: Mouse ABL1 WT + imatinib. Canonical DFGout reference.
+  #   Mouse/human ABL1 kinase domains are >97% identical.
+  #   KLIFS: DFG=out, aC=in. Nagar et al., Cancer Res 2002.
+  # 2GQG: Human ABL1 WT + dasatinib. Active conformation.
+  #   KLIFS: DFG=in, aC=in. Das et al., J Mol Biol 2006.
+  # 2G1T: Human ABL1 WT, Src-like inactive.
+  #   KLIFS: DFG=in, aC=out. Levinson et al., PLoS Biol 2006.
+  representatives:
+    DFGin_aCin: 2gqg
+    DFGin_aCout: 2g1t
+    DFGout_aCin: 1iep
+
+  # Additional validated structures per state (for cross-docking):
+  # DFGout_aCin: 3CS9 (nilotinib, human, 2.21 Å), 3PYY (allosteric, human, 1.85 Å)
+
+# ABL1 docking box coordinates.
+# Centroid from dasatinib center-of-mass in 2GQG chain A.
+# These should be updated with exact coordinates after receptor preparation.
+box:
+  center_x: 22.0
+  center_y: 0.0
+  center_z: 18.0
+  size_x: 25.0
+  size_y: 25.0
+  size_z: 25.0
+
+batch:
+  n_workers: 4                              # Parallel docking workers
+
+target:
+  gene: ABL1
+  uniprot_id: P00519
+  kinase_domain_start: 242
+  kinase_domain_end: 493
+  gatekeeper_residue: T315
+  dfg_motif: D381-F382-G383
+  salt_bridge: K271-E286

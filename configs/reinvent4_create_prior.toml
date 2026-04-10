@@ -1,0 +1,30 @@
+# REINVENT 4 -- Create a Reinvent prior model from EGFR SMILES.
+#
+# This creates a new (untrained) REINVENT model with vocabulary learned
+# from the EGFR SMILES dataset. The resulting model file is then used as
+# the starting point for transfer learning and RL.
+#
+# Usage:
+#   reinvent configs/reinvent4_create_prior.toml
+
+run_type = "create_model"
+
+[parameters]
+output_model_type = "Reinvent"
+
+[io]
+smiles_file = "data/processed/egfr_all_smiles_standardized.smi"
+model_file = "models/reinvent4_egfr_prior.model"
+
+[network]
+num_layers = 3
+layer_size = 512
+dropout = 0.0
+max_sequence_length = 256
+cell_type = "lstm"
+embedding_layer_size = 256
+layer_normalization = false
+
+[metadata]
+data_source = "StateBind EGFR SMILES (ChEMBL)"
+comment = "EGFR-focused prior for StateBind baseline comparison"

@@ -1,0 +1,27 @@
+# REINVENT 4 -- Transfer Learning on EGFR SMILES.
+#
+# Trains the prior model on EGFR SMILES to learn the chemical space
+# of EGFR binders. This produces an agent model that generates
+# EGFR-like molecules, which is then used for RL with GNINA scoring.
+#
+# Usage:
+#   reinvent configs/reinvent4_tl.toml
+
+run_type = "transfer_learning"
+device = "cuda:0"
+tb_logdir = "logs/reinvent4_tl_tb"
+json_out_config = "artifacts/generation/reinvent4_tl_config.json"
+
+[parameters]
+input_model_file = "models/reinvent4_egfr_prior.model"
+output_model_file = "models/reinvent4_egfr_agent.model"
+smiles_file = "data/processed/egfr_all_smiles_standardized.smi"
+save_every_n_epochs = 5
+batch_size = 128
+num_epochs = 50
+num_refs = 0
+sample_batch_size = 128
+starting_epoch = 1
+shuffle_each_epoch = true
+standardize_smiles = false
+randomize_smiles = false

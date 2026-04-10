@@ -31,6 +31,8 @@ _VALID_STATES = set(DEFAULT_STATE_MAPPING.keys())
 
 def load_vae_candidates(
     path: Path | str,
+    strategy: GenerationStrategy = GenerationStrategy.VAE_GENERATED,
+    id_prefix: str = "vae",
 ) -> list[StateConditionedCandidate]:
     """Load VAE candidates from JSON and wrap as StateConditionedCandidate.
 
@@ -43,13 +45,20 @@ def load_vae_candidates(
 
     Each candidate gets:
         - ``source = CandidateSource.ML_GENERATED``
-        - ``strategy = GenerationStrategy.VAE_GENERATED``
-        - ``candidate_id = "vae_{state}_{index:04d}"``
+        - ``strategy`` as specified (default ``VAE_GENERATED``)
+        - ``candidate_id = "{id_prefix}_{state}_{index:04d}"``
 
     Parameters
     ----------
     path:
         Path to the VAE candidates JSON artifact.
+    strategy:
+        Generation strategy to assign.  Defaults to
+        ``GenerationStrategy.VAE_GENERATED`` for backward
+        compatibility.  Pass ``TRANSFORMER_VAE_GENERATED`` for
+        Transformer VAE candidates.
+    id_prefix:
+        Prefix for candidate IDs.  Defaults to ``"vae"``.
 
     Returns
     -------
@@ -111,13 +120,13 @@ def load_vae_candidates(
         state_counters[state] += 1
 
         candidate = StateConditionedCandidate(
-            candidate_id=f"vae_{state}_{idx:04d}",
+            candidate_id=f"{id_prefix}_{state}_{idx:04d}",
             smiles=smiles,
             source=CandidateSource.ML_GENERATED,
             parent_id="",
             target_state=state,
             target_pdb_id="",
-            strategy=GenerationStrategy.VAE_GENERATED,
+            strategy=strategy,
             pocket_volume=0.0,
             back_pocket=False,
             gatekeeper_clearance=0.0,

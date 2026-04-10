@@ -1,0 +1,79 @@
+# Conditional Transformer VAE Training Configuration (3-state)
+#
+# Replaces the broken SELFIES GRU VAE with a Transformer decoder
+# using SMILES representation. State conditioning via prefix tokens.
+#
+# Key differences from vae.yaml:
+#   - Transformer decoder (not GRU) with causal self-attention
+#   - SMILES representation (not SELFIES)
+#   - Free bits + word dropout to prevent posterior collapse
+#   - No teacher forcing (Transformers process full sequence in parallel)
+#
+# Data: ChEMBL EGFR bioactivity (IC50 < 10uM) + known binders
+# Expected training time: ~30-60 minutes on single GPU
+
+model:
+  vocab_size: 150        # Adjusted during training based on data
+  embed_dim: 128
+  latent_dim: 64
+  n_states: 3
+  pad_idx: 0
+
+  # Encoder (bidirectional GRU, reused from vae.py)
+  encoder_hidden_dim: 256
+  encoder_n_layers: 2
+  encoder_dropout: 0.1
+
+  # Decoder (Transformer)
+  d_model: 256
+  n_heads: 4
+  n_decoder_layers: 4
+  dim_feedforward: 512
+  decoder_dropout: 0.1
+
+  # z injection
+  n_prefix_tokens: 8
+
+  # Anti-collapse
+  word_dropout: 0.1      # Fraction of decoder inputs replaced with <unk>
+  free_bits: 0.25        # Minimum KL per latent dimension
+
+  # KL
+  kl_weight: 1.0
+
+training:
+  epochs: 2000
+  batch_size: 128
+  learning_rate: 0.0003  # Lower than GRU VAE for Transformer stability
+  weight_decay: 0.00001
+  lr_scheduler: cosine
+  lr_warmup_epochs: 10   # Linear warmup before cosine decay
+  patience: 300
+  gradient_clip: 1.0
+  device: auto
+  checkpoint_dir: artifacts/models/transformer_vae/
+  log_dir: artifacts/logs/transformer_vae/
+  seed: 42
+  num_workers: 4
+  mixed_precision: false
+
+data:
+  train_path: data/processed/egfr_smiles_train.json
+  val_path: data/processed/egfr_smiles_val.json
+  max_len: 128
+  state_mapping:
+    DFGin_aCin: 0
+    DFGin_aCout: 1
+    DFGout_aCin: 2
+
+generation:
+  n_samples_per_state: 100
+  temperature: 0.8
+  max_len: 128
+  output_path: artifacts/generation/transformer_vae_candidates.json
+
+kl_annealing:
+  warmup_epochs: 50
+  strategy: linear
+
+early_stop_metric: val_recon_loss

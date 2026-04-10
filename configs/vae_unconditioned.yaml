@@ -1,0 +1,61 @@
+# Unconditioned SMILES VAE Training Configuration (Ablation C)
+#
+# This config trains a VAE with n_states=1 for the Ablation C thesis test.
+# All molecules are assigned to a single "unconditioned" state, making the
+# one-hot vector a constant [1.0] that carries zero state information.
+# Every other hyperparameter is identical to configs/vae.yaml.
+#
+# SELFIES mode: pass --selfies to train_vae.py to use SELFIES representation.
+#
+# Data: Use data prepared by scripts/prepare_ablation_c_data.py
+# Expected training time: ~15-30 minutes on single GPU
+
+model:
+  vocab_size: 150        # Adjusted during training based on data
+  embed_dim: 128
+  hidden_dim: 512        # Increased from 256 for better capacity
+  latent_dim: 64
+  n_layers: 2
+  dropout: 0.2           # Increased from 0.1 to reduce overfitting
+  n_states: 1
+  kl_weight: 0.01        # Increased from 0.001 to reduce prior-posterior mismatch
+  pad_idx: 0
+
+training:
+  epochs: 300
+  batch_size: 128
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  lr_scheduler: cosine
+  patience: 40           # Increased from 20 to allow more exploration
+  gradient_clip: 1.0
+  device: auto
+  checkpoint_dir: artifacts/models/vae_unconditioned/
+  log_dir: artifacts/logs/vae/
+  seed: 42
+  num_workers: 4
+  mixed_precision: false
+
+data:
+  train_path: data/processed/egfr_smiles_unconditioned_train.json
+  val_path: data/processed/egfr_smiles_unconditioned_val.json
+  max_len: 128
+  state_mapping:
+    unconditioned: 0
+
+generation:
+  n_samples_per_state: 100
+  temperature: 0.8
+  max_len: 128
+  output_path: artifacts/generation/vae_unconditioned_candidates.json
+
+kl_annealing:
+  warmup_epochs: 50      # Increased from 20 to give decoder more time
+  strategy: linear
+
+teacher_forcing:
+  start_ratio: 1.0       # Full teacher forcing at start
+  end_ratio: 0.0         # Fully autoregressive by end
+  warmup_epochs: 30      # Hold at 1.0 for first 30 epochs
+
+early_stop_metric: val_recon_loss  # Track recon loss, not total (avoids KL artifacts)

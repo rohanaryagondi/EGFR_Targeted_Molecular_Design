@@ -1,0 +1,67 @@
+# REINVENT 4 configuration for EGFR static baseline comparison.
+#
+# Uses ExternalProcess scoring component to call GNINA via
+# scripts/reinvent4_gnina_component.py. Docks against the 1M17 receptor
+# (DFGin_aCin state) -- same as the StateBind static baseline.
+#
+# This is a SINGLE-RECEPTOR config (no state conditioning) to serve as
+# an external RL baseline for comparison with StateBind's VAE.
+#
+# Reference: REINVENT 4 documentation
+# https://github.com/MolecularAI/REINVENT4
+
+run_type = "staged_learning"
+device = "cuda:0"
+tb_logdir = "logs/reinvent4_egfr_tb"
+json_out_config = "artifacts/generation/reinvent4_egfr_config_dump.json"
+
+[parameters]
+prior_file = "models/reinvent4_egfr_prior.model"
+agent_file = "models/reinvent4_egfr_agent.model"
+summary_csv_prefix = "artifacts/generation/reinvent4_egfr_summary"
+batch_size = 32
+unique_sequences = true
+randomize_smiles = true
+
+[learning_strategy]
+type = "dap"
+sigma = 128
+rate = 0.0001
+
+[diversity_filter]
+type = "IdenticalMurckoScaffold"
+bucket_size = 25
+minscore = 0.4
+minsimilarity = 0.4
+
+# Stage 1: Optimize GNINA docking score + QED (drug-likeness)
+# 50 steps with batch_size=32 = 1600 total SMILES attempts
+# Reduced from 100x64=6400 to fit within SLURM 6h limit with GNINA docking
+[[stage]]
+
+chkpt_file = "models/reinvent4_egfr_stage1.chkpt"
+termination = "simple"
+max_score = 0.8
+min_steps = 10
+max_steps = 50
+
+[stage.scoring]
+type = "geometric_mean"
+
+[[stage.scoring.component]]
+[stage.scoring.component.ExternalProcess]
+
+[[stage.scoring.component.ExternalProcess.endpoint]]
+name = "GNINA Docking (1M17)"
+weight = 0.7
+
+params.executable = "/home/rag88/.conda/envs/reinvent4/bin/python"
+params.args = "/home/rag88/projects/statebind/repo/scripts/reinvent4_gnina_component.py --receptor /home/rag88/projects/statebind/repo/data/processed/docking/receptors/1m17.pdbqt --center 22.014 0.253 52.794 --box-size 25.0 25.0 25.0 --exhaustiveness 2 --num-modes 1 --gnina-bin /home/rag88/projects/statebind/repo/bin/gnina --scale 3.0 --timeout 60"
+params.property = "gnina_score"
+
+[[stage.scoring.component]]
+[stage.scoring.component.QED]
+
+[[stage.scoring.component.QED.endpoint]]
+name = "QED drug-likeness"
+weight = 0.3

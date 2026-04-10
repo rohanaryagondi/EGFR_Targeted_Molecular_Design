@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-"""Generate molecular candidates from the trained Conditional SMILES VAE.
+"""Generate molecular candidates from the trained Conditional Transformer VAE.
 
-For each of the 4 EGFR conformational states, samples N latent vectors
-from the prior N(0, I), conditions on the state one-hot, and decodes to
-SMILES.  Validates each SMILES with RDKit (if available) and writes a
-JSON artifact at ``artifacts/generation/vae_candidates.json``.
+For each EGFR conformational state, samples N latent vectors from the
+prior N(0, I), conditions on the state one-hot, and decodes to SMILES
+via autoregressive Transformer decoding.  Validates each SMILES with
+RDKit (if available) and writes a JSON artifact.
 
 This artifact is consumed by ``statebind.generation.vae_integration``
 to create ``StateConditionedCandidate`` objects for the ranking pipeline.
 
 Usage::
 
-    python scripts/generate_vae_candidates.py [--config configs/vae.yaml]
-        [--n-per-state 100] [--temperature 0.8]
+    python scripts/generate_transformer_vae.py \\
+        --checkpoint artifacts/models/transformer_vae/best_model.pt \\
+        --vocab artifacts/models/transformer_vae/vocabulary.json \\
+        --n-per-state 100 --temperature 0.8
 """
 
 from __future__ import annotations
@@ -29,30 +31,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Default conformational states and their one-hot indices
 DEFAULT_STATE_NAMES = ["DFGin_aCin", "DFGin_aCout", "DFGout_aCin"]
-STATE_NAMES = DEFAULT_STATE_NAMES  # backward compat alias
 
 
 def _resolve_state_names(
     cli_states: str | None,
     n_states: int,
 ) -> list[str]:
-    """Determine the list of state names for generation.
-
-    Parameters
-    ----------
-    cli_states:
-        Comma-separated state names from the ``--states`` CLI argument, or
-        ``None`` if the user did not provide the flag.
-    n_states:
-        ``n_states`` from the loaded VAE config / checkpoint.
-
-    Returns
-    -------
-    list[str]:
-        Ordered state names to iterate over during generation.
-    """
+    """Determine the list of state names for generation."""
     if cli_states is not None:
         names = [s.strip() for s in cli_states.split(",") if s.strip()]
         if len(names) != n_states:
@@ -63,33 +49,31 @@ def _resolve_state_names(
             )
         return names
 
-    # Derive from n_states when no --states flag given
     if n_states == 1:
         return ["unconditioned"]
     if n_states == 3:
         return list(DEFAULT_STATE_NAMES)
-    # Fallback: numbered states
     return [f"state_{i}" for i in range(n_states)]
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate VAE candidates")
+    parser = argparse.ArgumentParser(description="Generate Transformer VAE candidates")
     parser.add_argument(
         "--config",
         type=str,
-        default="artifacts/models/vae/config.yaml",
-        help="Path to VAE config YAML",
+        default="artifacts/models/transformer_vae/config.yaml",
+        help="Path to config YAML (optional, checkpoint config used as fallback)",
     )
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default="artifacts/models/vae/best_model.pt",
-        help="Path to VAE checkpoint",
+        default="artifacts/models/transformer_vae/best_model.pt",
+        help="Path to Transformer VAE checkpoint",
     )
     parser.add_argument(
         "--vocab",
         type=str,
-        default="artifacts/models/vae/vocabulary.json",
+        default="artifacts/models/transformer_vae/vocabulary.json",
         help="Path to vocabulary JSON",
     )
     parser.add_argument(
@@ -107,7 +91,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=str,
-        default="artifacts/generation/vae_candidates.json",
+        default="artifacts/generation/transformer_vae_candidates.json",
         help="Output JSON path",
     )
     parser.add_argument(
@@ -125,9 +109,12 @@ def main() -> None:
     import torch
     import yaml
 
-    from statebind.ml.vae import ConditionalSMILESVAE, VAEConfig
-    from statebind.ml.vocabulary import Vocabulary
+    from statebind.ml.transformer_vae import (
+        ConditionalTransformerVAE,
+        TransformerVAEConfig,
+    )
     from statebind.ml.utils import get_device
+    from statebind.ml.vocabulary import Vocabulary
 
     # ── Load config ─────────────────────────────────────────────────
     config_path = Path(args.config)
@@ -147,25 +134,21 @@ def main() -> None:
     device = get_device("auto")
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
 
-    # Detect SELFIES mode from checkpoint config
-    ckpt_config = checkpoint.get("config", {})
-    use_selfies = ckpt_config.get("representation", "smiles") == "selfies"
-    selfies_tokenizer = None
-    if use_selfies:
-        from statebind.ml.tokenizer import SELFIESTokenizer
-        selfies_tokenizer = SELFIESTokenizer()
-        logger.info("SELFIES mode detected — will convert generated tokens to SMILES")
-
-    # Reconstruct VAEConfig from checkpoint
-    if "vae_config" in checkpoint and checkpoint["vae_config"]:
-        vae_config = VAEConfig(**checkpoint["vae_config"])
+    # Reconstruct TransformerVAEConfig from checkpoint
+    if "transformer_vae_config" in checkpoint and checkpoint["transformer_vae_config"]:
+        tvae_config = TransformerVAEConfig(**checkpoint["transformer_vae_config"])
     elif model_cfg:
-        vae_config = VAEConfig(**model_cfg)
+        tvae_config = TransformerVAEConfig(**model_cfg)
     else:
-        vae_config = VAEConfig()
+        tvae_config = TransformerVAEConfig()
 
-    logger.info("VAE config: vocab=%d, latent=%d, hidden=%d",
-                vae_config.vocab_size, vae_config.latent_dim, vae_config.hidden_dim)
+    logger.info(
+        "Transformer VAE config: vocab=%d, latent=%d, d_model=%d, layers=%d",
+        tvae_config.vocab_size,
+        tvae_config.latent_dim,
+        tvae_config.d_model,
+        tvae_config.n_decoder_layers,
+    )
 
     # ── Load vocabulary ─────────────────────────────────────────────
     vocab_path = Path(args.vocab)
@@ -177,12 +160,15 @@ def main() -> None:
     logger.info("Vocabulary loaded: %d tokens", vocab.size)
 
     # ── Build and load model ────────────────────────────────────────
-    model = ConditionalSMILESVAE(vae_config)
+    model = ConditionalTransformerVAE(tvae_config)
     model.load_state_dict(checkpoint["model_state_dict"])
     model.to(device)
     model.eval()
-    logger.info("Model loaded on %s (%d params)",
-                device, sum(p.numel() for p in model.parameters()))
+    logger.info(
+        "Model loaded on %s (%d params)",
+        device,
+        sum(p.numel() for p in model.parameters()),
+    )
 
     # ── Try to import RDKit for validation ──────────────────────────
     try:
@@ -194,28 +180,30 @@ def main() -> None:
         logger.warning("RDKit not available — SMILES validity not checked")
 
     # ── Resolve state names ────────────────────────────────────────
-    state_names = _resolve_state_names(args.states, vae_config.n_states)
+    state_names = _resolve_state_names(args.states, tvae_config.n_states)
     logger.info("State names: %s", state_names)
 
     # ── Generate candidates ─────────────────────────────────────────
     n_per_state = args.n_per_state
     temperature = args.temperature
     max_len = 128
-    n_states = vae_config.n_states
+    n_states = tvae_config.n_states
 
     all_candidates: list[dict] = []
     stats: dict[str, dict] = {}
 
     for state_idx, state_name in enumerate(state_names):
-        logger.info("Generating %d candidates for %s (temp=%.2f)...",
-                     n_per_state, state_name, temperature)
+        logger.info(
+            "Generating %d candidates for %s (temp=%.2f)...",
+            n_per_state, state_name, temperature,
+        )
 
         # Build state one-hot: (n_per_state, n_states)
         state_onehot = torch.zeros(n_per_state, n_states, device=device)
         state_onehot[:, state_idx] = 1.0
 
         # Sample from prior: z ~ N(0, I)
-        z = torch.randn(n_per_state, vae_config.latent_dim, device=device)
+        z = torch.randn(n_per_state, tvae_config.latent_dim, device=device)
 
         # Decode
         token_sequences = model.generate(
@@ -230,28 +218,17 @@ def main() -> None:
 
         for seq_indices in token_sequences:
             tokens = vocab.decode(seq_indices, strip_special=True)
-            raw_str = "".join(tokens)
+            smiles = "".join(tokens)
 
-            if not raw_str:
+            if not smiles:
+                all_candidates.append({
+                    "smiles": "",
+                    "state": state_name,
+                    "is_valid": False,
+                    "is_novel": False,
+                    "source": "transformer_vae_generated",
+                })
                 continue
-
-            # Convert SELFIES to SMILES if in SELFIES mode
-            if use_selfies and selfies_tokenizer is not None:
-                smiles = selfies_tokenizer.selfies_to_smiles(raw_str)
-                if smiles is None:
-                    smiles = raw_str  # Keep raw for debugging
-                    is_valid = False
-                    is_novel = False
-                    all_candidates.append({
-                        "smiles": smiles,
-                        "state": state_name,
-                        "is_valid": False,
-                        "is_novel": False,
-                        "source": "conditional_smiles_vae",
-                    })
-                    continue
-            else:
-                smiles = raw_str
 
             is_valid = True
             is_novel = smiles not in seen_smiles
@@ -261,7 +238,6 @@ def main() -> None:
                 if mol is None:
                     is_valid = False
                 else:
-                    # Canonicalize
                     smiles = Chem.MolToSmiles(mol)
 
             if is_valid:
@@ -275,7 +251,7 @@ def main() -> None:
                 "state": state_name,
                 "is_valid": is_valid,
                 "is_novel": is_novel and is_valid,
-                "source": "conditional_smiles_vae",
+                "source": "transformer_vae_generated",
             })
 
         validity_rate = n_valid / max(n_per_state, 1)
@@ -289,9 +265,11 @@ def main() -> None:
             "uniqueness_rate": round(uniqueness_rate, 4),
         }
 
-        logger.info("  %s: %d valid (%.1f%%), %d unique (%.1f%%)",
-                     state_name, n_valid, validity_rate * 100,
-                     n_unique, uniqueness_rate * 100)
+        logger.info(
+            "  %s: %d valid (%.1f%%), %d unique (%.1f%%)",
+            state_name, n_valid, validity_rate * 100,
+            n_unique, uniqueness_rate * 100,
+        )
 
     # ── Write artifact ──────────────────────────────────────────────
     output_path = Path(args.output)
@@ -299,7 +277,7 @@ def main() -> None:
 
     artifact = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "model": "ConditionalSMILESVAE",
+        "model": "ConditionalTransformerVAE",
         "checkpoint": str(args.checkpoint),
         "temperature": temperature,
         "n_per_state": n_per_state,
@@ -320,10 +298,11 @@ def main() -> None:
     total_valid = artifact["total_valid"]
     total = artifact["total_candidates"]
     total_unique = artifact["total_unique_valid"]
+    n_params = sum(p.numel() for p in model.parameters())
     print("\n" + "=" * 60)
-    print("VAE GENERATION SUMMARY")
+    print("TRANSFORMER VAE GENERATION SUMMARY")
     print("=" * 60)
-    print(f"  Model:        ConditionalSMILESVAE ({sum(p.numel() for p in model.parameters()):,} params)")
+    print(f"  Model:        ConditionalTransformerVAE ({n_params:,} params)")
     print(f"  Temperature:  {temperature}")
     print(f"  Per state:    {n_per_state}")
     print(f"  Total:        {total}")
