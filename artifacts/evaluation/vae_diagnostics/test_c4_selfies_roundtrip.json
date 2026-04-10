@@ -1,0 +1,77 @@
+{
+  "test": "C4_selfies_roundtrip",
+  "generated_at": "2026-04-10T05:41:46.350430+00:00",
+  "results": {
+    "erlotinib": {
+      "original_smiles": "COCCOc1cc2ncnc(Nc3cccc(C#C)c3)c2cc1OCCOC",
+      "canonical_smiles": "C#Cc1cccc(Nc2ncnc3cc(OCCOC)c(OCCOC)cc23)c1",
+      "selfies": "[C][O][C][C][O][C][=C][C][=N][C][=N][C][Branch1][=C][N][C][=C][C][=C][C][Branch1][Ring1][C][#C][=C][Ring1][Branch2][=C][Ring1][#C][C][=C][Ring2][Ring1][Ring1][O][C][C][O][C]",
+      "n_selfies_tokens": 40,
+      "roundtrip_smiles": "COCCOC1=CC2=NC=NC(NC3=CC=CC(C#C)=C3)=C2C=C1OCCOC",
+      "roundtrip_canonical": "C#Cc1cccc(Nc2ncnc3cc(OCCOC)c(OCCOC)cc23)c1",
+      "exact_match": true,
+      "tanimoto_similarity": 1.0
+    },
+    "gefitinib": {
+      "original_smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCCN1CCOCC1",
+      "canonical_smiles": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCCN1CCOCC1",
+      "selfies": "[C][O][C][=C][C][=N][C][=N][C][Branch1][S][N][C][=C][C][=C][Branch1][C][F][C][Branch1][C][Cl][=C][Ring1][Branch2][=C][Ring1][#C][C][=C][Ring2][Ring1][Ring1][O][C][C][C][N][C][C][O][C][C][Ring1][=Branch1]",
+      "n_selfies_tokens": 46,
+      "roundtrip_smiles": "COC1=CC2=NC=NC(NC3=CC=C(F)C(Cl)=C3)=C2C=C1OCCCN4CCOCC4",
+      "roundtrip_canonical": "COc1cc2ncnc(Nc3ccc(F)c(Cl)c3)c2cc1OCCCN1CCOCC1",
+      "exact_match": true,
+      "tanimoto_similarity": 1.0
+    },
+    "afatinib": {
+      "original_smiles": "CN(C)C/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC1CCOC1",
+      "canonical_smiles": "CN(C)C/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC1CCOC1",
+      "selfies": "[C][N][Branch1][C][C][C][/C][=C][/C][=Branch1][C][=O][N][C][=C][C][=C][Branch1][S][N][C][=C][C][=C][Branch1][C][F][C][Branch1][C][Cl][=C][Ring1][Branch2][N][=C][N][=C][Ring1][#C][C][=C][Ring2][Ring1][Ring1][O][C][C][C][O][C][Ring1][Branch1]",
+      "n_selfies_tokens": 53,
+      "roundtrip_smiles": "CN(C)C/C=C/C(=O)NC1=CC2=C(NC3=CC=C(F)C(Cl)=C3)N=CN=C2C=C1OC4CCOC4",
+      "roundtrip_canonical": "CN(C)C/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC1CCOC1",
+      "exact_match": true,
+      "tanimoto_similarity": 1.0
+    },
+    "osimertinib": {
+      "original_smiles": "COc1cc(N(C)CCN(C)C)c(NC(=O)/C=C/CN(C)C)cc1Nc1nccc(-c2cn(C)c3ccccc23)n1",
+      "canonical_smiles": "COc1cc(N(C)CCN(C)C)c(NC(=O)/C=C/CN(C)C)cc1Nc1nccc(-c2cn(C)c3ccccc23)n1",
+      "selfies": "[C][O][C][=C][C][Branch1][N][N][Branch1][C][C][C][C][N][Branch1][C][C][C][=C][Branch1][=C][N][C][=Branch1][C][=O][/C][=C][/C][N][Branch1][C][C][C][C][=C][Ring2][Ring1][=Branch1][N][C][=N][C][=C][C][Branch1][P][C][=C][N][Branch1][C][C][C][=C][C][=C][C][=C][Ring1][#Branch2][Ring1][=Branch1][=N][Ring1][S]",
+      "n_selfies_tokens": 66,
+      "roundtrip_smiles": "COC1=CC(N(C)CCN(C)C)=C(NC(=O)/C=C/CN(C)C)C=C1NC2=NC=CC(C3=CN(C)C4=CC=CC=C34)=N2",
+      "roundtrip_canonical": "COc1cc(N(C)CCN(C)C)c(NC(=O)/C=C/CN(C)C)cc1Nc1nccc(-c2cn(C)c3ccccc23)n1",
+      "exact_match": true,
+      "tanimoto_similarity": 1.0
+    },
+    "dacomitinib": {
+      "original_smiles": "CN(C)C/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC1CCCC1",
+      "canonical_smiles": "CN(C)C/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC1CCCC1",
+      "selfies": "[C][N][Branch1][C][C][C][/C][=C][/C][=Branch1][C][=O][N][C][=C][C][=C][Branch1][S][N][C][=C][C][=C][Branch1][C][F][C][Branch1][C][Cl][=C][Ring1][Branch2][N][=C][N][=C][Ring1][#C][C][=C][Ring2][Ring1][Ring1][O][C][C][C][C][C][Ring1][Branch1]",
+      "n_selfies_tokens": 53,
+      "roundtrip_smiles": "CN(C)C/C=C/C(=O)NC1=CC2=C(NC3=CC=C(F)C(Cl)=C3)N=CN=C2C=C1OC4CCCC4",
+      "roundtrip_canonical": "CN(C)C/C=C/C(=O)Nc1cc2c(Nc3ccc(F)c(Cl)c3)ncnc2cc1OC1CCCC1",
+      "exact_match": true,
+      "tanimoto_similarity": 1.0
+    },
+    "lazertinib": {
+      "original_smiles": "C=CC(=O)Nc1cccc(Nc2nccc(-c3cn(C)c4ccccc34)n2)c1OC",
+      "canonical_smiles": "C=CC(=O)Nc1cccc(Nc2nccc(-c3cn(C)c4ccccc34)n2)c1OC",
+      "selfies": "[C][=C][C][=Branch1][C][=O][N][C][=C][C][=C][C][Branch2][Ring1][N][N][C][=N][C][=C][C][Branch1][P][C][=C][N][Branch1][C][C][C][=C][C][=C][C][=C][Ring1][#Branch2][Ring1][=Branch1][=N][Ring1][S][=C][Ring2][Ring1][#Branch1][O][C]",
+      "n_selfies_tokens": 48,
+      "roundtrip_smiles": "C=CC(=O)NC1=CC=CC(NC2=NC=CC(C3=CN(C)C4=CC=CC=C34)=N2)=C1OC",
+      "roundtrip_canonical": "C=CC(=O)Nc1cccc(Nc2nccc(-c3cn(C)c4ccccc34)n2)c1OC",
+      "exact_match": true,
+      "tanimoto_similarity": 1.0
+    },
+    "mobocertinib": {
+      "original_smiles": "C=CC(=O)Nc1cc(Nc2ncc(-c3cccnc3)c(-c3ccsc3)n2)c(OC)cc1N(C)CCN(C)C",
+      "canonical_smiles": "C=CC(=O)Nc1cc(Nc2ncc(-c3cccnc3)c(-c3ccsc3)n2)c(OC)cc1N(C)CCN(C)C",
+      "selfies": "[C][=C][C][=Branch1][C][=O][N][C][=C][C][Branch2][Ring1][=N][N][C][=N][C][=C][Branch1][=Branch2][C][=C][C][=C][N][=C][Ring1][=Branch1][C][Branch1][Branch2][C][C][=C][S][C][=Ring1][Branch1][=N][Ring1][P][=C][Branch1][Ring1][O][C][C][=C][Ring2][Ring1][#Branch2][N][Branch1][C][C][C][C][N][Branch1][C][C][C]",
+      "n_selfies_tokens": 62,
+      "roundtrip_smiles": "C=CC(=O)NC1=CC(NC2=NC=C(C3=CC=CN=C3)C(C=4C=CSC=4)=N2)=C(OC)C=C1N(C)CCN(C)C",
+      "roundtrip_canonical": "C=CC(=O)Nc1cc(Nc2ncc(-c3cccnc3)c(-c3ccsc3)n2)c(OC)cc1N(C)CCN(C)C",
+      "exact_match": true,
+      "tanimoto_similarity": 1.0
+    }
+  },
+  "time_seconds": 8.1
+}

@@ -1,0 +1,29 @@
+{
+  "test": "G8_cross_seed",
+  "seed": "all",
+  "generated_at": "2026-04-10T05:48:40.562049+00:00",
+  "results": {
+    "42": {
+      "mean_kl_per_sample": 0.608,
+      "std_kl_per_sample": 0.5771,
+      "n_valid_from_100": 100,
+      "max_future_sim_50": 0.1316,
+      "mean_future_sim_50": 0.0867
+    },
+    "123": {
+      "mean_kl_per_sample": 0.0286,
+      "std_kl_per_sample": 0.0252,
+      "n_valid_from_100": 100,
+      "max_future_sim_50": 0.1345,
+      "mean_future_sim_50": 0.0886
+    },
+    "7": {
+      "mean_kl_per_sample": 0.0975,
+      "std_kl_per_sample": 0.1068,
+      "n_valid_from_100": 100,
+      "max_future_sim_50": 0.13,
+      "mean_future_sim_50": 0.0803
+    }
+  },
+  "time_seconds": 2.3
+}

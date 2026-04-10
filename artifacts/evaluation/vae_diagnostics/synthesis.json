@@ -1,0 +1,116 @@
+{
+  "test": "SYNTHESIS",
+  "generated_at": "2026-04-10T05:50:00+00:00",
+  "investigation": "VAE Enrichment Failure Root Cause Analysis",
+  "trigger": "Gate G2 NO-GO (confirmed). Cohen's d = -0.04, EF@10 = 0 for all seeds/conditions.",
+  "tests_completed": 15,
+  "tests_gpu": ["G1_reconstruction", "G2_temperature_sweep", "G3_greedy_decoding", "G4_drug_seeding", "G5_conditioning", "G6_large_batch", "G7_latent_space", "G8_cross_seed"],
+  "tests_cpu": ["C1_training_proximity", "C2_scaffolds", "C3_distributions", "C4_selfies_roundtrip", "C5_random_baseline", "C6_nearest_neighbor", "C7_per_state"],
+
+  "root_cause": "Total autoencoder failure: the SELFIES VAE decoder cannot generate aromatic ring systems, producing aliphatic fragments instead. Compounded by complete posterior collapse (zero active latent dimensions) rendering the encoder-decoder channel non-functional.",
+
+  "diagnosis_category": "MODEL_FAILURE",
+  "diagnosis_subcategories": ["decoder_incapacity", "posterior_collapse", "selfies_ring_closure_difficulty"],
+
+  "evidence_summary": {
+    "decoder_failure": {
+      "description": "The decoder cannot produce aromatic ring systems regardless of input",
+      "evidence": {
+        "G1_reconstruction": "0% exact match, mean Tanimoto to input = 0.031. Cannot encode-decode ANY training molecule.",
+        "G3_greedy_decoding": "Default molecule (z=0, argmax) is a 127-carbon aliphatic chain (CCCC...C). Identical for all 3 states.",
+        "G4_drug_seeding": "Encoding real EGFR drugs then decoding at noise=0 gives max sim ~0.11 to input. Decoded molecules are aliphatic garbage.",
+        "C3_distributions": "Generated aromatic rings = 0.03 (training = 3.56). Total rings = 1.54 (training = 4.42). MW = 367 (training = 480).",
+        "C2_scaffolds": "Zero scaffold overlap between generated (170 scaffolds) and training (1168 scaffolds). Top generated scaffolds: cyclopropane (C1CC1), cyclopropene (C1=CC1)."
+      }
+    },
+    "latent_space_collapse": {
+      "description": "The latent space encodes no meaningful information despite non-zero aggregate KL",
+      "evidence": {
+        "G7_active_dims": "ZERO dimensions with KL > 0.01. All 64 dims have KL < 0.0013. Top dim KL = 0.0013.",
+        "G7_posterior_stats": "mu_mean_norm = 0.162 (near origin), sigma_mean = 0.998 (= prior). Posterior ≈ Prior.",
+        "G7_state_separation": "State centroid distances: 0.06-0.09. States completely overlap in latent space.",
+        "G8_cross_seed": "Seed 42 KL=0.61, seed 123 KL=0.03, seed 7 KL=0.10 — all produce equally bad molecules (max future sim 0.13).",
+        "note": "The aggregate KL of 0.61-0.68 for seed 42 APPEARED healthy in training logs, but is spread across 64 dimensions (~0.01 each), meaning no dimension carries information. This is posterior collapse disguised by dimensionality."
+      }
+    },
+    "conditioning_cosmetic_only": {
+      "description": "State conditioning changes token sequences but not molecular quality",
+      "evidence": {
+        "G5_conditioning": "0% identical outputs across states (conditioning does change tokens).",
+        "C7_per_state": "All states produce mean future sim = 0.086, mean NN to training = 0.122. No quality difference.",
+        "G3_greedy": "Greedy decoding from z=0 produces identical CCCC...C for all 3 states."
+      }
+    },
+    "not_data_problem": {
+      "description": "Training data contains drug-relevant molecules; the representation is lossless",
+      "evidence": {
+        "C1_training_proximity": "Max training sim to afatinib = 1.0. 380/2000 training mols above 0.4 Tanimoto. Random training subsets achieve EF@10 = 1.32 (41/50 nonzero).",
+        "C4_selfies_roundtrip": "All 7 EGFR drugs survive SMILES→SELFIES→SMILES with exact match and Tanimoto = 1.0.",
+        "C5_random_baseline": "Random SELFIES even worse (max future sim = 0.063, validity 43%). VAE is marginally better than random but still terrible."
+      }
+    },
+    "temperature_irrelevant": {
+      "description": "No temperature setting improves drug similarity",
+      "evidence": {
+        "G2_temperature_sweep": "T=0 through T=1.2: zero molecules above 0.3 Tanimoto to any drug at any temperature. T=0 produces a single repeated molecule. Best max sim across all T = 0.21 (at T=0.7).",
+        "G6_large_batch": "3000 molecules (1000/state), max future drug sim = 0.167. Zero above 0.3."
+      }
+    }
+  },
+
+  "likely_mechanism": {
+    "step_1": "During teacher-forced training, the decoder learns that [C] is the most frequent token and linear chains are the lowest-risk sequences to predict.",
+    "step_2": "Aromatic ring closure in SELFIES requires producing [Ring1]/[Ring2] tokens that reference earlier positions — a long-range dependency the GRU decoder struggles with.",
+    "step_3": "KL regularization pushes posteriors toward the prior. The decoder never learns to USE latent information, so the KL term drops as posteriors collapse. The model achieves 'reasonable' val_loss (2.235) by predicting common tokens without learning global molecular structure.",
+    "step_4": "The result: the decoder maps every latent code to variations of aliphatic chains, ignoring both the encoded molecular identity and the state conditioning label."
+  },
+
+  "hypotheses_resolved": {
+    "H1_reconstruction_failure": {"supported": true, "strength": "conclusive", "note": "0% exact match, mean Tanimoto 0.031"},
+    "H2_training_data_coverage": {"supported": false, "strength": "conclusive", "note": "Training has max sim 1.0 to afatinib, EF@10=1.32 from random subsets"},
+    "H3_selfies_destroys_info": {"supported": false, "strength": "conclusive", "note": "All 7 drugs roundtrip perfectly"},
+    "H4_temperature_too_high": {"supported": false, "strength": "conclusive", "note": "No temperature helps; T=0 gives repeated aliphatic chain"},
+    "H5_posterior_collapse": {"supported": true, "strength": "conclusive", "note": "Zero active dimensions despite non-zero aggregate KL"},
+    "H6_conditioning_no_effect": {"supported": "partial", "strength": "moderate", "note": "Conditioning changes tokens (G5) but not quality (C7, G3). Cosmetic effect only."},
+    "H7_prior_posterior_gap": {"supported": true, "strength": "conclusive", "note": "G4 shows decoding from drug encodings gives same garbage as prior sampling. No gap — everything decodes to garbage."},
+    "H8_generic_not_egfr": {"supported": false, "strength": "conclusive", "note": "Not even generic drug-like. Zero aromatic rings. Generated molecules are aliphatic fragments."}
+  },
+
+  "implications": {
+    "for_statebind": "The SELFIES VAE component is non-functional. The retrospective enrichment (EF@10 = 4.95/7.72) comes entirely from analogue-based generation in baselines/, not from the VAE. The G2 NO-GO is not a subtle conditioning failure — it is a total autoencoder failure.",
+    "for_thesis": "The state-conditioning hypothesis cannot be tested with this VAE because the underlying generative model doesn't work. The concept of state-conditioned generation remains untested.",
+    "for_publication": "The VAE failure is actually informative: it demonstrates that SELFIES VAE (a common approach in the literature) fails catastrophically on EGFR drug generation despite high validity scores. This is a negative result worth documenting."
+  },
+
+  "recommended_next_steps": {
+    "immediate": [
+      "Accept VAE failure as conclusive. Do not attempt hyperparameter tuning — the failure is architectural/representational.",
+      "Focus the publication narrative on the scoring framework + retrospective validation + analogue-based enrichment.",
+      "Document the VAE failure as a methodological finding (validity ≠ utility for SELFIES VAE)."
+    ],
+    "if_de_novo_generation_pursued": [
+      "SMILES-based VAE (REINVENT-style RNN): SMILES encodes rings more naturally via branch/ring notation",
+      "Graph-based generation (MoLeR, GCPN): directly constructs molecular graphs, avoids serialization issues",
+      "Fragment-based generation (BRICS decomposition + assembly): guaranteed structural validity from fragments",
+      "Diffusion models (DiGress, EDM): recent state-of-art in molecular generation"
+    ],
+    "for_phase_2_planning": "Reframe Phase 2 to focus on what DOES work (analogue-based generation with state-conditioned scoring) rather than what doesn't (VAE de novo generation)."
+  },
+
+  "key_numbers": {
+    "reconstruction_exact_match": 0.0,
+    "reconstruction_mean_tanimoto": 0.031,
+    "generated_aromatic_rings": 0.03,
+    "training_aromatic_rings": 3.56,
+    "scaffold_overlap_gen_train": 0,
+    "nn_to_training_mean": 0.125,
+    "nn_to_training_max": 0.225,
+    "active_latent_dims": 0,
+    "latent_dim_total": 64,
+    "state_centroid_max_distance": 0.087,
+    "max_future_drug_sim_3000_mols": 0.167,
+    "training_random_subset_ef10": 1.317,
+    "vae_ef10_all_conditions": 0.0,
+    "default_molecule_greedy": "CCCCCCCCCC...C (127 carbons)"
+  }
+}

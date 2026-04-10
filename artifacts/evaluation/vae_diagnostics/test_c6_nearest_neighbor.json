@@ -1,0 +1,17 @@
+{
+  "test": "C6_nearest_neighbor",
+  "generated_at": "2026-04-10T05:41:47.245144+00:00",
+  "n_generated_tested": 271,
+  "n_training_fps": 1000,
+  "mean_nn_sim": 0.1248,
+  "median_nn_sim": 0.124,
+  "p25_nn_sim": 0.1128,
+  "p75_nn_sim": 0.1379,
+  "max_nn_sim": 0.225,
+  "min_nn_sim": 0.0323,
+  "n_nn_above_0.5": 0,
+  "n_nn_above_0.7": 0,
+  "n_nn_above_0.9": 0,
+  "interpretation": "If mean NN similarity is low (<0.3), the VAE generates molecules in a very different chemical space from training. If high (>0.7), the VAE closely reproduces training distribution.",
+  "time_seconds": 0.3
+}

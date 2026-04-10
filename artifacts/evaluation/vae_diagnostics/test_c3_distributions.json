@@ -1,0 +1,149 @@
+{
+  "test": "C3_distributions",
+  "generated_at": "2026-04-10T05:41:38.205066+00:00",
+  "distribution_comparison": {
+    "mw": {
+      "training_mean": 479.95,
+      "training_std": 112.2,
+      "generated_mean": 367.28,
+      "generated_std": 174.54,
+      "shift": -112.66
+    },
+    "logp": {
+      "training_mean": 4.6,
+      "training_std": 1.4,
+      "generated_mean": 3.15,
+      "generated_std": 2.13,
+      "shift": -1.45
+    },
+    "hbd": {
+      "training_mean": 2.2,
+      "training_std": 1.12,
+      "generated_mean": 2.62,
+      "generated_std": 2.28,
+      "shift": 0.42
+    },
+    "hba": {
+      "training_mean": 6.72,
+      "training_std": 2.01,
+      "generated_mean": 5.83,
+      "generated_std": 3.79,
+      "shift": -0.88
+    },
+    "tpsa": {
+      "training_mean": 95.65,
+      "training_std": 27.34,
+      "generated_mean": 70.83,
+      "generated_std": 44.45,
+      "shift": -24.82
+    },
+    "num_rings": {
+      "training_mean": 4.42,
+      "training_std": 1.25,
+      "generated_mean": 1.54,
+      "generated_std": 1.45,
+      "shift": -2.88
+    },
+    "num_aromatic_rings": {
+      "training_mean": 3.56,
+      "training_std": 0.88,
+      "generated_mean": 0.03,
+      "generated_std": 0.16,
+      "shift": -3.54
+    },
+    "num_heavy_atoms": {
+      "training_mean": 33.87,
+      "training_std": 8.11,
+      "generated_mean": 25.62,
+      "generated_std": 12.28,
+      "shift": -8.25
+    },
+    "num_rotatable_bonds": {
+      "training_mean": 6.84,
+      "training_std": 3.06,
+      "generated_mean": 9.1,
+      "generated_std": 6.98,
+      "shift": 2.26
+    }
+  },
+  "drug_descriptors": {
+    "erlotinib": {
+      "mw": 393.4430000000002,
+      "logp": 3.405100000000002,
+      "hbd": 1,
+      "hba": 7,
+      "tpsa": 74.73,
+      "num_rings": 3,
+      "num_aromatic_rings": 3,
+      "num_heavy_atoms": 29,
+      "num_rotatable_bonds": 10
+    },
+    "gefitinib": {
+      "mw": 446.9100000000004,
+      "logp": 4.275600000000003,
+      "hbd": 1,
+      "hba": 7,
+      "tpsa": 68.74000000000001,
+      "num_rings": 4,
+      "num_aromatic_rings": 3,
+      "num_heavy_atoms": 31,
+      "num_rotatable_bonds": 8
+    },
+    "afatinib": {
+      "mw": 485.94700000000023,
+      "logp": 4.389900000000002,
+      "hbd": 2,
+      "hba": 7,
+      "tpsa": 88.61000000000001,
+      "num_rings": 4,
+      "num_aromatic_rings": 3,
+      "num_heavy_atoms": 34,
+      "num_rotatable_bonds": 8
+    },
+    "osimertinib": {
+      "mw": 556.7150000000003,
+      "logp": 4.441600000000003,
+      "hbd": 2,
+      "hba": 8,
+      "tpsa": 90.79,
+      "num_rings": 4,
+      "num_aromatic_rings": 4,
+      "num_heavy_atoms": 41,
+      "num_rotatable_bonds": 12
+    },
+    "dacomitinib": {
+      "mw": 483.97500000000025,
+      "logp": 5.543600000000004,
+      "hbd": 2,
+      "hba": 6,
+      "tpsa": 79.38000000000001,
+      "num_rings": 4,
+      "num_aromatic_rings": 3,
+      "num_heavy_atoms": 34,
+      "num_rotatable_bonds": 8
+    },
+    "lazertinib": {
+      "mw": 399.4540000000002,
+      "logp": 4.512000000000002,
+      "hbd": 2,
+      "hba": 5,
+      "tpsa": 81.07000000000001,
+      "num_rings": 4,
+      "num_aromatic_rings": 4,
+      "num_heavy_atoms": 30,
+      "num_rotatable_bonds": 6
+    },
+    "mobocertinib": {
+      "mw": 529.6700000000003,
+      "logp": 5.141600000000005,
+      "hbd": 2,
+      "hba": 9,
+      "tpsa": 95.50999999999999,
+      "num_rings": 4,
+      "num_aromatic_rings": 4,
+      "num_heavy_atoms": 38,
+      "num_rotatable_bonds": 11
+    }
+  },
+  "time_seconds": 0.6
+}

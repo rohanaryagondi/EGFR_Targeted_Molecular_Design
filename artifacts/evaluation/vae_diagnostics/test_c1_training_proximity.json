@@ -1,0 +1,63 @@
+{
+  "test": "C1_training_proximity",
+  "generated_at": "2026-04-10T05:41:36.922647+00:00",
+  "n_sampled": 2000,
+  "overall_max_sim_to_any_drug": 1.0,
+  "overall_mean_max_sim": 0.2849,
+  "n_training_above_0.3": 762,
+  "n_training_above_0.4": 380,
+  "n_training_above_0.5": 182,
+  "per_drug_stats": {
+    "erlotinib": {
+      "max_sim_in_training": 0.7407,
+      "mean_sim": 0.1929,
+      "n_above_0.3": 303,
+      "n_above_0.4": 79
+    },
+    "gefitinib": {
+      "max_sim_in_training": 0.9194,
+      "mean_sim": 0.2181,
+      "n_above_0.3": 389,
+      "n_above_0.4": 182
+    },
+    "afatinib": {
+      "max_sim_in_training": 1.0,
+      "mean_sim": 0.2138,
+      "n_above_0.3": 333,
+      "n_above_0.4": 118
+    },
+    "osimertinib": {
+      "max_sim_in_training": 0.8701,
+      "mean_sim": 0.1791,
+      "n_above_0.3": 133,
+      "n_above_0.4": 78
+    },
+    "dacomitinib": {
+      "max_sim_in_training": 0.8333,
+      "mean_sim": 0.2178,
+      "n_above_0.3": 363,
+      "n_above_0.4": 134
+    },
+    "lazertinib": {
+      "max_sim_in_training": 0.6623,
+      "mean_sim": 0.1706,
+      "n_above_0.3": 156,
+      "n_above_0.4": 56
+    },
+    "mobocertinib": {
+      "max_sim_in_training": 0.5934,
+      "mean_sim": 0.1715,
+      "n_above_0.3": 146,
+      "n_above_0.4": 72
+    }
+  },
+  "random_training_subset_ef10": {
+    "n_trials": 50,
+    "subset_size": 300,
+    "mean_ef10": 1.3174,
+    "max_ef10": 3.0769,
+    "min_ef10": 0.0,
+    "n_nonzero": 41
+  },
+  "time_seconds": 31.6
+}

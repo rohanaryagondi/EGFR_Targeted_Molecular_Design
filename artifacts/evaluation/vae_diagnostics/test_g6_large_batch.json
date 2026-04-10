@@ -1,0 +1,30 @@
+{
+  "test": "G6_large_batch",
+  "seed": 42,
+  "generated_at": "2026-04-10T05:48:36.084714+00:00",
+  "n_generated": 3000,
+  "n_valid": 3000,
+  "n_unique": 2712,
+  "future_drug_proximity": {
+    "max_sim": 0.1667,
+    "mean_sim": 0.0881,
+    "p90_sim": 0.1143,
+    "p99_sim": 0.1393,
+    "n_above_0.3": 0,
+    "n_above_0.4": 0,
+    "per_drug_max_sim": {
+      "afatinib": 0.1667,
+      "osimertinib": 0.1393,
+      "dacomitinib": 0.1636,
+      "lazertinib": 0.1495,
+      "mobocertinib": 0.1413
+    }
+  },
+  "reference_drug_proximity": {
+    "max_sim": 0.1875,
+    "mean_sim": 0.0695,
+    "n_above_0.3": 0,
+    "n_above_0.4": 0
+  },
+  "time_seconds": 9.4
+}

@@ -1,0 +1,12 @@
+{
+  "test": "C5_random_baseline",
+  "generated_at": "2026-04-10T05:41:46.990567+00:00",
+  "n_attempted": 1000,
+  "n_valid": 431,
+  "validity_rate": 0.431,
+  "max_future_drug_sim": 0.0625,
+  "mean_future_drug_sim": 0.0212,
+  "n_above_0.3_future": 0,
+  "n_above_0.4_future": 0,
+  "time_seconds": 0.6
+}

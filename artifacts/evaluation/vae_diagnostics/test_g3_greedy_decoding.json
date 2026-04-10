@@ -1,0 +1,33 @@
+{
+  "test": "G3_greedy_decoding",
+  "seed": 42,
+  "generated_at": "2026-04-10T05:48:22.826932+00:00",
+  "note": "Greedy (argmax) decoding from z=0 with each state label",
+  "results": {
+    "DFGin_aCin": {
+      "smiles": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "is_valid": true,
+      "max_future_sim": 0.0405,
+      "closest_future_drug": "dacomitinib",
+      "max_ref_sim": 0.0625,
+      "closest_ref_drug": "gefitinib"
+    },
+    "DFGin_aCout": {
+      "smiles": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "is_valid": true,
+      "max_future_sim": 0.0405,
+      "closest_future_drug": "dacomitinib",
+      "max_ref_sim": 0.0625,
+      "closest_ref_drug": "gefitinib"
+    },
+    "DFGout_aCin": {
+      "smiles": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "is_valid": true,
+      "max_future_sim": 0.0405,
+      "closest_future_drug": "dacomitinib",
+      "max_ref_sim": 0.0625,
+      "closest_ref_drug": "gefitinib"
+    }
+  },
+  "time_seconds": 0.1
+}

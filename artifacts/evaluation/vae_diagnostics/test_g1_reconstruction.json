@@ -1,0 +1,15 @@
+{
+  "test": "G1_reconstruction",
+  "seed": 42,
+  "generated_at": "2026-04-10T05:48:16.124672+00:00",
+  "n_tested": 500,
+  "failed_encode": 0,
+  "exact_match_rate": 0.0,
+  "exact_matches": 0,
+  "mean_tanimoto_to_input": 0.0314,
+  "median_tanimoto_to_input": 0.0282,
+  "tanimoto_p25": 0.0161,
+  "tanimoto_p75": 0.0411,
+  "tanimoto_below_0.5": 500,
+  "time_seconds": 10.3
+}

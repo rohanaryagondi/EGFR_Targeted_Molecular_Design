@@ -1,0 +1,534 @@
+{
+  "test": "G4_drug_seeding",
+  "seed": 42,
+  "generated_at": "2026-04-10T05:48:26.455522+00:00",
+  "note": "Encode known drugs \u2192 add Gaussian noise at various scales \u2192 decode",
+  "results": {
+    "erlotinib": {
+      "latent_norm": 1.8354,
+      "noise_0.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0534,
+        "max_sim_to_seed": 0.0818,
+        "mean_future_sim": 0.0835,
+        "max_future_sim": 0.1282,
+        "example_smiles": [
+          "C1C(CC=C=C)C2=CC2=CNCCC=C=C=CCC(C=O)C3=C1C=C3",
+          "C1OOC=CC=NC=NC=C=CCOOC=C2CC23C(C3C)=C=CC=C1CC",
+          "CCC(C=O)C1CC1(C)C=C=CC=CCCCC=CBr"
+        ]
+      },
+      "noise_0.1": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0615,
+        "max_sim_to_seed": 0.0971,
+        "mean_future_sim": 0.0842,
+        "max_future_sim": 0.1321,
+        "example_smiles": [
+          "C1OOC1=C",
+          "OOC=CCC1C=N1",
+          "CCC=C=C1C=C1"
+        ]
+      },
+      "noise_0.3": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0546,
+        "max_sim_to_seed": 0.0882,
+        "mean_future_sim": 0.0854,
+        "max_future_sim": 0.12,
+        "example_smiles": [
+          "COOC(=C)CNN=C=CC(NCC=C=CC)C1C=C1C=C=CC2=C=C2",
+          "CCCCC=C=CC=CCC=C=CC(N=NC=C)CCl",
+          "C123CC=C=C4CC(CN=O)NC1C=C=C2OOCCOCC=C=C43"
+        ]
+      },
+      "noise_0.5": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0641,
+        "max_sim_to_seed": 0.1039,
+        "mean_future_sim": 0.0883,
+        "max_future_sim": 0.1171,
+        "example_smiles": [
+          "C=CCC=O",
+          "CNN=CCC(N=NCC)C=CCC=C=CC=CNN=C=C=CCCC=O",
+          "NNNNC=CC(S1SC=N)=NC2=NC=CNNC=C=NNNN2N1"
+        ]
+      },
+      "noise_1.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0568,
+        "max_sim_to_seed": 0.093,
+        "mean_future_sim": 0.0855,
+        "max_future_sim": 0.1111,
+        "example_smiles": [
+          "CSSCC=O",
+          "O1OC=CC=NC[C@H1][C@H1]1C(C=O)OONNCC=C=CSSOC2CC/C/C3=CCCCCC4(C=C4)C3CC(C)=C2SC=C=C",
+          "C1CCCC2=C=CC3=CC3([C@H1])C=CCC1NC=C=CCCCC(NNNN)N(C)CCCCCC#CCCCC4CC24SCC=C"
+        ]
+      },
+      "noise_2.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0597,
+        "max_sim_to_seed": 0.086,
+        "mean_future_sim": 0.0857,
+        "max_future_sim": 0.125,
+        "example_smiles": [
+          "C1=C(CCC=O)C[C@@H1][C@@H1]NN=C=C=C=C=CCOOCC=C=CC=CC=C2CC2C1CC=C=CC",
+          "C=CCC1C=C1SSC=C=O",
+          "COOC=CNNC=C(CC[NH1])C=CC=CNNC1=CC(CF)OOC1"
+        ]
+      }
+    },
+    "gefitinib": {
+      "latent_norm": 1.8976,
+      "noise_0.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0663,
+        "max_sim_to_seed": 0.1087,
+        "mean_future_sim": 0.0904,
+        "max_future_sim": 0.1667,
+        "example_smiles": [
+          "C=C=C(C=O)C#CCC=C(C)F",
+          "COOCCC=NCC=C=C(Cl)C1OO1",
+          "C1=C(OC2C)CON3N2C3=CCC4=CC=C(CBr)C4C=C=CNN=C=C=C1"
+        ]
+      },
+      "noise_0.1": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0562,
+        "max_sim_to_seed": 0.0876,
+        "mean_future_sim": 0.0826,
+        "max_future_sim": 0.1273,
+        "example_smiles": [
+          "OOC=C1CCC=NN2NCN(NC=CC)CCC=C=C2NC=CC=C=C=C=CNN(CNNC)NN3C14C3N4",
+          "C=CC=C=C(N=NCNCC=C)CSSN=C=CC#CNNC1=C=CC=CCC=C=CC=CC=C=C1",
+          "CC=NNC=CCC=NNC(CC1)=CC1(CNC=C=CNNC=CC2=C)C2(CC)C3=CC3=C"
+        ]
+      },
+      "noise_0.3": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0581,
+        "max_sim_to_seed": 0.094,
+        "mean_future_sim": 0.0845,
+        "max_future_sim": 0.127,
+        "example_smiles": [
+          "CC1OOC=CC=C(CNC=C)CCCCC2CC=C=C2CC=NN[NH1][NH1]C=CC3CNN=C=C=C31",
+          "CNN=CSSC#CCC=CC=C1C=CCCCCCC(=C=CC=CC)C=C2C=C2CCCNN=C=CC=C(C)C=CCCC=CC1CCCCC",
+          "CCCCC(CC=C)C=C=C=CCCCC=C1COOC=C=C1OC(CN=CC)OO"
+        ]
+      },
+      "noise_0.5": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0545,
+        "max_sim_to_seed": 0.0942,
+        "mean_future_sim": 0.0796,
+        "max_future_sim": 0.1122,
+        "example_smiles": [
+          "COOC=CC=NC=NC1=NNNCCC=CNNCNN(C)CC=C(C2=O)N2CC1(CC=C=C)CC",
+          "CCCCNNCC=C=CC=CF",
+          "COOC=CC=NC=NC=C=CNC=CC#CCCCC"
+        ]
+      },
+      "noise_1.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0638,
+        "max_sim_to_seed": 0.1,
+        "mean_future_sim": 0.0829,
+        "max_future_sim": 0.1034,
+        "example_smiles": [
+          "C1CCCCCN=C=CSNCCC=C=C=CN(CNNN)N=CCC2=CC2(C)C=CCC1",
+          "C1NNCC#CC2=CC2CC(C=O)CCCNNC3=CC3C1CCC4NN4",
+          "OOC=CC=CCCC=C=CCCCCCC(CCC=C)COOC=C=CC(C#CC1C)C1COOCC"
+        ]
+      },
+      "noise_2.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0657,
+        "max_sim_to_seed": 0.1111,
+        "mean_future_sim": 0.0851,
+        "max_future_sim": 0.124,
+        "example_smiles": [
+          "C1=CC=C=C(CNNN)C(CCCC)C2=C=C(CCCCC2)O1",
+          "NNCCCCCCN=C=C1C=C1NCCC[C@@H1][C@@H1]COOCNC(C)C2=CCCCOOCCCCC2(CF)N=C=C=C",
+          "C=CCNN=CCCCC=C=O"
+        ]
+      }
+    },
+    "afatinib": {
+      "latent_norm": 0.456,
+      "noise_0.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0775,
+        "max_sim_to_seed": 0.1148,
+        "mean_future_sim": 0.0877,
+        "max_future_sim": 0.1197,
+        "example_smiles": [
+          "C=CC=NNCCCCl",
+          "CCCCC=NNC=NCCNN=NN=CCC1CC1",
+          "CCC(C=C=CNN=C=C)C=C1NNC=C=CC2=CCC(C=C=C23)C13CC(COOC4)CC4NN5CC5OO"
+        ]
+      },
+      "noise_0.1": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0659,
+        "max_sim_to_seed": 0.1089,
+        "mean_future_sim": 0.0796,
+        "max_future_sim": 0.1183,
+        "example_smiles": [
+          "OOC=CC(CCCC)CCC=CC=C=C=C=NN\\N\\NCNNC=C1C=C1OOCC",
+          "COOCCC=NC=CCN=NNC=CCCl",
+          "COOC=CC=NC=CC#N"
+        ]
+      },
+      "noise_0.3": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0781,
+        "max_sim_to_seed": 0.1301,
+        "mean_future_sim": 0.0867,
+        "max_future_sim": 0.1356,
+        "example_smiles": [
+          "C1OOCCCCC2=NC2NC=C=CC=C(C)CC=CCCC3=CC3NN=CC=C=CC4C=C=C14",
+          "C1=CCSCCCCC1N=C=CC(SNCC)C(CF)CCl",
+          "CCC(C=O)C#CC=NNCC=CC(COCC1)=CC12NNCC=C(CNNCCC3=C)C32"
+        ]
+      },
+      "noise_0.5": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0758,
+        "max_sim_to_seed": 0.1102,
+        "mean_future_sim": 0.0924,
+        "max_future_sim": 0.1458,
+        "example_smiles": [
+          "CCC=C=CC=CCS#CCCl",
+          "CNNC(CNN[C@@H1][C@@H1])[C@@H1]NC=NCCCCl",
+          "CCC(C=O)/CC(CCl)=NN1OO1"
+        ]
+      },
+      "noise_1.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0759,
+        "max_sim_to_seed": 0.1129,
+        "mean_future_sim": 0.092,
+        "max_future_sim": 0.1263,
+        "example_smiles": [
+          "COOC=C1C=NC=NC2NC=CC=C(Cl)C2(Cl)C1PP=CCCCCOO",
+          "CCOOC(C)C=C=CC=CC=CCCNNCC=NNC=C=NNCCC=C=CCCCBr",
+          "C=CC(=O)OCC=C=C=CC(CNC=O)C(C)CCCNCCC=CC=CCCC(CCCC1)CC1C=C=C=CC"
+        ]
+      },
+      "noise_2.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0691,
+        "max_sim_to_seed": 0.1049,
+        "mean_future_sim": 0.0779,
+        "max_future_sim": 0.1083,
+        "example_smiles": [
+          "NNCCNNCCCNN=C=C=C",
+          "C12CC=C=CC1C=CC(Cl)=CN=CC(CN)NCC3CC3(CC)NN4C=P4C2=C=CNNN(C)CCCNNN(CCCF)CNNN=C",
+          "CCCCC=O"
+        ]
+      }
+    },
+    "osimertinib": {
+      "latent_norm": 0.4084,
+      "noise_0.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0596,
+        "max_sim_to_seed": 0.0947,
+        "mean_future_sim": 0.0806,
+        "max_future_sim": 0.13,
+        "example_smiles": [
+          "C=C(CCC=C)C=CCC=NNNNNNC=C=CNNC=CCNN=C=C1C=C1",
+          "C=CC(C)N=C=CC(NNCC)C=CCCF",
+          "C1=CC=C=CC1NC2CC2CCCCCCC=NNC=C(OOCCCNNC3)C=C3N=NC"
+        ]
+      },
+      "noise_0.1": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0664,
+        "max_sim_to_seed": 0.1103,
+        "mean_future_sim": 0.0821,
+        "max_future_sim": 0.112,
+        "example_smiles": [
+          "COOC(=N)/N/NC\\[NH1]C=CC=CNNNCNNC(CSSC)NN=CNC=C=CC1CC1",
+          "COOC(=C)CCCCCC(COCCOC=C)NCNCCCC=CNNCCC=O",
+          "C1CCCC1"
+        ]
+      },
+      "noise_0.3": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0604,
+        "max_sim_to_seed": 0.0903,
+        "mean_future_sim": 0.0812,
+        "max_future_sim": 0.128,
+        "example_smiles": [
+          "C=CCNNC=C=C=CC=CCNNSSCCNN=C=CC=CBr",
+          "C1OOC1=O",
+          "CC=NNN=C=C=CN1N2C=CC=C[C@H1][C@H1]N=C=C=C1C=C=C2"
+        ]
+      },
+      "noise_0.5": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0627,
+        "max_sim_to_seed": 0.0949,
+        "mean_future_sim": 0.0834,
+        "max_future_sim": 0.15,
+        "example_smiles": [
+          "C12=C=CCC=NNC=NN1C=NNN=NNNCCC=C(CN=CC3=C4C3(O)OC)CCCC=C=C2C4",
+          "C1CC1C=O",
+          "C1CC(C=O)CCCC(CC=O)CCNC1"
+        ]
+      },
+      "noise_1.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0644,
+        "max_sim_to_seed": 0.0923,
+        "mean_future_sim": 0.0817,
+        "max_future_sim": 0.1239,
+        "example_smiles": [
+          "C12=CC(S=C=CC)=CC=C1CNN=C(C3=O)CC=C=CN=C4C2C4C=C=C5CC5C=C=C3",
+          "COOC=CC=NC=CNNCCCC(CBr)C=CCC=CCC1CC1OOC",
+          "C1N=NC(NNC=C)=C=C(F)C=C=C1Cl"
+        ]
+      },
+      "noise_2.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0697,
+        "max_sim_to_seed": 0.1429,
+        "mean_future_sim": 0.0897,
+        "max_future_sim": 0.1429,
+        "example_smiles": [
+          "COOC=CCC1C=N1",
+          "COOCCC=NC=NC(C1=O)C1C",
+          "C=CC=NNC(N=NN=NNN=C)=C=C=CCCC=C=C"
+        ]
+      }
+    },
+    "dacomitinib": {
+      "latent_norm": 0.4345,
+      "noise_0.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0742,
+        "max_sim_to_seed": 0.1079,
+        "mean_future_sim": 0.0809,
+        "max_future_sim": 0.1079,
+        "example_smiles": [
+          "CNN=C=CCC(NNC=C)CCCCC=NNNCC=NNC1C=CC=CC(NNCC=O)C(C=C=C1)CF",
+          "COOC=CC=NC=O",
+          "CNN=CSSCC(C=CCC=C)CCCC=C=CCCC=NNCCC1CC1(NNCC)C"
+        ]
+      },
+      "noise_0.1": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.078,
+        "max_sim_to_seed": 0.1357,
+        "mean_future_sim": 0.0872,
+        "max_future_sim": 0.1357,
+        "example_smiles": [
+          "CC(CCCC)=O",
+          "C=CCCC=O",
+          "CCNN=CNC/C/C(=N)C\\C#N"
+        ]
+      },
+      "noise_0.3": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0849,
+        "max_sim_to_seed": 0.1293,
+        "mean_future_sim": 0.0878,
+        "max_future_sim": 0.1293,
+        "example_smiles": [
+          "CC=C=CCNC=C=CC(C)CC=CC(CC1CCCNNC#C2)=C=C=C=C2CC1",
+          "C1=CCCCCCC=NC=NC=CC=C=C(C=CC=CCCCC[C@H1])[C@H1](O)C1C=C",
+          "C=CCCCC=NNC(CC=C=CC(Cl)CCCC=C1C=C1)C"
+        ]
+      },
+      "noise_0.5": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0819,
+        "max_sim_to_seed": 0.1391,
+        "mean_future_sim": 0.0873,
+        "max_future_sim": 0.1391,
+        "example_smiles": [
+          "C1CC=C=CCNC=CC=C1",
+          "COOC(=C)C(CCCC)C=O",
+          "C=C=C=CC1C=C1NC=C=C=CSS2NC=CCCC=C(CF)CC=C3C2=C3OON4NC4"
+        ]
+      },
+      "noise_1.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0743,
+        "max_sim_to_seed": 0.112,
+        "mean_future_sim": 0.0844,
+        "max_future_sim": 0.1376,
+        "example_smiles": [
+          "C12CCCCCC(NC1=C3)C=C=C=C=C3CC(F)N4NCCC(CCl)N=NN24",
+          "C1C=C=CC=CC(C=CCCCC=C=C)N=NC2=NNN=C(NC1)[C@@H1][C@@H1](O)N2OC=C=CCCCCC3CC3",
+          "COOC=CC=NC=NNNN1NC1(C)CC=C"
+        ]
+      },
+      "noise_2.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0779,
+        "max_sim_to_seed": 0.1119,
+        "mean_future_sim": 0.0818,
+        "max_future_sim": 0.1192,
+        "example_smiles": [
+          "C1CN2N/C/C=C/C/CCNN(CNNC)CC=C=C3C=C3CCC=C=C4C=C4CCC1PCC(CC2)N5CC5=C",
+          "C=CCCCl",
+          "CCC=C=CC1NNC2=CC=NN=NCC(C=CC=NN=C2C3)=C=C13"
+        ]
+      }
+    },
+    "lazertinib": {
+      "latent_norm": 0.9861,
+      "noise_0.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0695,
+        "max_sim_to_seed": 0.1134,
+        "mean_future_sim": 0.0949,
+        "max_future_sim": 0.129,
+        "example_smiles": [
+          "C=C(C=O)CCCCC=NCN(C=O)CCCCNN(C)CSS=O",
+          "CNN(C=C)C/CCC=O",
+          "COOC=CCCC1=C=C1[C@H1][C@H1]NC=CC(Cl)=C=C=CCC(C)=CN(C)CC=C(CCl)CCCCC"
+        ]
+      },
+      "noise_0.1": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.058,
+        "max_sim_to_seed": 0.1207,
+        "mean_future_sim": 0.0701,
+        "max_future_sim": 0.1207,
+        "example_smiles": [
+          "CNNCCC=C=CC=CC=NCNNC=CC=C=CCC=CCNNCCCCCC1CC1=C",
+          "C[S+1][S+1]CC[O-1]",
+          "C1=C=C=C=C=C1NNN=CNNNC(C2=C)=CC=NN2CCNNNN=CC=C"
+        ]
+      },
+      "noise_0.3": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0683,
+        "max_sim_to_seed": 0.1176,
+        "mean_future_sim": 0.0878,
+        "max_future_sim": 0.1261,
+        "example_smiles": [
+          "CCC(C=O)C=C",
+          "C1=CC1N=CCCNN=CC=C=CC=CNNCC=C=C(C2)CC2C",
+          "C1CNNCCCCCCC(CCC=C)=CCCCC=C=CCNN2C=C2ON3NC31CC=NN=NSS(OOCC4O)C4(C)CCNN"
+        ]
+      },
+      "noise_0.5": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0642,
+        "max_sim_to_seed": 0.1204,
+        "mean_future_sim": 0.0838,
+        "max_future_sim": 0.1333,
+        "example_smiles": [
+          "C12OOC=C=C=CN1CC=CC=C2CC=C=CCC3OCCC4=CCOOCCC=C=C=C5C(C54)NC(CC)=NC=C=C3",
+          "C12=C=C(C=O)C1NC=CC=C(NN=NNC=C2)C=C(CCOO)CC3NN3C",
+          "CCCCC=O"
+        ]
+      },
+      "noise_1.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0639,
+        "max_sim_to_seed": 0.13,
+        "mean_future_sim": 0.078,
+        "max_future_sim": 0.1327,
+        "example_smiles": [
+          "CCC1(C=O)N=NCNC=C=C=CC(C)=C=CCSC=C1CC[C@H1][C@H1]OO",
+          "C1C=NNC=CC=C=CCNNC=C=NNC=NC(CCCC)CC2CC2(CF)CC=CC1C",
+          "BrBr"
+        ]
+      },
+      "noise_2.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0665,
+        "max_sim_to_seed": 0.1053,
+        "mean_future_sim": 0.0876,
+        "max_future_sim": 0.1216,
+        "example_smiles": [
+          "C=C=CC=C(CNNC)CC=CCNN=NNC=CC1CNNC=NC=CCC2C3C2CNN=CN=NOOCC=CN4N=C4C=C3CCC=CCC=C1",
+          "C1#CCC(=O)N[C@@H1][C@@H1]O[C@][C@]CC1(C=N)NC(CCCC=CC=C=C2CC2CCC3=C=C34)C4C(O)N(CC5=NN=C5)C=C=C",
+          "OOCCC=CC=NCC1=C=C1C=C=C(CC#N)C2=NC2C#N"
+        ]
+      }
+    },
+    "mobocertinib": {
+      "latent_norm": 0.6692,
+      "noise_0.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0605,
+        "max_sim_to_seed": 0.0965,
+        "mean_future_sim": 0.0811,
+        "max_future_sim": 0.1298,
+        "example_smiles": [
+          "C1OOC=CC=CC=CCC=C=C(C#N)NNC1(C2=CC2)C",
+          "C=CC=C=CCNC=NC=NCCOOC=CC=O",
+          "CC(CN1CC1)NNC=NC=C(N2C=C2CCBr)CCC=O"
+        ]
+      },
+      "noise_0.1": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0736,
+        "max_sim_to_seed": 0.1129,
+        "mean_future_sim": 0.0919,
+        "max_future_sim": 0.1413,
+        "example_smiles": [
+          "OOC=CCCCCC(NC1)CCC=C=C=CC=NNNN2CC2C1OO",
+          "C1NNCCNNCCC=C=C1CCCCNCCC=NNCCNC2COOCC2CC=O",
+          "C=CC(C)C1NN1NC=CCCCNCCC=C=CN(CCC=C)CCF"
+        ]
+      },
+      "noise_0.3": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0661,
+        "max_sim_to_seed": 0.1026,
+        "mean_future_sim": 0.0856,
+        "max_future_sim": 0.1149,
+        "example_smiles": [
+          "C=CC\\C\\C(C)NNC1=NC1CNC=CC=C(OOCC=CCF)Cl",
+          "CC(CNC=C)=CNOOC=CC=CC=NNNC(C)CCCl",
+          "CCCC1=NC1=NN=NC=NC=CNC=C2C3=C2CN(C=O)N=NCCC=NN4CCSS4C=C=C5CC5PP(C=C)=C3"
+        ]
+      },
+      "noise_0.5": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0599,
+        "max_sim_to_seed": 0.1087,
+        "mean_future_sim": 0.0768,
+        "max_future_sim": 0.1168,
+        "example_smiles": [
+          "C#CCCCC=O",
+          "C1COOC=CC=C(SCCN=N1)CCCC=C=CCCCCC=C=CC=C=C",
+          "C1=C/C(=O)NC=CC=C1NNNCC#CCC=CC=C2C=C2CCNN=C"
+        ]
+      },
+      "noise_1.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0634,
+        "max_sim_to_seed": 0.1024,
+        "mean_future_sim": 0.0833,
+        "max_future_sim": 0.1356,
+        "example_smiles": [
+          "C#CCC(=O)C=CNNN=CNN=CN(CCCC)C=CC=CCOOC=1CC=1C",
+          "C1OOC=CC=NC=NCNN(OOC=C)C=CC(C#N)=NN2N=C21",
+          "C=C1C(F)(C2)C=C2CC=C(COC=C)C1NNC=CCC=CCCCC=C=CNN=C=CC=C3C=C=C=C=C3"
+        ]
+      },
+      "noise_2.0": {
+        "n_valid": 20,
+        "mean_sim_to_seed": 0.0638,
+        "max_sim_to_seed": 0.0965,
+        "mean_future_sim": 0.0855,
+        "max_future_sim": 0.1224,
+        "example_smiles": [
+          "CNN=C=CCCNN(C=C=CC)NN=CCC=CF",
+          "COOCC1C=N1",
+          "N1N2C=C2C/C/C(C)C=CC=C(C3Cl)C3CC[C@H1][C@H1]C=C=CSSC=NNNN=C1N=NCP"
+        ]
+      }
+    }
+  },
+  "time_seconds": 3.6
+}

@@ -1,0 +1,34 @@
+{
+  "test": "C7_per_state",
+  "generated_at": "2026-04-10T05:41:48.688667+00:00",
+  "results": {
+    "DFGin_aCin": {
+      "n_total": 300,
+      "n_unique": 285,
+      "n_seeds": 3,
+      "overlap_across_seeds": 15,
+      "mean_future_sim": 0.086,
+      "max_future_sim": 0.1569,
+      "mean_nn_to_training": 0.1218
+    },
+    "DFGin_aCout": {
+      "n_total": 300,
+      "n_unique": 282,
+      "n_seeds": 3,
+      "overlap_across_seeds": 18,
+      "mean_future_sim": 0.0862,
+      "max_future_sim": 0.1477,
+      "mean_nn_to_training": 0.1257
+    },
+    "DFGout_aCin": {
+      "n_total": 300,
+      "n_unique": 286,
+      "n_seeds": 3,
+      "overlap_across_seeds": 14,
+      "mean_future_sim": 0.0858,
+      "max_future_sim": 0.1429,
+      "mean_nn_to_training": 0.1254
+    }
+  },
+  "time_seconds": 1.4
+}

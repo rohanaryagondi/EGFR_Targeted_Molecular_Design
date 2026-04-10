@@ -1,0 +1,13 @@
+{
+  "test": "G5_conditioning",
+  "seed": 42,
+  "generated_at": "2026-04-10T05:48:26.681600+00:00",
+  "n_fixed_z": 50,
+  "n_identical_all_states": 0,
+  "frac_identical_all_states": 0.0,
+  "n_identical_pairwise": 0,
+  "n_pairs_total": 150,
+  "frac_identical_pairwise": 0.0,
+  "interpretation": "If frac_identical_all_states is high (>0.5), conditioning has no effect \u2014 the model ignores the state label. If low (<0.1), conditioning works.",
+  "time_seconds": 0.2
+}

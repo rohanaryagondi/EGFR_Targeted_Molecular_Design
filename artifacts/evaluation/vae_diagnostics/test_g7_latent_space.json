@@ -1,0 +1,43 @@
+{
+  "test": "G7_latent_space",
+  "seed": 42,
+  "generated_at": "2026-04-10T05:48:38.293352+00:00",
+  "n_encoded": 1000,
+  "latent_dim": 64,
+  "mu_global_mean_norm": 0.1617,
+  "mu_global_std_mean": 0.1264,
+  "sigma_mean": 0.9978,
+  "active_dimensions_kl_gt_0.01": 0,
+  "total_kl_per_sample": 0.6788,
+  "top_10_kl_dims": [
+    12,
+    36,
+    20,
+    2,
+    13,
+    39,
+    54,
+    0,
+    50,
+    48
+  ],
+  "top_10_kl_values": [
+    0.0013,
+    0.0008,
+    0.0008,
+    0.0007,
+    0.0007,
+    0.0007,
+    0.0006,
+    0.0006,
+    0.0006,
+    0.0005
+  ],
+  "state_centroid_distances": {
+    "DFGin_aCin_vs_DFGin_aCout": 0.0612,
+    "DFGin_aCin_vs_DFGout_aCin": 0.0873,
+    "DFGin_aCout_vs_DFGout_aCin": 0.0691
+  },
+  "interpretation": "active_dimensions < 10 suggests posterior collapse. state_centroid_distances near 0 means states are not separated in latent space.",
+  "time_seconds": 2.2
+}
