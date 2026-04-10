@@ -32,6 +32,6 @@ Last updated: 2026-04-09T22:15:00Z
 | Phase | Status | Tasks Total | Completed | Remaining |
 |-------|--------|-------------|-----------|-----------|
 | Phase 0: Structural & Methodological Fixes | completed | 9 | 9 | 0 |
-| Phase 1: Core Experiments | not started | -- | -- | -- |
+| Phase 1: Core Experiments | planned | 13 | 0 | 13 |
 | Phase 2: Multi-Kinase & Strengthening | not started | -- | -- | -- |
 | Phase 3: Writing & Submission | not started | -- | -- | -- |

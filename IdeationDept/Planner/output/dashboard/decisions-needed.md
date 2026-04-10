@@ -4,9 +4,11 @@ Last updated: 2026-04-09T22:30:00Z
 
 ## Pending Decisions
 
-No decisions pending from Phase 0. All gates resolved.
-
-Future gates (Phase 1+) will be added here as phases are planned and executed.
+| # | Gate | Expected | Criterion | Action Needed |
+|---|------|----------|-----------|---------------|
+| 1 | G2 | week 4-5 | Ablation C Cohen's d >= 0.5 | After P1-T10: decide GO/PIVOT/NO-GO for ABL1 (Waves 4-5) |
+| 2 | G3 | week 7 | REINVENT 4 produces 100+ valid docked molecules | After P1-T11: decide GO/CONDITIONAL/NO-GO |
+| 3 | G4 | week 8 | ABL1 EF@10 > 1.0 for state-aware | After P1-T13: decide GO/CONDITIONAL/NO-GO |
 
 ## Decision Log
 

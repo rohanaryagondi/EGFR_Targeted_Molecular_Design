@@ -1,38 +1,41 @@
 # Current Status
 
-Last updated: 2026-04-09T22:30:00Z
+Last updated: 2026-04-09T23:45:00Z
 
 ## State
 
-**Phase 0: Structural & Methodological Fixes** -- COMPLETED.
+**Phase 1: Core Experiments** -- PLANNED (13 tasks, 5 waves).
 
-All 9 tasks executed successfully. Gates G0 and G1 both passed. 669 tests pass
-(23 new, 0 failures). Project is ready for Phase 1: Core Experiments.
+Phase 0 complete (9/9 tasks, G0+G1 GO). Phase 1 planned with 13 tasks across
+5 waves (max 3 agents in parallel). Critical path: Ablation C (T01->T07->T10)
+leading to Gate G2 decision. Waves 4-5 (ABL1) conditional on G2 outcome.
 
-## Task Status
+## Phase 1 Task Status
 
-| Task ID | Name | Status | Completed |
-|---------|------|--------|-----------|
-| P0-T01 | Verify 4ZAU DFG Conformation | completed | 2026-04-09 |
-| P0-T02 | Fix Osimertinib Reference Leakage | completed | 2026-04-09 |
-| P0-T03 | MPNN Scaffold + Temporal Split (Code) | completed | 2026-04-09 |
-| P0-T04 | Bootstrap CIs + BEDROC | completed | 2026-04-09 |
-| P0-T05 | MPNN Scaffold Split Evaluation (GPU) | completed | 2026-04-09 |
-| P0-T06 | Fix Structural Annotations (Common) | completed | 2026-04-09 |
-| P0-T07 | Remove DFGout_aCout (3-State Switch) | completed | 2026-04-09 |
-| P0-T08 | VAE Retrain (3-State) | completed | 2026-04-09 |
-| P0-T09 | Pre-Registration Document | completed | 2026-04-09 |
+| Task ID | Name | Wave | Status |
+|---------|------|------|--------|
+| P1-T01 | Ablation C Config + Data Prep | 1A | pending |
+| P1-T02 | VAE Quality Metrics (FCD/Recon/Novelty) | 1A | pending |
+| P1-T03 | Scoring Ablation + Fairness Script | 1A | pending |
+| P1-T04 | PMO Comparison Infrastructure | 1B | pending |
+| P1-T05 | ABL1 Schema + Data Curation Script | 1B | pending |
+| P1-T06 | REINVENT 4 Environment + GNINA Plugin | 1B | pending |
+| P1-T07 | Ablation C Training + Generation (GPU) | 2 | pending |
+| P1-T08 | Scoring Ablation + PMO Execution | 2 | pending |
+| P1-T09 | ABL1 Structures + Features | 2 | pending |
+| P1-T10 | Ablation C Analysis + Gate G2 | 3 | pending |
+| P1-T11 | REINVENT 4 EGFR Run + Gate G3 | 3 | pending |
+| P1-T12 | ABL1 Model Training (VAE + MPNN) | 4 | pending |
+| P1-T13 | ABL1 Pipeline + Retrospective + Gate G4 | 5 | pending |
 
-**Completed:** 9/9 | **In Progress:** 0/9 | **Pending:** 0/9
+**Completed:** 0/13 | **In Progress:** 0/13 | **Pending:** 13/13
 
-## Key Results
+## Phase 0 Key Results (Complete)
 
-- **3-state model adopted:** 4ZAU=DFGin_aCin, 5D41=DFGin_aCout. No genuine EGFR
-  DFGout structures exist. DFGout_aCout removed from entire codebase.
-- **MPNN scaffold R^2 = 0.5153** (random was 0.69, degradation = 0.1863).
-  Gate G1 GO -- MPNN remains credible scoring component.
+- **3-state model adopted:** 4ZAU=DFGin_aCin, 5D41=DFGin_aCout. DFGout_aCout removed.
+- **MPNN scaffold R^2 = 0.5153** (Gate G1 GO).
 - **VAE retrained** with n_states=3 (300 epochs, 21.4 min on H200).
-- **Pre-registration committed** at 9e7cf96 before any ablation experiments.
+- **Pre-registration committed** at 9e7cf96.
 
 ## Gates
 
@@ -50,7 +53,7 @@ All 9 tasks executed successfully. Gates G0 and G1 both passed. 669 tests pass
 | Phase | Status |
 |-------|--------|
 | Phase 0: Structural & Methodological Fixes | **completed** (9/9 tasks, G0+G1 GO) |
-| Phase 1: Core Experiments | not planned |
+| Phase 1: Core Experiments | **planned** (13 tasks, 5 waves, 3 gates) |
 | Phase 2: Multi-Kinase & Strengthening | not planned |
 | Phase 3: Writing & Submission | not planned |
 
