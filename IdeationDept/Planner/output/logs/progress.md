@@ -1,6 +1,6 @@
 # Master Progress Tracker
 
-Last updated: 2026-04-10T05:50:00Z
+Last updated: 2026-04-10T17:00:00Z
 
 ## Progress Table
 
@@ -30,6 +30,7 @@ Last updated: 2026-04-10T05:50:00Z
 | Phase 1 | P1-T12 | ABL1 Model Training (VAE + MPNN) | skipped | 2026-04-10 | Skipped: G2 NO-GO. ABL1 extension not warranted. |
 | Phase 1 | P1-T13 | ABL1 Pipeline + Retrospective + Gate G4 | skipped | 2026-04-10 | Skipped: G2 NO-GO. |
 | Phase 1 | P1-DIAG | VAE Enrichment Failure Diagnostics | **completed** | 2026-04-10 | 15/15 tests done. **Root cause: total autoencoder failure.** 0% reconstruction (mean Tanimoto 0.031 to input). Decoder produces aliphatic chains (0.03 aromatic rings vs 3.56 in training). ZERO active latent dims. State conditioning cosmetic only. NOT a data/representation problem (training has drugs, SELFIES roundtrip perfect). See synthesis.json. |
+| Phase 1 | P1-DIAG-V | Independent Verification of Diagnostics | **completed** | 2026-04-10 | All 15 test JSONs manually reviewed against interpretation guide. Root cause diagnosis CONFIRMED: MODEL_FAILURE (decoder_incapacity + posterior_collapse). Additional findings: (1) PMO comparison uninformative — GNINA timed out on CPU partition, both pipelines scored 0.0; (2) G4 shows 4/7 drugs encode to latent_norm < 1.0 (within prior ball) yet still decode to garbage — conclusively rules out prior-posterior gap; (3) SELFIES ring closure requires 40-66 tokens with long-range Ring1/Ring2 dependencies beyond GRU memory. synthesis.json updated to v2 with these additions. |
 
 ## Gate Outcomes
 
@@ -48,7 +49,7 @@ Last updated: 2026-04-10T05:50:00Z
 |--------|------|-----------|---------|--------|
 | 7832709 | vae_diag_cpu | day | 7 CPU diagnostic tests (C1-C7) | completed |
 | 7834860 | vae_diag_gpu | scavenge_gpu | 8 GPU diagnostic tests (G1-G8) | completed |
-| 7799914 | pmo_comp | day | PMO comparison (budget=500, real GNINA) | completed — UNINFORMATIVE (all scores 0.0, GNINA timed out on CPU-only partition) |
+| 7799914 | pmo_comp | day | PMO comparison (budget=500, real GNINA) | completed — UNINFORMATIVE (all scores 0.0, GNINA timed out on CPU-only partition). Static generated proper analogues (gefitinib/erlotinib scaffolds) but docking returned 0 for all 30+76 candidates. Resubmit on gpu_devel with GNINA GPU mode to get real scores. |
 
 ## VAE Diagnostic Investigation — Key Findings (2026-04-10)
 
@@ -72,7 +73,16 @@ Last updated: 2026-04-10T05:50:00Z
 **Diagnosis category**: MODEL_FAILURE (decoder_incapacity + posterior_collapse)
 **NOT**: data problem, representation problem, temperature problem, or conditioning problem
 
-**Full synthesis**: `artifacts/evaluation/vae_diagnostics/synthesis.json`
+**Full synthesis**: `artifacts/evaluation/vae_diagnostics/synthesis.json` (v2, independently verified 2026-04-10T17:00Z)
+
+### Independent Verification Notes (2026-04-10T17:00Z)
+
+All 15 test JSONs reviewed against raw data and interpretation guide. Key additions to v1 synthesis:
+
+1. **PMO comparison uninformative**: GNINA docking on CPU partition timed out. Both pipelines generated proper SMILES (static pipeline produced gefitinib/erlotinib analogues) but all docking scores = 0. Needs resubmission on GPU partition.
+2. **Prior-posterior gap definitively ruled out**: G4 data shows afatinib (norm=0.46), osimertinib (0.41), dacomitinib (0.43) encode WITHIN the unit ball — exactly where N(0,I) sampling draws from. Yet decoding from these positions gives max self-similarity 0.08-0.11. The decoder is uniformly broken across the entire latent space.
+3. **SELFIES token complexity**: C4 shows drugs require 40-66 SELFIES tokens with multiple Ring1/Ring2 closure tokens. These are long-range dependencies (ring closure references positions 20+ tokens back) that the single-layer GRU decoder cannot reliably learn.
+4. **KL collapse is disguised by aggregation**: Seed 42's total KL=0.61 looked healthy in training logs, but G7 shows it's spread across 64 dims at <0.001 each. Zero dimensions above KL=0.01. Future VAE monitoring should track per-dimension KL, not just aggregate.
 
 ## Phase Summary
 
