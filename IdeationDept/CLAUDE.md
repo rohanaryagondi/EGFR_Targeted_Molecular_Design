@@ -21,9 +21,12 @@ IdeationDept/
 ├── Cohort2/               # Second roundtable (different specialists, completed)
 │   ├── agents/            # Cohort2 specialist personas
 │   └── output/            # Cohort2 research, proposals, critiques
-└── ReviewCohort/          # Critical review panel (reads both cohorts)
-    ├── agents/            # Review panel member personas
-    └── output/            # Reviews, verification, deliberation, final plan
+├── ReviewCohort/          # Critical review panel (reads both cohorts)
+│   ├── agents/            # Review panel member personas
+│   └── output/            # Reviews, verification, deliberation, final plan
+└── DiagnosticCohort/      # G2 investigation team (diagnoses ablation failure)
+    ├── agents/            # Diagnostic specialist personas
+    └── output/            # Investigation reports, proposals, recovery plan
 ```
 
 **Shared resources** (at IdeationDept root): `context/project-briefing.md`, `templates/`.
@@ -42,6 +45,18 @@ output. This ensures independent ideation. Specifically:
 The ReviewCohort is the **exception** to the contamination firewall. Its entire purpose
 is to read and critically evaluate output from BOTH Cohort1 and Cohort2. ReviewCohort
 agents MUST read both cohorts' final agendas, proposals, and critiques.
+
+### DiagnosticCohort
+
+The DiagnosticCohort investigates the Gate G2 (Ablation C) NO_GO result. It reads:
+- The G2 report (`reports/gate-g2-ablation-c-report.md`)
+- The implementation plan (`ReviewCohort/output/final/implementation-plan.md`)
+- The pre-registration (`docs/pre-registration.md`)
+- Source code (VAE, scoring) for architectural context
+- Project briefing for full context
+
+Its 5 agents investigate three hypotheses for the null result: weak conditioning
+mechanism (H1), insufficient state-specific data (H2), and wrong evaluation metric (H3).
 
 ---
 
@@ -110,6 +125,7 @@ All documents written by agents follow these conventions:
   - Cohort1: `medchem`, `compchem`, `structbio`, `mlres`, `genai`, `synthbio`, `datasci`
   - Cohort2: `drughunt`, `biophys`, `cheminfo`, `clinonc`, `protml`, `kinpharm`, `bencharch`
   - ReviewCohort: `compbiorev`, `mlrev`, `principal`, `associate`, `progdir`
+  - DiagnosticCohort: `condgen`, `kinchembio`, `evaldes`, `mldebug`, `pubstrat`
   - Orchestrator: `orch` (all cohorts)
 - **Frontmatter**: Every document starts with YAML frontmatter:
   ```yaml
